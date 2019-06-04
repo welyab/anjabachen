@@ -27,52 +27,64 @@ package com.welyab.anjabachen;
 public enum Piece {
 
 	/**
+	 * Represents the black king piece.
 	 */
-	BLACK_KING(PieceType.KING, Color.BLACK),
+	BLACK_KING(PieceType.KING, 'k', Color.BLACK, SquareContent.BLACK_KING),
 
 	/**
+	 * Represents the black queen piece.
 	 */
-	BLACK_QUEEN(PieceType.QUEEN, Color.BLACK),
+	BLACK_QUEEN(PieceType.QUEEN, 'q', Color.BLACK, SquareContent.BLACK_QUEEN),
 
 	/**
+	 * Represents the black rook piece.
 	 */
-	BLACK_ROOK(PieceType.ROOK, Color.BLACK),
+	BLACK_ROOK(PieceType.ROOK, 'r', Color.BLACK, SquareContent.BLACK_ROOK),
 
 	/**
+	 * Represents the black bishop piece.
 	 */
-	BLACK_BISHOP(PieceType.BISHOP, Color.BLACK),
+	BLACK_BISHOP(PieceType.BISHOP, 'b', Color.BLACK, SquareContent.BLACK_BISHOP),
 
 	/**
+	 * Represents the black knight piece.
 	 */
-	BLACK_KNIGHT(PieceType.KNIGHT, Color.BLACK),
+	BLACK_KNIGHT(PieceType.KNIGHT, 'n', Color.BLACK, SquareContent.BLACK_KNIGHT),
 
 	/**
+	 * Represents the black pawn piece.
 	 */
-	BLACK_PAWN(PieceType.PAWN, Color.BLACK),
+	BLACK_PAWN(PieceType.PAWN, 'p', Color.BLACK, SquareContent.BLACK_PAWN),
 
 	/**
+	 * Represents the white king piece.
 	 */
-	WHITE_KING(PieceType.KING, Color.WHITE),
+	WHITE_KING(PieceType.KING, 'K', Color.WHITE, SquareContent.WHITE_KING),
 
 	/**
+	 * Represents the white queen piece.
 	 */
-	WHITE_QUEEN(PieceType.QUEEN, Color.WHITE),
+	WHITE_QUEEN(PieceType.QUEEN, 'Q', Color.WHITE, SquareContent.WHITE_QUEEN),
 
 	/**
+	 * Represents the white rook piece.
 	 */
-	WHITE_ROOK(PieceType.ROOK, Color.WHITE),
+	WHITE_ROOK(PieceType.ROOK, 'R', Color.WHITE, SquareContent.WHITE_ROOK),
 
 	/**
+	 * Represents the white bishop piece.
 	 */
-	WHITE_BISHOP(PieceType.BISHOP, Color.WHITE),
+	WHITE_BISHOP(PieceType.BISHOP, 'B', Color.WHITE, SquareContent.WHITE_BISHOP),
 
 	/**
+	 * Represents the white knight piece.
 	 */
-	WHITE_KNIGHT(PieceType.KNIGHT, Color.WHITE),
+	WHITE_KNIGHT(PieceType.KNIGHT, 'N', Color.WHITE, SquareContent.WHITE_KNIGHT),
 
 	/**
+	 * Represents the white king piece.
 	 */
-	WHITE_PAWN(PieceType.PAWN, Color.WHITE);
+	WHITE_PAWN(PieceType.PAWN, 'P', Color.WHITE, SquareContent.WHITE_PAWN);
 
 	/**
 	 * The piece type (king, queen, rook...).
@@ -84,10 +96,22 @@ public enum Piece {
 	 */
 	private final Color color;
 
+	/**
+	 * The letter symbol for this piece.
+	 */
+	private final char letterSymbol;
+
+	/**
+	 * The representative value of this piece when occupying a board square.
+	 */
+	private final int value;
+
 	@SuppressWarnings("javadoc")
-	private Piece(PieceType type, Color color) {
+	private Piece(PieceType type, char letterSymbol, Color color, int value) {
 		this.type = type;
+		this.letterSymbol = letterSymbol;
 		this.color = color;
+		this.value = value;
 	}
 
 	/**
@@ -106,6 +130,17 @@ public enum Piece {
 	 */
 	public Color getColor() {
 		return color;
+	}
+
+	/**
+	 * Retrieves the representative value for this piece when it is occupying a square.
+	 *
+	 * @return The square content for this piece.
+	 *
+	 * @see SquareContent
+	 */
+	public int getValue() {
+		return value;
 	}
 
 	/**
@@ -300,5 +335,38 @@ public enum Piece {
 	 */
 	public boolean isWhitePawn() {
 		return this == WHITE_PAWN;
+	}
+
+	/**
+	 * Retrieves the letter symbols for this piece.
+	 *
+	 * @return The letter piece.
+	 */
+	public char getLetterSymbol() {
+		return letterSymbol;
+	}
+
+	/**
+	 * Retrieves the piece instance associated with given letter symbol.
+	 *
+	 * @param letterSymbol The letter symbol associated requested piece.
+	 *
+	 * @return The piece.
+	 *
+	 * @throws IllegalArgumentException If the given letter symbols does not have a piece associated
+	 *         with it.
+	 */
+	public static Piece fromLetterSymbol(char letterSymbol) {
+		for (Piece piece : values()) {
+			if (piece.getLetterSymbol() == letterSymbol) {
+				return piece;
+			}
+		}
+		throw new IllegalArgumentException(
+			String.format(
+				"Invalid letter symbol: %c",
+				letterSymbol
+			)
+		);
 	}
 }
