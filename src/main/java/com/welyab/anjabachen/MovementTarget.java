@@ -25,27 +25,33 @@
  * @author Welyab Paula
  */
 public class MovementTarget {
-
+	
 	/**
 	 * If the being moved piece is a pawn during a promotion, this field may be
 	 * used in order to know which piece should be used as replacement for the pawn. In other
 	 * scenarios, this field keeps the same piece present in the origin square.
 	 */
 	private final Piece piece;
-
+	
 	/**
 	 * The destination square row number.
 	 */
 	private final int row;
-
+	
 	/**
 	 * The destination square column number.
 	 */
 	private final int column;
-
+	
+	private final RookMovement rooMovement;
+	
 	/**
 	 * Creates a new target by informing the piece and the <code>[row, column]</code> coordinates of
 	 * the destination square.
+	 *
+	 * <p>
+	 * This constructor is the most simple one. Used when a piece simply moving from a square to
+	 * another. There are constructors for castling movements and <i>en passant</i> pawn captures.
 	 *
 	 * @param piece If the being moved piece is a pawn during a promotion, this field may be used in
 	 *        order to know which piece should be used as replacement for the pawn. In
@@ -58,8 +64,31 @@ public class MovementTarget {
 		this.piece = piece;
 		this.row = row;
 		this.column = column;
+		this.rooMovement = null;
 	}
-
+	
+	public MovementTarget(Piece piece, int row, int column, RookMovement rooMovement) {
+		this.piece = piece;
+		this.row = row;
+		this.column = column;
+		this.rooMovement = rooMovement;
+	}
+	
+	/**
+	 *
+	 * @return
+	 */
+	public boolean isCastling() {
+		return rooMovement != null;
+	}
+	
+	public RookMovement getRooMovement() {
+		if (isCastling()) {
+			throw new MovementException("movement target is not a castling movement");
+		}
+		return rooMovement;
+	}
+	
 	/**
 	 * If the being moved piece is a pawn during a promotion, this method is used to let
 	 * know which piece should be used as replacement for the pawn. In other scenarios,
@@ -70,7 +99,7 @@ public class MovementTarget {
 	public Piece getPiece() {
 		return piece;
 	}
-
+	
 	/**
 	 * Retrieves the destination square row number.
 	 *
@@ -79,7 +108,7 @@ public class MovementTarget {
 	public int getRow() {
 		return row;
 	}
-
+	
 	/**
 	 * Retrieves the destination square row number.
 	 *
@@ -87,5 +116,25 @@ public class MovementTarget {
 	 */
 	public int getColumn() {
 		return column;
+	}
+	
+	public static class RookMovement {
+		
+		private final Position origin;
+		
+		private final Position destination;
+		
+		public RookMovement(Position origin, Position destination) {
+			this.origin = origin;
+			this.destination = destination;
+		}
+		
+		public Position getOrigin() {
+			return origin;
+		}
+		
+		public Position getDestination() {
+			return destination;
+		}
 	}
 }

@@ -24,27 +24,27 @@ import java.util.List;
  * @author Welyab Paula
  */
 public class Movements {
-
+	
 	/**
 	 * The piece being moved.
 	 */
 	private final Piece piece;
-
+	
 	/**
 	 * The origin square row number.
 	 */
 	private final int row;
-
+	
 	/**
 	 * The origin square column number.
 	 */
 	private final int column;
-
+	
 	/**
 	 * The list of available targets for the underlying piece.
 	 */
 	private final List<MovementTarget> targets;
-
+	
 	/**
 	 * Creates a new <code>Movements</code> set for piece.
 	 *
@@ -59,7 +59,7 @@ public class Movements {
 		this.column = column;
 		this.targets = targets;
 	}
-
+	
 	/**
 	 * Retrieves the being moved piece.
 	 *
@@ -68,7 +68,7 @@ public class Movements {
 	public Piece getPiece() {
 		return piece;
 	}
-
+	
 	/**
 	 * Retrieves the origin square column number.
 	 *
@@ -77,7 +77,7 @@ public class Movements {
 	public int getRow() {
 		return row;
 	}
-
+	
 	/**
 	 * Retrieves the origin square column number.
 	 *
@@ -86,7 +86,7 @@ public class Movements {
 	public int getColumn() {
 		return column;
 	}
-
+	
 	/**
 	 * Retrieves the list of movement targets.
 	 *
@@ -95,7 +95,7 @@ public class Movements {
 	public List<MovementTarget> getTargets() {
 		return targets;
 	}
-
+	
 	/**
 	 * The amount of available movements in this set.
 	 *
@@ -104,7 +104,7 @@ public class Movements {
 	public int size() {
 		return targets.size();
 	}
-
+	
 	/**
 	 * Indicates if exists any movement in this set.
 	 *
@@ -113,7 +113,7 @@ public class Movements {
 	public boolean isEmpty() {
 		return targets.isEmpty();
 	}
-
+	
 	/**
 	 * Retrieves the target in the specific index.
 	 *
@@ -123,5 +123,23 @@ public class Movements {
 	 */
 	public MovementTarget getTarget(int index) {
 		return targets.get(index);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(piece.name()).append(String.format("[%d, %d]", row, column)).append(" -> [");
+		for (int i = 0; i < targets.size(); i++) {
+			MovementTarget target = targets.get(i);
+			if (i > 0) {
+				builder.append(", ");
+			}
+			if (target.isCastling()) {
+				builder.append("castling");
+			}
+			builder.append(String.format("[%d, %d]", target.getRow(), target.getColumn()));
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }
