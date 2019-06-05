@@ -65,6 +65,10 @@ public class Board {
 	 */
 	private static final int WHITE_ROOK_INITIAL_ROW = 7;
 
+	private static final int BLACK_PAWN_PROMOTION_ROW = 7;
+
+	private static final int WHITE_PAWN_PROMOTION_ROW = 0;
+
 	/**
 	 * New line.
 	 */
@@ -166,6 +170,30 @@ public class Board {
 			new DirectionAdjuster(-1, +2),
 			new DirectionAdjuster(+1, -2),
 			new DirectionAdjuster(-1, -2)
+		)
+	);
+
+	/**
+	 * The movement template for the black pawn.
+	 */
+	private static List<DirectionAdjuster> blackPawnMoveTemplate = Collections.unmodifiableList(
+		Arrays.asList(
+			new DirectionAdjuster(+1, +0),
+			new DirectionAdjuster(+2, +0),
+			new DirectionAdjuster(+1, +1),
+			new DirectionAdjuster(+1, -1)
+		)
+	);
+
+	/**
+	 * The movement template for the white pawn.
+	 */
+	private static List<DirectionAdjuster> whitePawnMoveTemplate = Collections.unmodifiableList(
+		Arrays.asList(
+			new DirectionAdjuster(-1, +0),
+			new DirectionAdjuster(-2, +0),
+			new DirectionAdjuster(-1, +1),
+			new DirectionAdjuster(-1, -1)
 		)
 	);
 
@@ -360,7 +388,7 @@ public class Board {
 		Square square = getSquare(row, column);
 		PieceInfo pieceInfo = square.getPieceInfo();
 		Piece piece = pieceInfo.getPiece();
-		int maxMoveLength = getMaxRadialMoveLength(piece.getType());
+		int maxMoveLength = getMaxPieceMovementLength(piece.getType());
 		List<DirectionAdjuster> directionAdjusters = getMovementTemplate(piece);
 		boolean[] invalidDirection = new boolean[directionAdjusters.size()];
 		List<MovementTarget> targets = new ArrayList<>();
@@ -441,7 +469,7 @@ public class Board {
 		if (isUnderAttackByKnight(row, column, color)) {
 			return true;
 		}
-		int maxMoveLength = getMaxRadialMoveLength(PieceType.QUEEN);
+		int maxMoveLength = getMaxPieceMovementLength(PieceType.QUEEN);
 		boolean[] invalidDirections = new boolean[queenMoveTemplate.size()];
 		for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
 			for (int t = 0; t < queenMoveTemplate.size(); t++) {
@@ -610,16 +638,13 @@ public class Board {
 	}
 
 	/**
-	 * Retrieves the maximum movement length for an radial movement piece (all pieces, except the
-	 * pawn).
+	 * Retrieves the maximum movement length for a piece movement.
 	 *
 	 * @param type The piece type.
 	 *
 	 * @return The maximum movement length.
-	 *
-	 * @throws ChessError If the piece has no radial movement.
 	 */
-	private static int getMaxRadialMoveLength(PieceType type) {
+	private static int getMaxPieceMovementLength(PieceType type) {
 		if (type == PieceType.KING) {
 			return 1;
 		}
@@ -639,7 +664,69 @@ public class Board {
 	}
 
 	private Movements getPawnMovements(int row, int column) {
-		return null;
+		Square pawnSquare = getSquare(row, column);
+		PieceInfo pawnInfo = pawnSquare.getPieceInfo();
+		Piece pawn = pawnInfo.getPiece();
+		List<DirectionAdjuster> directionAdjusters = getMovementTemplate(pawn);
+		List<MovementTarget> targets = new ArrayList<>();
+		for (DirectionAdjuster directionAjduster : directionAdjusters) {
+			int targetRow = row + directionAjduster.getRowAdjuster();
+			int targetColumn = column + directionAjduster.getColumnAdjuster();
+			if (isInsideBoard(targetRow, targetColumn)) {
+				Square targetSquare = getSquare(targetRow, targetColumn);
+				boolean validPawnMovementForward = isValidPawnMovementForward(pawnSquare, targetSquare);
+				boolean validPawnCaptureMovement = isValidPawnCaptureMovement(pawnSquare, targetSquare);
+				boolean isEnPassant = validPawnCaptureMovement && targetSquare.isEmpty();
+				if (validPawnMovementForward || validPawnCaptureMovement) {
+					if (!isKingInCheckWithMove(row, column, targetRow, targetColumn)) {
+						boolean isPawnPromotion = targetRow == getPawnPromotionRow(pawn.getColor());
+						if (isPawnPromotion) {
+						} else {
+							targets.add(
+								new MovementTarget(
+									pawn,
+									targetRow,
+									targetColumn
+								)
+							);
+						}
+					}
+				}
+			}
+		}
+		return new Movements(
+			pawn,
+			row,
+			column,
+			targets
+		);
+	}
+
+	private int getPawnPromotionRow(Color color) {
+		return color.isWhite()
+				? WHITE_PAWN_PROMOTION_ROW
+				: BLACK_PAWN_PROMOTION_ROW;
+	}
+
+	private boolean isValidPawnCaptureMovement(Square pawnSquare, Square targetSquare) {
+		return false;
+	}
+
+	private boolean isValidPawnMovementForward(Square pawnSquare, Square targetSquare) {
+		if (targetSquare.isNotEmpty()) {
+			return false;
+		}
+		if (pawnSquare.getColumn() != targetSquare.getColumn()) {
+			return false;
+		}
+		if (Math.abs(pawnSquare.getRow() - targetSquare.getRow()) == 2) {
+			int midRow = (pawnSquare.getRow() + targetSquare.getRow()) / 2;
+			Square midSquare = getSquare(midRow, pawnSquare.getColumn());
+			if (midSquare.isNotEmpty()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
