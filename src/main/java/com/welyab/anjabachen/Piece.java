@@ -369,4 +369,47 @@ public enum Piece {
 			)
 		);
 	}
+
+	public static Piece get(PieceType type, Color color) {
+		if (color.isWhite()) {
+			if (type.isKing()) {
+				return Piece.WHITE_KING;
+			}
+			if (type.isQueen()) {
+				return Piece.WHITE_QUEEN;
+			}
+			if (type.isRook()) {
+				return Piece.WHITE_ROOK;
+			}
+			if (type.isBishop()) {
+				return Piece.WHITE_BISHOP;
+			}
+			if (type.isKnight()) {
+				return Piece.WHITE_KNIGHT;
+			}
+			if (type.isPawn()) {
+				return Piece.WHITE_PAWN;
+			}
+		} else if (color.isBlack()) {
+			if (type.isKing()) {
+				return Piece.BLACK_KING;
+			}
+			if (type.isQueen()) {
+				return Piece.BLACK_QUEEN;
+			}
+			if (type.isRook()) {
+				return Piece.BLACK_ROOK;
+			}
+			if (type.isBishop()) {
+				return Piece.BLACK_BISHOP;
+			}
+			if (type.isKnight()) {
+				return Piece.BLACK_KNIGHT;
+			}
+			if (type.isPawn()) {
+				return Piece.BLACK_PAWN;
+			}
+		}
+		throw new ChessError(String.format("Invalid combination of piece type and color: %s, %s", type, color));
+	}
 }

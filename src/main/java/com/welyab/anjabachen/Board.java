@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.welyab.anjabachen.MovementTarget.RookMovement;
+
 /**
  * @author Welyab Paula
  */
@@ -68,6 +70,15 @@ public class Board {
 	private static final int BLACK_PAWN_PROMOTION_ROW = 7;
 
 	private static final int WHITE_PAWN_PROMOTION_ROW = 0;
+
+	private static final List<PieceType> pawnPromotionReplacements = Collections.unmodifiableList(
+		Arrays.asList(
+			PieceType.QUEEN,
+			PieceType.ROOK,
+			PieceType.BISHOP,
+			PieceType.KNIGHT
+		)
+	);
 
 	/**
 	 * New line.
@@ -563,13 +574,59 @@ public class Board {
 	}
 
 	private List<MovementTarget> getCastlingTargets(int row, int column) {
-		return Collections.emptyList();
-	}
-
-	private boolean isRookValidForCastling(Square rookSquare) {
-		return rookSquare.isNotEmpty()
-				&& rookSquare.getPieceInfo().getMovementCount() == 0
-				&& rookSquare.getPieceInfo().getPiece().isRook();
+		Square kingSquare = getSquare(row, column);
+		PieceInfo kingInfo = kingSquare.getPieceInfo();
+		if (kingInfo.getMovementCount() > 0) {
+			return Collections.emptyList();
+		}
+		Piece king = kingInfo.getPiece();
+		if (!getKingInitialPosition(king.getColor()).equals(row, column)) {
+			return Collections.emptyList();
+		}
+		Square[] rookSquares = new Square[] {
+				getKingSideRookSquare(king.getColor()),
+				getQueenSideRookSquare(king.getColor())
+		};
+		List<MovementTarget> targets = new ArrayList<>();
+		for (Square rookSquare : rookSquares) {
+			if (rookSquare.isNotEmpty()) {
+				PieceInfo rookInfo = rookSquare.getPieceInfo();
+				if (rookInfo.getMovementCount() == 0) {
+					Piece rook = rookInfo.getPiece();
+					if (rook.isRook() && rook.getColor().equals(king.getColor())) {
+						int direction = Integer.signum(rookSquare.getColumn() - column);
+						int tLength = 0;
+						boolean invalidCastling = false;
+						while (!invalidCastling && tLength < Math.abs(rookSquare.getColumn() - column)) {
+							int targetColumn = column + tLength * direction;
+							if (isUnderAttack(row, targetColumn, king.getColor().getOpposite())) {
+								invalidCastling = true;
+							}
+							if (tLength > 0 && getSquare(row, targetColumn).isNotEmpty()) {
+								invalidCastling = true;
+							}
+							tLength++;
+						}
+						if (!invalidCastling) {
+							int targetKingColumn = column + 2 * direction;
+							int targetRookColumn = targetKingColumn + direction;
+							targets.add(
+								new MovementTarget(
+									king,
+									row,
+									targetKingColumn,
+									new RookMovement(
+										POSITIONS[rookSquare.getRow()][rookSquare.getColumn()],
+										POSITIONS[rookSquare.getRow()][targetRookColumn]
+									)
+								)
+							);
+						}
+					}
+				}
+			}
+		}
+		return targets;
 	}
 
 	private Square getKingSideRookSquare(Color color) {
@@ -669,6 +726,7 @@ public class Board {
 		Piece pawn = pawnInfo.getPiece();
 		List<DirectionAdjuster> directionAdjusters = getMovementTemplate(pawn);
 		List<MovementTarget> targets = new ArrayList<>();
+		boolean isPawnPromotion = false;
 		for (DirectionAdjuster directionAjduster : directionAdjusters) {
 			int targetRow = row + directionAjduster.getRowAdjuster();
 			int targetColumn = column + directionAjduster.getColumnAdjuster();
@@ -679,8 +737,26 @@ public class Board {
 				boolean isEnPassant = validPawnCaptureMovement && targetSquare.isEmpty();
 				if (validPawnMovementForward || validPawnCaptureMovement) {
 					if (!isKingInCheckWithMove(row, column, targetRow, targetColumn)) {
-						boolean isPawnPromotion = targetRow == getPawnPromotionRow(pawn.getColor());
+						isPawnPromotion = targetRow == getPawnPromotionRow(pawn.getColor());
 						if (isPawnPromotion) {
+							for (PieceType replacement : pawnPromotionReplacements) {
+								targets.add(
+									new MovementTarget(
+										Piece.get(replacement, pawn.getColor()),
+										targetRow,
+										targetColumn
+									)
+								);
+							}
+						} else if (isEnPassant) {
+							targets.add(
+								new MovementTarget(
+									pawn,
+									targetRow,
+									targetColumn,
+									POSITIONS[row][targetColumn]
+								)
+							);
 						} else {
 							targets.add(
 								new MovementTarget(

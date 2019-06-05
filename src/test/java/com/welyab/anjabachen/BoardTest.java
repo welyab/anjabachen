@@ -29,7 +29,7 @@ import org.junit.Test;
  * @author Welyab Paula
  */
 public class BoardTest {
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForKingOnCenter() {
@@ -58,7 +58,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldNotGenerateKingMovesBeyondSquareOccupiedBySameColorPiece() {
@@ -87,7 +87,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForKingOnCorner() {
@@ -116,7 +116,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForKingOnBorder() {
@@ -145,7 +145,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForQueenOnCenter() {
@@ -174,7 +174,7 @@ public class BoardTest {
 				/* 7 */ + ". . . Q . . . Q" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldNotGenerateQueenMovesBeyondSquareOccupiedBySameColorPiece() {
@@ -203,7 +203,7 @@ public class BoardTest {
 				/* 7 */ + ". . . Q . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForQueenOnCorner() {
@@ -232,7 +232,7 @@ public class BoardTest {
 				/* 7 */ + "Q . . . . . . Q" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForQueenOnBorder() {
@@ -261,7 +261,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . Q . . Q" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForRookOnCenter() {
@@ -290,7 +290,7 @@ public class BoardTest {
 				/* 7 */ + ". . . R . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldNotGenerateRookMovesBeyondSquareOccupiedBySameColorPiece() {
@@ -319,7 +319,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForRookOnCorner() {
@@ -348,7 +348,7 @@ public class BoardTest {
 				/* 7 */ + "R R R R R R R R" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForRookBorder() {
@@ -377,7 +377,7 @@ public class BoardTest {
 				/* 7 */ + "R . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForBishopOnCenter() {
@@ -406,7 +406,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . B" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldNotGenerateBishopMovesBeyondSquareOccupiedBySameColorPiece() {
@@ -435,7 +435,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . B" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForBishopOnCorner() {
@@ -464,7 +464,7 @@ public class BoardTest {
 				/* 7 */ + "B . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForBishopOnBorder() {
@@ -493,7 +493,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . B . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForKnightOnCenter() {
@@ -522,7 +522,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldNotGenerateBishopMovesBeyondKnightOccupiedBySameColorPiece() {
@@ -551,7 +551,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForKnightOnCorner() {
@@ -580,7 +580,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . N" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForKnightOnBorder() {
@@ -609,14 +609,14 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@SuppressWarnings("javadoc")
 	private void addPieces(Board board, List<MovementTarget> targets) {
 		for (MovementTarget target : targets) {
 			board.addPiece(target.getPiece(), target.getRow(), target.getColumn());
 		}
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackeShouldReturnTrueWhenPositionIsAttackedByKing() {
@@ -635,7 +635,7 @@ public class BoardTest {
 		assertTrue(board.isUnderAttack(2, 4, Color.WHITE));
 		assertTrue(board.isUnderAttack(3, 4, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackeShouldReturnTrueWhenPositionIsAttackedByQueen() {
@@ -654,7 +654,7 @@ public class BoardTest {
 		assertTrue(board.isUnderAttack(5, 6, Color.WHITE));
 		assertTrue(board.isUnderAttack(0, 5, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackeShouldReturnTrueWhenPositionIsAttackedByRook() {
@@ -673,7 +673,7 @@ public class BoardTest {
 		assertTrue(board.isUnderAttack(6, 3, Color.WHITE));
 		assertTrue(board.isUnderAttack(2, 6, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackeShouldReturnTrueWhenPositionIsAttackedByBishop() {
@@ -692,7 +692,7 @@ public class BoardTest {
 		assertTrue(board.isUnderAttack(4, 5, Color.WHITE));
 		assertTrue(board.isUnderAttack(5, 0, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackeShouldReturnTrueWhenPositionIsAttackedByKnight() {
@@ -711,7 +711,7 @@ public class BoardTest {
 		assertTrue(board.isUnderAttack(4, 4, Color.WHITE));
 		assertTrue(board.isUnderAttack(3, 1, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackShouldReturnFalseWhenQueenIsBlockedByPieceOfSameColor() {
@@ -728,7 +728,7 @@ public class BoardTest {
 		Board board = new Board(boardString, "");
 		assertFalse(board.isUnderAttack(3, 6, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackShouldReturnFalseWhenQueenIsBlockedByPieceOfDifferentColor() {
@@ -745,7 +745,7 @@ public class BoardTest {
 		Board board = new Board(boardString, "");
 		assertFalse(board.isUnderAttack(3, 6, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackShouldReturnFalseWhenRookIsBlockedByPieceOfSameColor() {
@@ -762,7 +762,7 @@ public class BoardTest {
 		Board board = new Board(boardString, "");
 		assertFalse(board.isUnderAttack(7, 3, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackShouldReturnFalseWhenRookIsBlockedByPieceOfDifferentColor() {
@@ -779,7 +779,7 @@ public class BoardTest {
 		Board board = new Board(boardString, "");
 		assertFalse(board.isUnderAttack(7, 3, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackShouldReturnFalseWhenBishopIsBlockedByPieceOfSameColor() {
@@ -796,7 +796,7 @@ public class BoardTest {
 		Board board = new Board(boardString, "");
 		assertFalse(board.isUnderAttack(6, 6, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void isUnderAttackShouldReturnFalseWhenBishopIsBlockedByPieceOfDifferentColor() {
@@ -813,7 +813,7 @@ public class BoardTest {
 		Board board = new Board(boardString, "");
 		assertFalse(board.isUnderAttack(6, 6, Color.WHITE));
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForQuenInPlacesWhereTheKingIsNotInCheck() {
@@ -842,7 +842,7 @@ public class BoardTest {
 				/* 7 */ + ". . Q . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForRookInPlacesWhereTheKingIsNotInCheck() {
@@ -871,7 +871,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForBishopInPlacesWhereTheKingIsNotInCheck() {
@@ -900,7 +900,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . B ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementsForKnightInPlacesWhereTheKingIsNotInCheck() {
@@ -929,7 +929,7 @@ public class BoardTest {
 				/* 7 */ + ". . . . . . b ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementForQueenInTheOnlyPlaceWhereItReleasesKingFromCheck() {
@@ -958,7 +958,7 @@ public class BoardTest {
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementForRookInTheOnlyPlaceWhereItReleasesKingFromCheck() {
@@ -987,7 +987,7 @@ public class BoardTest {
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementForBishopInTheOnlyPlaceWhereItReleasesKingFromCheck() {
@@ -1016,7 +1016,7 @@ public class BoardTest {
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsShouldGenerateMovementForKnightInTheOnlyPlaceWhereItReleasesKingFromCheck() {
@@ -1045,7 +1045,7 @@ public class BoardTest {
 				/* 7 */ + ". . r . N . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsCantGenerateMovesForQueenIfItCantReleaseItsKingFromCheck() {
@@ -1063,7 +1063,7 @@ public class BoardTest {
 		Movements movements = board.getMovements(3, 5);
 		assertTrue(movements.isEmpty());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsCantGenerateMovesForRookIfItCantReleaseItsKingFromCheck() {
@@ -1099,7 +1099,7 @@ public class BoardTest {
 		Movements movements = board.getMovements(4, 1);
 		assertTrue(movements.isEmpty());
 	}
-
+	
 	@Test
 	@SuppressWarnings("javadoc")
 	public void getMovementsCantGenerateMovesForKnightIfItCantReleaseItsKingFromCheck() {
@@ -1116,5 +1116,25 @@ public class BoardTest {
 		Board board = new Board(boardString, "");
 		Movements movements = board.getMovements(3, 2);
 		assertTrue(movements.isEmpty());
+	}
+	
+	@Test
+	@SuppressWarnings("javadoc")
+	public void test() {
+		String boardString = ""
+				// - - - - 0 1 2 3 4 5 6 7
+				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 1 */ + "b . . . . . . ." + Board.NEWLINE
+				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 6 */ + "P P P P P P P P" + Board.NEWLINE
+				/* 7 */ + "R . . . K . . R" + Board.NEWLINE;
+		Board board = new Board(boardString, "");
+		Movements movements = board.getMovements(7, 4);
+		addPieces(board, movements.getTargets());
+		System.out.println(movements);
+		System.out.println(board.toString2());
 	}
 }
