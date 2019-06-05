@@ -22,17 +22,17 @@ package com.welyab.anjabachen;
  * @author Welyab Paula
  */
 public class Position {
-	
+
 	/**
 	 * The row number.
 	 */
 	private final int row;
-	
+
 	/**
 	 * The column number.
 	 */
 	private final int column;
-	
+
 	/**
 	 * Creates a new instance of <code>Position</code> by receive a <code>[row, column]</code> pair.
 	 *
@@ -44,7 +44,7 @@ public class Position {
 		this.row = row;
 		this.column = column;
 	}
-	
+
 	/**
 	 * Retrieves the row number of this position.
 	 *
@@ -53,7 +53,7 @@ public class Position {
 	public int getRow() {
 		return row;
 	}
-	
+
 	/**
 	 * Retrieves the column number of this position.
 	 *
@@ -62,7 +62,21 @@ public class Position {
 	public int getColumn() {
 		return column;
 	}
-	
+
+	/**
+	 * Evaluates if this position object has the same values for <code>row</code> and
+	 * <code>column</code>.
+	 *
+	 * @param row The row.
+	 * @param column The column.
+	 *
+	 * @return A value <code>true</code> this object has the same values, or <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean equals(int row, int column) {
+		return this.row == row && this.column == column;
+	}
+
 	/**
 	 * Creates a new instance of <code>Position</code> by receive a <code>[row, column]</code> pair.
 	 *
@@ -75,7 +89,7 @@ public class Position {
 	public static Position of(int row, int column) {
 		return new Position(row, column);
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("[%d, %d]", row, column);

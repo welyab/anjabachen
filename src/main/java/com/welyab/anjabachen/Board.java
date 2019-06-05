@@ -31,6 +31,41 @@ public class Board {
 	private static final int BOARD_SIZE = 8;
 
 	/**
+	 * The king initial column number position.
+	 */
+	private static final int KING_INITIAL_COLUMN = 4;
+
+	/**
+	 * The black king initial row number position.
+	 */
+	private static final int BLACK_KING_INITIAL_ROW = 0;
+
+	/**
+	 * The white king initial row number position.
+	 */
+	private static final int WHITE_KING_INITIAL_ROW = 7;
+
+	/**
+	 * The king's side rook initial column number position.
+	 */
+	private static final int KING_SIDE_ROOK_INITIAL_COLUMN = 7;
+
+	/**
+	 * The queen's side rook initial column number position.
+	 */
+	private static final int QUEEN_SIDE_ROOK_INITIAL_COLUMN = 0;
+
+	/**
+	 * The black rook initial row number position.
+	 */
+	private static final int BLACK_ROOK_INITIAL_ROW = 0;
+
+	/**
+	 * The white rook initial row number position.
+	 */
+	private static final int WHITE_ROOK_INITIAL_ROW = 7;
+
+	/**
 	 * New line.
 	 */
 	public static final String NEWLINE = String.format("%n");
@@ -236,12 +271,6 @@ public class Board {
 		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println(
-			new Board()
-		);
-	}
-
 	/**
 	 * Creates a 2-dimensional array with size equals to {@link #BOARD_SIZE}.
 	 *
@@ -409,17 +438,8 @@ public class Board {
 	}
 
 	public boolean isUnderAttack(int row, int column, Color color) {
-		for (int t = 0; t < knightMoveTemplate.size(); t++) {
-			int targetRow = row + knightMoveTemplate.get(t).getRowAdjuster();
-			int targetColumn = column + knightMoveTemplate.get(t).getColumnAdjuster();
-			if (isInsideBoard(targetRow, targetColumn)) {
-				Square targetSquare = getSquare(targetRow, targetColumn);
-				if (targetSquare.isNotEmpty()
-						&& targetSquare.getPieceInfo().getPiece().isKnight()
-						&& targetSquare.getPieceInfo().getPiece().getColor().equals(color)) {
-					return true;
-				}
-			}
+		if (isUnderAttackByKnight(row, column, color)) {
+			return true;
 		}
 		int maxMoveLength = getMaxRadialMoveLength(PieceType.QUEEN);
 		boolean[] invalidDirections = new boolean[queenMoveTemplate.size()];
@@ -434,23 +454,12 @@ public class Board {
 						if (targetSquare.isNotEmpty()) {
 							PieceInfo pieceInfo = targetSquare.getPieceInfo();
 							Piece targetPiece = pieceInfo.getPiece();
-							if (targetPiece.getColor().equals(color)) {
-								if (targetPiece.isQueen()) {
-									return true;
-								}
-								if (targetPiece.isRook() && (row == targetRow || column == targetColumn)) {
-									return true;
-								} else {
-									invalidDirections[t] = true;
-								}
-								if (targetPiece.isBishop() && row != targetRow && column != targetColumn) {
-									return true;
-								} else {
-									invalidDirections[t] = true;
-								}
-								if (targetPiece.isKing() && mLength == 1) {
-									return true;
-								}
+							if (targetPiece.getColor().equals(color)
+									&& (targetPiece.isQueen()
+											|| targetPiece.isRook() && (row == targetRow || column == targetColumn)
+											|| targetPiece.isBishop() && row != targetRow && column != targetColumn
+											|| targetPiece.isKing() && mLength == 1)) {
+								return true;
 							} else {
 								invalidDirections[t] = true;
 							}
@@ -462,6 +471,33 @@ public class Board {
 		return false;
 	}
 
+	private boolean isUnderAttackByKnight(int row, int column, Color color) {
+		for (int t = 0; t < knightMoveTemplate.size(); t++) {
+			int targetRow = row + knightMoveTemplate.get(t).getRowAdjuster();
+			int targetColumn = column + knightMoveTemplate.get(t).getColumnAdjuster();
+			if (isInsideBoard(targetRow, targetColumn)) {
+				Square targetSquare = getSquare(targetRow, targetColumn);
+				if (targetSquare.isNotEmpty()
+						&& targetSquare.getPieceInfo().getPiece().isKnight()
+						&& targetSquare.getPieceInfo().getPiece().getColor().equals(color)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Retrieves the position of the king of the specific color.
+	 *
+	 * @param color The color of the required king piece.
+	 *
+	 * @return The position of the king.
+	 *
+	 * @throws KingNotFound If the king piece is not in the board.
+	 *
+	 * @see #isKingPresent(Color)
+	 */
 	public Position getKingPosition(Color color) {
 		for (int row = 0; row < BOARD_SIZE; row++) {
 			for (int column = 0; column < BOARD_SIZE; column++) {
@@ -476,6 +512,14 @@ public class Board {
 		throw new KingNotFound(color);
 	}
 
+	/**
+	 * Evaluates if the king piece of the specific color is present in the board. This board
+	 * implementation allow some operation to be done without king piece.
+	 *
+	 * @param color The color of required king.
+	 *
+	 * @return A value <code>true</code> if the king is present, or <code>false</code> otherwise.
+	 */
 	public boolean isKingPresent(Color color) {
 		for (int row = 0; row < BOARD_SIZE; row++) {
 			for (int column = 0; column < BOARD_SIZE; column++) {
@@ -492,6 +536,37 @@ public class Board {
 
 	private List<MovementTarget> getCastlingTargets(int row, int column) {
 		return Collections.emptyList();
+	}
+
+	private boolean isRookValidForCastling(Square rookSquare) {
+		return rookSquare.isNotEmpty()
+				&& rookSquare.getPieceInfo().getMovementCount() == 0
+				&& rookSquare.getPieceInfo().getPiece().isRook();
+	}
+
+	private Square getKingSideRookSquare(Color color) {
+		return color.isWhite()
+				? getSquare(WHITE_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN)
+				: getSquare(BLACK_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN);
+	}
+
+	private Square getQueenSideRookSquare(Color color) {
+		return color.isWhite()
+				? getSquare(WHITE_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN)
+				: getSquare(BLACK_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN);
+	}
+
+	/**
+	 * Retrieves the king piece initial position for the specific color side.
+	 *
+	 * @param color The color of the king.
+	 *
+	 * @return The initial position of the king piece.
+	 */
+	private Position getKingInitialPosition(Color color) {
+		return color.isWhite()
+				? POSITIONS[WHITE_KING_INITIAL_ROW][KING_INITIAL_COLUMN]
+				: POSITIONS[BLACK_KING_INITIAL_ROW][KING_INITIAL_COLUMN];
 	}
 
 	/**
@@ -670,43 +745,118 @@ public class Board {
 	}
 
 	/**
+	 * An auxiliary class to represent a board square. This class has some method to determine if
+	 * the square is empty, etc.
+	 *
 	 * @author Welyab Paula
 	 */
 	private static class Square {
 
+		/**
+		 * The square position row number.
+		 */
 		final int row;
 
+		/**
+		 * The square position column number.
+		 */
 		final int column;
 
+		/**
+		 * The current piece located in this square. An <code>null</code> value indicates a empty
+		 * square.
+		 */
 		PieceInfo pieceInfo;
 
+		/**
+		 * Instantiates a square for the for the given location.
+		 *
+		 * @param row The square position row number.
+		 * @param column The square position column number.
+		 */
 		Square(int row, int column) {
 			this.row = row;
 			this.column = column;
 		}
 
+		/**
+		 * Adjusts the piece that is currently occupying this square. A <code>null</code> indicates
+		 * that the square is empty.
+		 *
+		 * @param piece The piece. Or <code>null</code> if the square is empty.
+		 */
 		void setPieceInfo(PieceInfo piece) {
 			pieceInfo = piece;
 		}
 
+		/**
+		 * Adjusts this square to be interpreted as empty square.
+		 */
 		void setEmpty() {
 			pieceInfo = null;
 		}
 
+		/**
+		 * Evaluates if this square is not empty.
+		 *
+		 * @return A value <code>true</code> if the square is not empty, or <code>false</code>
+		 *         otherwise.
+		 */
 		boolean isNotEmpty() {
 			return !isEmpty();
 		}
 
+		/**
+		 * Evaluates if this square is empty.
+		 *
+		 * @return A value <code>true</code> if the square is empty, or <code>false</code>
+		 *         otherwise.
+		 */
 		boolean isEmpty() {
 			return pieceInfo == null;
 		}
 
+		/**
+		 * Retrieves the row number of the position of this square.
+		 *
+		 * @return The row.
+		 */
+		public int getRow() {
+			return row;
+		}
+
+		/**
+		 * Retrieves the column number of the position of this square.
+		 *
+		 * @return The column.
+		 */
+		public int getColumn() {
+			return column;
+		}
+
+		/**
+		 * Retrieves the square content code for its current state.
+		 *
+		 * @return The square content value.
+		 *
+		 * @see SquareContent
+		 */
 		int getValue() {
 			return isEmpty()
 					? SquareContent.EMPTY
 					: getPieceInfo().getPiece().getValue();
 		}
 
+		/**
+		 * Retrieves the piece information for this piece.
+		 *
+		 * @return The piece info.
+		 *
+		 * @throws EmptySquareException If the square is empty.
+		 *
+		 * @see #isEmpty()
+		 * @see #isNotEmpty()
+		 */
 		PieceInfo getPieceInfo() {
 			if (isEmpty()) {
 				throw new EmptySquareException(row, column);
@@ -728,12 +878,26 @@ public class Board {
 		Piece piece;
 
 		/**
+		 * The total number of times that the underlying was moved.
+		 */
+		int movementCount;
+
+		/**
 		 * Creates a new <code>PieceInfo</code> instance.
 		 *
 		 * @param piece The piece.
 		 */
 		PieceInfo(Piece piece) {
 			this.piece = piece;
+		}
+
+		/**
+		 * Retrieves the total amount of times that this piece was moved in the board
+		 *
+		 * @return The total.
+		 */
+		int getMovementCount() {
+			return movementCount;
 		}
 
 		/**
