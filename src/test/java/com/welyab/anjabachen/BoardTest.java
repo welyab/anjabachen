@@ -44,7 +44,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -73,7 +73,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -102,7 +102,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(0, 0);
+		PieceMovement movements = board.getMovements(0, 0);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -131,7 +131,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(4, 0);
+		PieceMovement movements = board.getMovements(4, 0);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -160,7 +160,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -189,7 +189,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -218,7 +218,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(0, 7);
+		PieceMovement movements = board.getMovements(0, 7);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -247,7 +247,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(4, 7);
+		PieceMovement movements = board.getMovements(4, 7);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -276,7 +276,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -305,7 +305,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -334,7 +334,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + "R . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(7, 0);
+		PieceMovement movements = board.getMovements(7, 0);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -363,7 +363,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(2, 0);
+		PieceMovement movements = board.getMovements(2, 0);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -392,7 +392,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -421,7 +421,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -450,7 +450,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + "B . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(7, 0);
+		PieceMovement movements = board.getMovements(7, 0);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -479,7 +479,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . B . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(7, 4);
+		PieceMovement movements = board.getMovements(7, 4);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -508,7 +508,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -537,7 +537,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -566,7 +566,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . N" + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(7, 7);
+		PieceMovement movements = board.getMovements(7, 7);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -595,7 +595,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(0, 4);
+		PieceMovement movements = board.getMovements(0, 4);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -828,7 +828,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 2);
+		PieceMovement movements = board.getMovements(3, 2);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -857,7 +857,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 3);
+		PieceMovement movements = board.getMovements(3, 3);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -886,7 +886,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . b ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 2);
+		PieceMovement movements = board.getMovements(3, 2);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -915,7 +915,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . b ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(2, 4);
+		PieceMovement movements = board.getMovements(2, 4);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -944,7 +944,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(0, 5);
+		PieceMovement movements = board.getMovements(0, 5);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -973,7 +973,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 5);
+		PieceMovement movements = board.getMovements(3, 5);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -1002,7 +1002,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . B . ." + Board.NEWLINE
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(6, 5);
+		PieceMovement movements = board.getMovements(6, 5);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -1031,7 +1031,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r . N . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(7, 4);
+		PieceMovement movements = board.getMovements(7, 4);
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
@@ -1060,7 +1060,7 @@ public class BoardTest {
 				/* 6 */ + ". . . r . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 5);
+		PieceMovement movements = board.getMovements(3, 5);
 		assertTrue(movements.isEmpty());
 	}
 	
@@ -1078,7 +1078,7 @@ public class BoardTest {
 				/* 6 */ + ". . . r . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(5, 6);
+		PieceMovement movements = board.getMovements(5, 6);
 		assertTrue(movements.isEmpty());
 	}
 	
@@ -1096,7 +1096,7 @@ public class BoardTest {
 				/* 6 */ + ". . . q . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(4, 1);
+		PieceMovement movements = board.getMovements(4, 1);
 		assertTrue(movements.isEmpty());
 	}
 	
@@ -1114,7 +1114,7 @@ public class BoardTest {
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(3, 2);
+		PieceMovement movements = board.getMovements(3, 2);
 		assertTrue(movements.isEmpty());
 	}
 	
@@ -1132,7 +1132,7 @@ public class BoardTest {
 				/* 6 */ + "P P P P P P P P" + Board.NEWLINE
 				/* 7 */ + "R . . . K . . R" + Board.NEWLINE;
 		Board board = new Board(boardString, "");
-		Movements movements = board.getMovements(7, 4);
+		PieceMovement movements = board.getMovements(7, 4);
 		addPieces(board, movements.getTargets());
 		System.out.println(movements);
 		System.out.println(board.toString2());
