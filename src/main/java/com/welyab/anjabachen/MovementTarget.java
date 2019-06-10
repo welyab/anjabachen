@@ -25,35 +25,37 @@
  * @author Welyab Paula
  */
 public class MovementTarget {
-	
+
 	/**
 	 * If the being moved piece is a pawn during a promotion, this field may be
 	 * used in order to know which piece should be used as replacement for the pawn. In other
 	 * scenarios, this field keeps the same piece present in the origin square.
 	 */
 	private final Piece piece;
-	
+
 	/**
 	 * The destination square row number.
 	 */
 	private final int row;
-	
+
 	/**
 	 * The destination square column number.
 	 */
 	private final int column;
-	
+
 	/**
 	 * Keeps the rook piece movement during a castling movement.
 	 */
 	private final RookMovement rooMovement;
-	
+
 	/**
 	 * If the movement refers to a <i>en passant</i> pawn capture, this field keeps the position of
 	 * the captured pawn.
 	 */
 	private final Position enPassantCapturedPawn;
 	
+	private final boolean capture;
+
 	/**
 	 * Creates a new target by informing the piece and the <code>[row, column]</code> coordinates of
 	 * the destination square.
@@ -69,41 +71,44 @@ public class MovementTarget {
 	 * @param row The destination square row number.
 	 * @param column The destination square column number.
 	 */
-	public MovementTarget(Piece piece, int row, int column) {
+	public MovementTarget(Piece piece, int row, int column, boolean capture) {
 		this.piece = piece;
 		this.row = row;
 		this.column = column;
 		rooMovement = null;
 		enPassantCapturedPawn = null;
+		this.capture = capture;
 	}
-	
+
 	public MovementTarget(Piece piece, int row, int column, RookMovement rooMovement) {
 		this.piece = piece;
 		this.row = row;
 		this.column = column;
 		this.rooMovement = rooMovement;
 		enPassantCapturedPawn = null;
+		this.capture = false;
 	}
-	
+
 	public MovementTarget(Piece piece, int row, int column, Position enPassantCapturedPawn) {
 		this.piece = piece;
 		this.row = row;
 		this.column = column;
 		this.enPassantCapturedPawn = enPassantCapturedPawn;
 		rooMovement = null;
+		this.capture = true;
 	}
-	
+
 	public boolean isCastling() {
 		return rooMovement != null;
 	}
-	
+
 	public RookMovement getRooMovement() {
 		if (!isCastling()) {
 			throw new MovementException("movement target is not a castling movement");
 		}
 		return rooMovement;
 	}
-	
+
 	/**
 	 * Evaluates if this movement target refers to an <code>en passant</code>.
 	 *
@@ -115,7 +120,7 @@ public class MovementTarget {
 	public boolean isEnPassant() {
 		return enPassantCapturedPawn != null;
 	}
-	
+
 	/**
 	 * Retrieves the position of the opposite captured pawn.
 	 *
@@ -131,7 +136,7 @@ public class MovementTarget {
 		}
 		return enPassantCapturedPawn;
 	}
-	
+
 	/**
 	 * If the being moved piece is a pawn during a promotion, this method is used to let
 	 * know which piece should be used as replacement for the pawn. In other scenarios,
@@ -142,7 +147,7 @@ public class MovementTarget {
 	public Piece getPiece() {
 		return piece;
 	}
-	
+
 	/**
 	 * Retrieves the destination square row number.
 	 *
@@ -151,7 +156,7 @@ public class MovementTarget {
 	public int getRow() {
 		return row;
 	}
-	
+
 	/**
 	 * Retrieves the destination square row number.
 	 *
@@ -160,24 +165,24 @@ public class MovementTarget {
 	public int getColumn() {
 		return column;
 	}
-	
+
 	/**
 	 * This class keeps the rook movement during a castling.
 	 *
 	 * @author Welyab Paula
 	 */
 	public static class RookMovement {
-		
+
 		/**
 		 * The origin location of the rook piece.
 		 */
 		private final Position origin;
-		
+
 		/**
 		 * The final location of the rook piece.
 		 */
 		private final Position destination;
-		
+
 		/**
 		 * Creates a new instance using given <i>origin</i> and <i>destination</i> arguments.
 		 *
@@ -188,7 +193,7 @@ public class MovementTarget {
 			this.origin = origin;
 			this.destination = destination;
 		}
-		
+
 		/**
 		 * Retrieves the origin position of the rook piece during a castling movement.
 		 *
@@ -197,7 +202,7 @@ public class MovementTarget {
 		public Position getOrigin() {
 			return origin;
 		}
-		
+
 		/**
 		 * Retrieves the destination position of the rook piece during a castling movement.
 		 *
@@ -206,5 +211,9 @@ public class MovementTarget {
 		public Position getDestination() {
 			return destination;
 		}
+	}
+	
+	public boolean isCapture() {
+		return capture;
 	}
 }
