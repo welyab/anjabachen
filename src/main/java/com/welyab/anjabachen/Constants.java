@@ -16,14 +16,19 @@
 package com.welyab.anjabachen;
 
 public class Constants {
-
+	
 	public static final int BOARD_SIZE = 8;
-
+	
+	/**
+	 * The total amount of squares in the chess board.
+	 */
+	public static final int SQUARES_COUNT = Constants.BOARD_SIZE * Constants.BOARD_SIZE;
+	
 	public static final int MIN_ROW_NUMBER = 0;
-
+	
 	public static final int MAX_ROW_NUMBER = BOARD_SIZE - 1;
-
+	
 	public static final int MIN_COLUMN_NUMBER = 0;
-
+	
 	public static final int MAX_COLUMN_NUMBER = BOARD_SIZE - 1;
 }
