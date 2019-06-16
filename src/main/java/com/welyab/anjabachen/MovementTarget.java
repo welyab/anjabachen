@@ -44,16 +44,11 @@ public class MovementTarget {
 	private final int column;
 
 	/**
-	 * Keeps the rook piece movement during a castling movement.
-	 */
-	private final RookMovement rooMovement;
-
-	/**
 	 * If the movement refers to a <i>en passant</i> pawn capture, this field keeps the position of
 	 * the captured pawn.
 	 */
 	private final Position enPassantCapturedPawn;
-	
+
 	private final boolean capture;
 
 	/**
@@ -75,18 +70,8 @@ public class MovementTarget {
 		this.piece = piece;
 		this.row = row;
 		this.column = column;
-		rooMovement = null;
 		enPassantCapturedPawn = null;
 		this.capture = capture;
-	}
-
-	public MovementTarget(Piece piece, int row, int column, RookMovement rooMovement) {
-		this.piece = piece;
-		this.row = row;
-		this.column = column;
-		this.rooMovement = rooMovement;
-		enPassantCapturedPawn = null;
-		this.capture = false;
 	}
 
 	public MovementTarget(Piece piece, int row, int column, Position enPassantCapturedPawn) {
@@ -94,19 +79,7 @@ public class MovementTarget {
 		this.row = row;
 		this.column = column;
 		this.enPassantCapturedPawn = enPassantCapturedPawn;
-		rooMovement = null;
 		this.capture = true;
-	}
-
-	public boolean isCastling() {
-		return rooMovement != null;
-	}
-
-	public RookMovement getRooMovement() {
-		if (!isCastling()) {
-			throw new MovementException("movement target is not a castling movement");
-		}
-		return rooMovement;
 	}
 
 	/**
@@ -166,53 +139,6 @@ public class MovementTarget {
 		return column;
 	}
 
-	/**
-	 * This class keeps the rook movement during a castling.
-	 *
-	 * @author Welyab Paula
-	 */
-	public static class RookMovement {
-
-		/**
-		 * The origin location of the rook piece.
-		 */
-		private final Position origin;
-
-		/**
-		 * The final location of the rook piece.
-		 */
-		private final Position destination;
-
-		/**
-		 * Creates a new instance using given <i>origin</i> and <i>destination</i> arguments.
-		 *
-		 * @param origin The origin position.
-		 * @param destination The final position.
-		 */
-		public RookMovement(Position origin, Position destination) {
-			this.origin = origin;
-			this.destination = destination;
-		}
-
-		/**
-		 * Retrieves the origin position of the rook piece during a castling movement.
-		 *
-		 * @return The position.
-		 */
-		public Position getOrigin() {
-			return origin;
-		}
-
-		/**
-		 * Retrieves the destination position of the rook piece during a castling movement.
-		 *
-		 * @return The position.
-		 */
-		public Position getDestination() {
-			return destination;
-		}
-	}
-	
 	public boolean isCapture() {
 		return capture;
 	}

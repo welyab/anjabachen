@@ -24,32 +24,32 @@ import java.util.List;
  * @author Welyab Paula
  */
 public class PieceMovement {
-
+	
 	/**
 	 * The piece being moved.
 	 */
 	private final Piece piece;
-
+	
 	/**
 	 * The origin square row number.
 	 */
 	private final int row;
-
+	
 	/**
 	 * The origin square column number.
 	 */
 	private final int column;
-
+	
 	/**
 	 * The list of available targets for the underlying piece.
 	 */
 	private final List<MovementTarget> targets;
-
+	
 	/**
 	 * Indicates if this movements refers to a pawn promotion.
 	 */
 	private final boolean pawnPromotion;
-
+	
 	/**
 	 * Creates a new <code>Movements</code> set for piece.
 	 *
@@ -65,7 +65,7 @@ public class PieceMovement {
 		this.targets = targets;
 		this.pawnPromotion = false;
 	}
-
+	
 	/**
 	 * Creates a new <code>Movements</code> set for piece.
 	 *
@@ -82,7 +82,7 @@ public class PieceMovement {
 		this.targets = targets;
 		this.pawnPromotion = pawnPromotion;
 	}
-
+	
 	/**
 	 * Retrieves the being moved piece.
 	 *
@@ -91,7 +91,7 @@ public class PieceMovement {
 	public Piece getPiece() {
 		return piece;
 	}
-
+	
 	/**
 	 * Retrieves the origin square column number.
 	 *
@@ -100,7 +100,7 @@ public class PieceMovement {
 	public int getRow() {
 		return row;
 	}
-
+	
 	/**
 	 * Retrieves the origin square column number.
 	 *
@@ -109,7 +109,7 @@ public class PieceMovement {
 	public int getColumn() {
 		return column;
 	}
-
+	
 	/**
 	 * Retrieves the list of movement targets.
 	 *
@@ -118,7 +118,7 @@ public class PieceMovement {
 	public List<MovementTarget> getTargets() {
 		return targets;
 	}
-
+	
 	/**
 	 * The amount of available movements in this set.
 	 *
@@ -127,7 +127,7 @@ public class PieceMovement {
 	public int size() {
 		return targets.size();
 	}
-
+	
 	/**
 	 * Indicates if exists any movement in this set.
 	 *
@@ -136,7 +136,7 @@ public class PieceMovement {
 	public boolean isEmpty() {
 		return targets.isEmpty();
 	}
-	
+
 	/**
 	 * Indicates if not exists any movement in this set.
 	 *
@@ -145,7 +145,7 @@ public class PieceMovement {
 	public boolean isNotEmpty() {
 		return !isEmpty();
 	}
-
+	
 	/**
 	 * Retrieves the target in the specific index.
 	 *
@@ -156,7 +156,7 @@ public class PieceMovement {
 	public MovementTarget getTarget(int index) {
 		return targets.get(index);
 	}
-
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -166,15 +166,12 @@ public class PieceMovement {
 			if (i > 0) {
 				builder.append(", ");
 			}
-			if (target.isCastling()) {
-				builder.append("castling");
-			}
 			builder.append(String.format("[%d, %d]", target.getRow(), target.getColumn()));
 		}
 		builder.append("]");
 		return builder.toString();
 	}
-
+	
 	/**
 	 * Evaluates if this movements set refers to a pawn promotion.
 	 *

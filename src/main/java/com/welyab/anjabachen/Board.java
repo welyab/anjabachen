@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.welyab.anjabachen.MovementTarget.RookMovement;
-
 /**
  * @author Welyab Paula
  */
@@ -396,16 +394,20 @@ public class Board {
 			Square capturedPawnSquare = getSquare(capturedPawn.getRow(), capturedPawn.getColumn());
 			capturedPawnSquare.setEmpty();
 		}
-		if (target.isCastling()) {
-			RookMovement rookMovement = target.getRooMovement();
-			Square originRookSquare = getSquare(
-				rookMovement.getOrigin().getRow(),
-				rookMovement.getOrigin().getColumn()
-			);
-			Square targetRookSquare = getSquare(
-				rookMovement.getDestination().getRow(),
-				rookMovement.getDestination().getColumn()
-			);
+
+		if (targetSquare.getPieceInfo().getPiece().isKing()
+				&& Math.abs(movement.getColumn() - target.getColumn()) == 2) {
+
+			Square targetRookSquare = null;
+			Square originRookSquare = null;
+			if (movement.getColumn() < target.getColumn()) {
+				targetRookSquare = getSquare(movement.getRow(), movement.getColumn() + 1);
+				originRookSquare = getSquare(movement.getRow(), 0);
+			} else {
+				targetRookSquare = getSquare(movement.getRow(), movement.getColumn() - 1);
+				originRookSquare = getSquare(movement.getRow(), 7);
+			}
+
 			targetRookSquare.setPieceInfo(originRookSquare.getPieceInfo());
 			originRookSquare.setEmpty();
 
@@ -843,16 +845,12 @@ public class Board {
 						}
 						if (!invalidCastling) {
 							int targetKingColumn = column + 2 * direction;
-							int targetRookColumn = targetKingColumn + direction;
 							targets.add(
 								new MovementTarget(
 									king,
 									row,
 									targetKingColumn,
-									new RookMovement(
-										Position.of(rookSquare.getRow(), rookSquare.getColumn()),
-										Position.of(rookSquare.getRow(), targetRookColumn)
-									)
+									false
 								)
 							);
 						}
