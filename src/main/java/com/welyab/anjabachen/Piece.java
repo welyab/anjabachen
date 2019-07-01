@@ -370,6 +370,14 @@ public enum Piece {
 		);
 	}
 
+	/**
+	 * Given a type and a color, this method returns the associated piece.
+	 *
+	 * @param type The piece type (king, queen, rook...).
+	 * @param color The piece color (black or white).
+	 *
+	 * @return The instance of piece.
+	 */
 	public static Piece get(PieceType type, Color color) {
 		if (color.isWhite()) {
 			if (type.isKing()) {

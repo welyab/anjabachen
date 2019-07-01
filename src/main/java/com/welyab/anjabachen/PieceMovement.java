@@ -15,6 +15,7 @@
  */
 package com.welyab.anjabachen;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
  *
  * @author Welyab Paula
  */
-public class PieceMovement {
+public class PieceMovement implements Iterable<MovementTarget> {
 	
 	/**
 	 * The piece being moved.
@@ -31,14 +32,9 @@ public class PieceMovement {
 	private final Piece piece;
 	
 	/**
-	 * The origin square row number.
+	 * The initial position of this piece.
 	 */
-	private final int row;
-	
-	/**
-	 * The origin square column number.
-	 */
-	private final int column;
+	private final Position position;
 	
 	/**
 	 * The list of available targets for the underlying piece.
@@ -46,41 +42,28 @@ public class PieceMovement {
 	private final List<MovementTarget> targets;
 	
 	/**
-	 * Indicates if this movements refers to a pawn promotion.
+	 * The metadata associated with this movement set.
 	 */
-	private final boolean pawnPromotion;
+	private final PieceMovementMeta meta;
 	
 	/**
 	 * Creates a new <code>Movements</code> set for piece.
 	 *
 	 * @param piece The being moved piece.
-	 * @param row The origin square row number.
-	 * @param column The origin square column number.
+	 * @param position The origin position of this being moved piece.
 	 * @param targets The list of available targets for the underlying piece.
+	 * @param meta The metadata associated with this movement set.
 	 */
-	public PieceMovement(Piece piece, int row, int column, List<MovementTarget> targets) {
+	public PieceMovement(
+			Piece piece,
+			Position position,
+			List<MovementTarget> targets,
+			PieceMovementMeta meta
+	) {
 		this.piece = piece;
-		this.row = row;
-		this.column = column;
+		this.position = position;
 		this.targets = targets;
-		this.pawnPromotion = false;
-	}
-	
-	/**
-	 * Creates a new <code>Movements</code> set for piece.
-	 *
-	 * @param piece The being moved piece.
-	 * @param row The origin square row number.
-	 * @param column The origin square column number.
-	 * @param pawnPromotion Indicates if this movement refers to a pawn promotion.
-	 * @param targets The list of available targets for the underlying piece.
-	 */
-	public PieceMovement(Piece piece, int row, int column, boolean pawnPromotion, List<MovementTarget> targets) {
-		this.piece = piece;
-		this.row = row;
-		this.column = column;
-		this.targets = targets;
-		this.pawnPromotion = pawnPromotion;
+		this.meta = meta;
 	}
 	
 	/**
@@ -93,21 +76,12 @@ public class PieceMovement {
 	}
 	
 	/**
-	 * Retrieves the origin square column number.
+	 * Retrieves the origin position of this piece.
 	 *
-	 * @return The origin square column number.
+	 * @return The position.
 	 */
-	public int getRow() {
-		return row;
-	}
-	
-	/**
-	 * Retrieves the origin square column number.
-	 *
-	 * @return The origin square column number.
-	 */
-	public int getColumn() {
-		return column;
+	public Position getPosition() {
+		return position;
 	}
 	
 	/**
@@ -136,7 +110,7 @@ public class PieceMovement {
 	public boolean isEmpty() {
 		return targets.isEmpty();
 	}
-
+	
 	/**
 	 * Indicates if not exists any movement in this set.
 	 *
@@ -158,27 +132,33 @@ public class PieceMovement {
 	}
 	
 	@Override
+	public Iterator<MovementTarget> iterator() {
+		return targets.iterator();
+	}
+
+	/**
+	 * Retrieves the metadata associated with this piece movement.
+	 *
+	 * @return The metadata.
+	 */
+	public PieceMovementMeta getMeta() {
+		return meta;
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(piece.name()).append(String.format("[%d, %d]", row, column)).append(" -> [");
+		builder.append(piece.name())
+			.append(String.format("[%d, %d]", position.getRow(), position.getColumn()))
+			.append(" -> [");
 		for (int i = 0; i < targets.size(); i++) {
 			MovementTarget target = targets.get(i);
 			if (i > 0) {
 				builder.append(", ");
 			}
-			builder.append(String.format("[%d, %d]", target.getRow(), target.getColumn()));
+			builder.append(String.format("[%d, %d]", target.getPosition().getRow(), target.getPosition().getColumn()));
 		}
 		builder.append("]");
 		return builder.toString();
-	}
-	
-	/**
-	 * Evaluates if this movements set refers to a pawn promotion.
-	 *
-	 * @return A value <code>true</code> if this movements set is a pawn promotion, or
-	 *         <code>false</code> otherwise.
-	 */
-	public boolean isPawnPromotion() {
-		return pawnPromotion;
 	}
 }
