@@ -124,6 +124,15 @@ public class Position {
 		return POSITIONS[row][column];
 	}
 	
+	public static Position of(char file, int rank) {
+		file = Character.toLowerCase(file);
+		if (file < 'a' || file > 'h' || rank < 1 || rank > 8) {
+		}
+		// 1 2 3 4 5 6 7 8 rank
+		// 7 6 5 4 3 2 1 0 row
+		return of(8 - rank, file - 'a');
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("[%d, %d]", row, column);

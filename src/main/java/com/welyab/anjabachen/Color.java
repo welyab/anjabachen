@@ -25,7 +25,7 @@ public enum Color {
 	/**
 	 * The white side.
 	 */
-	BLACK("Black") {
+	BLACK("Black", 'b') {
 
 		@Override
 		public Color getOpposite() {
@@ -36,7 +36,7 @@ public enum Color {
 	/**
 	 * The black side.
 	 */
-	WHITE("White") {
+	WHITE("White", 'w') {
 
 		@Override
 		public Color getOpposite() {
@@ -45,13 +45,28 @@ public enum Color {
 	};
 
 	/**
+	 * The letter symbol for this color.
+	 */
+	private final char letterColor;
+
+	/**
 	 * The name of this color.
 	 */
 	private final String name;
 
 	@SuppressWarnings("javadoc")
-	private Color(String name) {
+	private Color(String name, char letterColor) {
 		this.name = name;
+		this.letterColor = letterColor;
+	}
+
+	/**
+	 * Retrieve the letter color symbol for this color.
+	 *
+	 * @return The letter color symbol for this color.
+	 */
+	public char getLetterColor() {
+		return letterColor;
 	}
 
 	/**
@@ -90,4 +105,29 @@ public enum Color {
 	 *         black.
 	 */
 	public abstract Color getOpposite();
+
+	/**
+	 * Retrieves the respective color representation for the given letter symbol.
+	 *
+	 * @param letterSymbol The letter symbol.
+	 *
+	 * @return The color representation for the given color.
+	 *
+	 * @throws IllegalArgumentException If the letter symbol don't represent the black color,
+	 *         neither the color white.
+	 */
+	public static Color fromColor(char letterSymbol) {
+		if ('w' == letterSymbol) {
+			return Color.WHITE;
+		}
+		if ('b' == letterSymbol) {
+			return Color.BLACK;
+		}
+		throw new IllegalArgumentException(
+			String.format(
+				"Unexpected letter symbol for color: %c",
+				letterSymbol
+			)
+		);
+	}
 }

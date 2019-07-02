@@ -17,7 +17,7 @@
 
 // Author: Welyba Paula
 
-grammar fen;
+grammar FEN;
 
 fen
 	: piecePlacement        Space 
@@ -29,40 +29,16 @@ fen
 	;
 
 piecePlacement
-	: dispositionRank1 Slash
-	  dispositionRank2 Slash
-	  dispositionRank3 Slash
-	  dispositionRank4 Slash
-	  dispositionRank5 Slash
-	  dispositionRank6 Slash
-	  dispositionRank7 Slash
-	  dispositionRank8
+	: pieceDisposition Slash // rank 8
+	  pieceDisposition Slash // rank 7
+	  pieceDisposition Slash // rank 6
+	  pieceDisposition Slash // rank 5
+	  pieceDisposition Slash // rank 4
+	  pieceDisposition Slash // rank 3
+	  pieceDisposition Slash // rank 2
+	  pieceDisposition       // rank 1
 	;
 
-dispositionRank1
-	: pieceDisposition
-	;
-dispositionRank2
-	: pieceDisposition
-	;
-dispositionRank3
-	: pieceDisposition
-	;
-dispositionRank4
-	: pieceDisposition
-	;
-dispositionRank5
-	: pieceDisposition
-	;
-dispositionRank6
-	: pieceDisposition
-	;
-dispositionRank7
-	: pieceDisposition
-	;
-dispositionRank8
-	: pieceDisposition
-	;
 pieceDisposition
 	: Eight
 	| piece+
@@ -92,18 +68,18 @@ whitePiece
 	| whitePawn
 	;
 
-blackKing: LowerLetterK;
-blackQueen: LowerLetterQ;
-blackRook: LowerLetterR;
+blackKing:   LowerLetterK;
+blackQueen:  LowerLetterQ;
+blackRook:   LowerLetterR;
 blackBishop: LowerLetterB;
 blackKnight: LowerLetterN;
-blackPawn: LowerLetterP;
-whiteKing:  UpperLetterK;
-whiteQueen: UpperLetterQ;
-whiteRook:  UpperLetterR;
+blackPawn:   LowerLetterP;
+whiteKing:   UpperLetterK;
+whiteQueen:  UpperLetterQ;
+whiteRook:   UpperLetterR;
 whiteBishop: UpperLetterB;
 whiteKnight: UpperLetterN;
-whitePawn: UpperLetterP;
+whitePawn:   UpperLetterP;
 
 sideToMove
 	: black
@@ -117,13 +93,13 @@ castlingAbility
 	| whiteKingSideCastling whiteQueenSideCastling blackKingSideCastling
 	| whiteKingSideCastling whiteQueenSideCastling blackKingSideCastling blackQueenSideCastling
 	|                       whiteQueenSideCastling blackKingSideCastling blackQueenSideCastling
-  |                                              blackKingSideCastling blackQueenSideCastling
+	|                                              blackKingSideCastling blackQueenSideCastling
 	|                                                                    blackQueenSideCastling
 	;
 
-whiteKingSideCastling: UpperLetterK;
+whiteKingSideCastling:  UpperLetterK;
 whiteQueenSideCastling: UpperLetterQ;
-blackKingSideCastling: LowerLetterK;
+blackKingSideCastling:  LowerLetterK;
 blackQueenSideCastling: LowerLetterQ;
 
 enPassantTargetSquare
@@ -133,13 +109,12 @@ enPassantTargetSquare
 
 halfMoveClock
 	: digitZeroToNine
-	| digitOneToFour | digitZeroToNine
-	| Five Zero
+	| digitOneToFour digitZeroToNine+
+	| One Zero Zero
 	;
 
 fullMoveCounter
-	: digitZeroToNine
-	| digitOneToNine | digitZeroToNine+
+	: digitOneToNine digitZeroToNine*
 	;
 
 file
@@ -153,14 +128,8 @@ file
 	| LowerLetterH
 	;
 
-rank1: One;
-rank2: Two;
 rank3: Three;
-rank4: Four;
-rank5: Five;
 rank6: Six;
-rank7: Seven;
-rank9: Eight;
 
 none: Hyphen;
 
