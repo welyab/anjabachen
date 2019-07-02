@@ -283,7 +283,7 @@ public class Board {
 	 * @param boardString The board disposition.
 	 * @param config
 	 */
-	public Board(String boardString, int movementCount) {
+	public Board(String boardString, BoardConfig boardConfig) {
 		grid = createGrid();
 		int counter = 0;
 		for (int i = 0; i < boardString.length(); i++) {
@@ -308,7 +308,7 @@ public class Board {
 				getSquare(Position.of(row, column)).getPieceInfo().incrementMovementCount();
 			}
 		}
-		this.movementCount = movementCount;
+		movementCount = movementCount;
 	}
 
 	public static void main(String[] args) {
@@ -360,11 +360,11 @@ public class Board {
 			meta.getEnPassantCount() - expectedMeta.getEnPassantCount()
 		);
 	}
-	
+
 	static int b = 0;
-	
+
 	static int k = 0;
-	
+
 	private static PieceMovementMeta calc(Board board, int depth) {
 		if (depth == 1) {
 			PieceMovements movements = board.getMovements();
@@ -390,7 +390,7 @@ public class Board {
 		}
 		return pieceMovementMetaBuilder.build();
 	}
-	
+
 	/**
 	 * Creates a 2-dimensional array with size equals to {@link Constants#BOARD_SIZE}.
 	 *
