@@ -32,50 +32,50 @@ import com.welyab.anjabachen.PieceMovementMeta.Builder;
  * @author Welyab Paula
  */
 public class Board {
-
+	
 	/**
 	 * The king initial column number position.
 	 */
 	private static final int KING_INITIAL_COLUMN = 4;
-
+	
 	/**
 	 * The black king initial row number position.
 	 */
 	private static final int BLACK_KING_INITIAL_ROW = 0;
-
+	
 	/**
 	 * The white king initial row number position.
 	 */
 	private static final int WHITE_KING_INITIAL_ROW = 7;
-
+	
 	/**
 	 * The king's side rook initial column number position.
 	 */
 	private static final int KING_SIDE_ROOK_INITIAL_COLUMN = 7;
-
+	
 	/**
 	 * The queen's side rook initial column number position.
 	 */
 	private static final int QUEEN_SIDE_ROOK_INITIAL_COLUMN = 0;
-
+	
 	/**
 	 * The black rook initial row number position.
 	 */
 	private static final int BLACK_ROOK_INITIAL_ROW = 0;
-
+	
 	/**
 	 * The white rook initial row number position.
 	 */
 	private static final int WHITE_ROOK_INITIAL_ROW = 7;
-
+	
 	private static final int BLACK_PAWN_PROMOTION_ROW = 7;
-
+	
 	private static final int WHITE_PAWN_PROMOTION_ROW = 0;
-
+	
 	private static final int BLACK_PAWN_INITIAL_ROW = 1;
-
+	
 	private static final int WHITE_PAWN_INITIAL_ROW = 6;
-
+	
 	private static final List<PieceType> pawnPromotionReplacements = Collections.unmodifiableList(
 		Arrays.asList(
 			PieceType.QUEEN,
@@ -84,31 +84,31 @@ public class Board {
 			PieceType.KNIGHT
 		)
 	);
-
+	
 	/**
 	 * New line.
 	 */
 	public static final String NEWLINE = String.format("%n");
-
+	
 	/**
 	 * The 2-dimensional array where the pieces are placed.
 	 */
 	private Square[][] grid;
-
+	
 	private List<MoveLog> logs;
-
+	
 	/**
 	 * Counts how many times the pieces were moved during the game playing. Each side moved count as
 	 * a movement, so the white movement followed by black movement counts as 2 movements.
 	 */
 	private int movementCount;
-
+	
 	/**
 	 * The total number of movement operations performed in this board. Works just like
 	 * {@link #movementCount}, but this counter do not have its value decremented.
 	 */
 	int movementOperationCount;
-
+	
 	/**
 	 * The movement template for the king piece.
 	 */
@@ -124,7 +124,7 @@ public class Board {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the queen piece.
 	 */
@@ -140,7 +140,7 @@ public class Board {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the rook piece.
 	 */
@@ -152,7 +152,7 @@ public class Board {
 			new DirectionAdjuster(+1, +0)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the bishop piece.
 	 */
@@ -164,7 +164,7 @@ public class Board {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the knight piece.
 	 */
@@ -180,7 +180,7 @@ public class Board {
 			new DirectionAdjuster(-1, -2)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the black pawn.
 	 */
@@ -192,7 +192,7 @@ public class Board {
 			new DirectionAdjuster(+1, -1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the white pawn.
 	 */
@@ -204,14 +204,14 @@ public class Board {
 			new DirectionAdjuster(-1, -1)
 		)
 	);
-
+	
 	/**
 	 * Creates a new board with the initial peace disposition.
 	 */
 	public Board() {
 		this(true);
 	}
-
+	
 	/**
 	 * Creates a new chess board.
 	 *
@@ -237,7 +237,7 @@ public class Board {
 			addPiece(Piece.BLACK_BISHOP, Position.of(0, 5));
 			addPiece(Piece.BLACK_KNIGHT, Position.of(0, 6));
 			addPiece(Piece.BLACK_ROOK, Position.of(0, 7));
-
+			
 			addPiece(Piece.WHITE_PAWN, Position.of(6, 0));
 			addPiece(Piece.WHITE_PAWN, Position.of(6, 1));
 			addPiece(Piece.WHITE_PAWN, Position.of(6, 2));
@@ -256,7 +256,7 @@ public class Board {
 			addPiece(Piece.WHITE_ROOK, Position.of(7, 7));
 		}
 	}
-
+	
 	/**
 	 * Instantiates a board using a piece disposition informed in the parameter
 	 * <code>boardString</code>. This string a sequence of 64 characters, where each character
@@ -310,85 +310,8 @@ public class Board {
 		}
 		movementCount = movementCount;
 	}
-
-	public static void main(String[] args) {
-		String boardString = ""
-				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + "r . . . k . . r" + Board.NEWLINE
-				/* 1 */ + "p . p p q p b ." + Board.NEWLINE
-				/* 2 */ + "b n . . p n p ." + Board.NEWLINE
-				/* 3 */ + ". . . P N . . ." + Board.NEWLINE
-				/* 4 */ + ". p . . P . . ." + Board.NEWLINE
-				/* 5 */ + ". . N . . Q . p" + Board.NEWLINE
-				/* 6 */ + "P P P B B P P P" + Board.NEWLINE
-				/* 7 */ + "R . . . K . . R" + Board.NEWLINE;
-		Board board = new Board(boardString, 0);
-		int deepth = 4;
-		PieceMovementMeta expectedMeta = PieceMovementMeta
-			.builder()
-			.incrementTotalMovements(4085603)
-			.incrementCaptureCount(757163)
-			.incrementPromotionCount(15172)
-			.incrementCastlings(128013)
-			.incrementEnPassantCount(1929)
-			.build();
-		PieceMovementMeta meta = calc(board, deepth);
-		System.out.printf("Deepth:           %10d%n", deepth);
-		System.out.printf(
-			"Nodes:            %10d  %d%n",
-			meta.getTotalMovements(),
-			meta.getTotalMovements() - expectedMeta.getTotalMovements()
-		);
-		System.out.printf(
-			"Capture count:    %10d  %d%n",
-			meta.getCaptureCount(),
-			meta.getCaptureCount() - expectedMeta.getCaptureCount()
-		);
-		System.out.printf(
-			"Promotion count:  %10d  %d%n",
-			meta.getPromotionCount(),
-			meta.getPromotionCount() - expectedMeta.getPromotionCount()
-		);
-		System.out.printf(
-			"Castling count:   %10d  %d%n",
-			meta.getCastlingsCount(),
-			meta.getCastlingsCount() - expectedMeta.getCastlingsCount()
-		);
-		System.out.printf(
-			"En passant count: %10d  %d%n",
-			meta.getEnPassantCount(),
-			meta.getEnPassantCount() - expectedMeta.getEnPassantCount()
-		);
-	}
-
-	static int b = 0;
-
-	static int k = 0;
-
-	private static PieceMovementMeta calc(Board board, int depth) {
-		if (depth == 1) {
-			PieceMovements movements = board.getMovements();
-			k += movements.getMeta().getTotalMovements();
-			b += movements.getMeta().getTotalMovements();
-			if (b > 5000000) {
-				b = 0;
-				System.out.println("Current count: " + k);
-			}
-			return movements.getMeta();
-		}
-		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-		for (PieceMovement pieceMovement : board.getMovements()) {
-			for (MovementTarget movementTarget : pieceMovement) {
-				Board boardTemp = new Board(
-					board.toString2(),
-					board.getMovementCount()
-				);
-				boardTemp.move(pieceMovement, movementTarget);
-				PieceMovementMeta pieceMovementMeta = calc(boardTemp, depth - 1);
-				pieceMovementMetaBuilder.add(pieceMovementMeta);
-			}
-		}
-		return pieceMovementMetaBuilder.build();
+	
+	public Board(List<PiecePosition> pieceDisposition, BoardConfig config) {
 	}
 
 	/**
@@ -405,17 +328,17 @@ public class Board {
 		}
 		return g;
 	}
-
+	
 	public void addPiece(Piece piece, Position position) {
 		Square square = getSquare(position);
 		PieceInfo pieceInfo = new PieceInfo(piece);
 		square.setPieceInfo(pieceInfo);
 	}
-
+	
 	public void move(Position originPosition, Position targetPosition, int targetColumn) {
 		move(originPosition, targetPosition, PieceType.QUEEN);
 	}
-
+	
 	public void move(Position originPosition, Position targetPosition, PieceType toPromotePawn) {
 		toPromotePawn = toPromotePawn == null ? PieceType.QUEEN : toPromotePawn;
 		PieceMovement movements = getMovements(originPosition);
@@ -431,7 +354,7 @@ public class Board {
 				break;
 			}
 		}
-
+		
 		if (target == null) {
 			throw new MovementException(
 				String.format(
@@ -442,20 +365,20 @@ public class Board {
 				)
 			);
 		}
-
+		
 		move(movements, target);
 	}
-
+	
 	private void move(PieceMovement pieceMovement, MovementTarget movementTarget) {
 		Square originSquare = getSquare(pieceMovement.getPosition());
 		PieceInfo originPieceInfo = originSquare.getPieceInfo();
 		originSquare.setEmpty();
-
+		
 		Square targetSquare = getSquare(movementTarget.getPosition());
-
+		
 		targetSquare.setPieceInfo(originPieceInfo);
 		targetSquare.getPieceInfo().setPiece(movementTarget.getPiece());
-
+		
 		if (movementTarget.getMeta().isCastling()) {
 			Square targetRookSquare = null;
 			Square originRookSquare = null;
@@ -486,7 +409,7 @@ public class Board {
 					)
 				);
 			}
-
+			
 			// try {
 			targetRookSquare.setPieceInfo(originRookSquare.getPieceInfo());
 			// } catch (EmptySquareException e) {
@@ -498,10 +421,10 @@ public class Board {
 			// return;
 			// }
 			originRookSquare.setEmpty();
-
+			
 			targetRookSquare.getPieceInfo().incrementMovementCount();
 		}
-
+		
 		if (movementTarget.getMeta().isEnPassant()) {
 			getSquare(
 				Position.of(
@@ -510,24 +433,24 @@ public class Board {
 				)
 			).setEmpty();
 		}
-
+		
 		incrementMovementCount();
 		targetSquare.getPieceInfo().incrementMovementCount();
 		targetSquare.getPieceInfo().setLastMovementCount(getMovementCount());
 	}
-
+	
 	private void incrementMovementCount() {
 		movementCount++;
 	}
-
+	
 	public int getMovementCount() {
 		return movementCount;
 	}
-
+	
 	private void incrementMovementOperationCount() {
 		movementOperationCount++;
 	}
-
+	
 	/**
 	 * The side color that has the next movement.
 	 *
@@ -536,7 +459,7 @@ public class Board {
 	public Color getActiveColor() {
 		return movementCount % 2 == 0 ? Color.WHITE : Color.BLACK;
 	}
-
+	
 	public boolean isCheck() {
 		if (!isKingPresent(getActiveColor())) {
 			return false;
@@ -547,17 +470,17 @@ public class Board {
 			getWaitingColor()
 		);
 	}
-
+	
 	public boolean isCheckmate() {
 		return isCheck()
 				&& getMovements().isEmpty();
 	}
-
+	
 	public boolean isStalemate() {
 		return !isCheck()
 				&& getMovements().isEmpty();
 	}
-
+	
 	/**
 	 * The side color that is waiting for the opponent movement.
 	 *
@@ -566,7 +489,7 @@ public class Board {
 	public Color getWaitingColor() {
 		return getActiveColor().getOpposite();
 	}
-
+	
 	public PieceMovements getMovements() {
 		Iterable<Square> squares = this::privateIterator;
 		List<PieceMovement> movements = new ArrayList<>(32);
@@ -582,7 +505,7 @@ public class Board {
 		}
 		return new PieceMovements(movements, pieceMovementMetaBuilder.build());
 	}
-
+	
 	/**
 	 * Retrieves the available movements for the piece located at given <code>[row/column]</code>
 	 * position.
@@ -601,26 +524,26 @@ public class Board {
 		}
 		return privateGetMovements(position);
 	}
-
+	
 	private Stream<Square> privateStream() {
 		return StreamSupport.stream(
 			Spliterators.spliterator(privateIterator(), Constants.SQUARES_COUNT, 0),
 			false
 		);
 	}
-
+	
 	private Iterator<Square> privateIterator() {
 		return new Iterator<>() {
-
+			
 			final int instantMovementOperationCount = getMovementOperationCount();
-
+			
 			int index = 0;
-
+			
 			@Override
 			public boolean hasNext() {
 				return index < Constants.SQUARES_COUNT;
 			}
-
+			
 			@Override
 			public Square next() {
 				if (!hasNext()) {
@@ -638,11 +561,11 @@ public class Board {
 			}
 		};
 	}
-
+	
 	private int getMovementOperationCount() {
 		return movementOperationCount;
 	}
-
+	
 	/**
 	 * The same method for retrieve piece available movements as {@link #getMovements(int, int)},
 	 * but without verification indicated in the documentation.
@@ -659,7 +582,7 @@ public class Board {
 		}
 		return getNonPawnMovements(position);
 	}
-
+	
 	/**
 	 * Generated the movements for piece located in the given position indicated by
 	 * <code>[row, column]</code> pair.
@@ -728,7 +651,7 @@ public class Board {
 			pieceMovementMetaBuilder.build()
 		);
 	}
-
+	
 	/**
 	 * Evaluates if the movement of the piece located in the square indicated by
 	 * <code>[row, column]</code> to the square target square indicated by
@@ -765,7 +688,7 @@ public class Board {
 		targetSquare.setPieceInfo(temp);
 		return underAttack;
 	}
-
+	
 	public boolean isUnderAttack(Position position, Color color) {
 		if (isUnderAttackByKnight(position, color)) {
 			return true;
@@ -804,7 +727,7 @@ public class Board {
 		}
 		return false;
 	}
-
+	
 	private boolean isUnderAttackByPawn(Position position, Color color) {
 		int direction = color.isWhite()
 				? -1
@@ -824,7 +747,7 @@ public class Board {
 		}
 		return false;
 	}
-
+	
 	private boolean isUnderAttackByKnight(Position position, Color color) {
 		for (int t = 0; t < knightMoveTemplate.size(); t++) {
 			int targetRow = position.getRow() + knightMoveTemplate.get(t).getRowAdjuster();
@@ -840,7 +763,7 @@ public class Board {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Retrieves the position of the king of the specific color.
 	 *
@@ -865,7 +788,7 @@ public class Board {
 		}
 		throw new KingNotFound(color);
 	}
-
+	
 	/**
 	 * Evaluates if the king piece of the specific color is present in the board. This board
 	 * implementation allow some operation to be done without king piece.
@@ -887,7 +810,7 @@ public class Board {
 		}
 		return false;
 	}
-
+	
 	private List<MovementTarget> getCastlingTargets(Position position) {
 		Square kingSquare = getSquare(position);
 		PieceInfo kingInfo = kingSquare.getPieceInfo();
@@ -944,19 +867,19 @@ public class Board {
 		}
 		return targets;
 	}
-
+	
 	private Square getKingSideRookSquare(Color color) {
 		return color.isWhite()
 				? getSquare(Position.of(WHITE_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN))
 				: getSquare(Position.of(BLACK_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN));
 	}
-
+	
 	private Square getQueenSideRookSquare(Color color) {
 		return color.isWhite()
 				? getSquare(Position.of(WHITE_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN))
 				: getSquare(Position.of(BLACK_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN));
 	}
-
+	
 	/**
 	 * Retrieves the king piece initial position for the specific color side.
 	 *
@@ -969,7 +892,7 @@ public class Board {
 				? Position.of(WHITE_KING_INITIAL_ROW, KING_INITIAL_COLUMN)
 				: Position.of(BLACK_KING_INITIAL_ROW, KING_INITIAL_COLUMN);
 	}
-
+	
 	/**
 	 * Evaluates if the given position is inside the board bounds.
 	 *
@@ -983,7 +906,7 @@ public class Board {
 		return row >= 0 && row < Constants.BOARD_SIZE
 				&& column >= 0 && column < Constants.BOARD_SIZE;
 	}
-
+	
 	/**
 	 * Retrieves the movement template related to the given piece.
 	 *
@@ -1015,7 +938,7 @@ public class Board {
 		}
 		throw new ChessError(String.format("Invalid piece: %s", piece));
 	}
-
+	
 	/**
 	 * Retrieves the maximum movement length for a piece movement.
 	 *
@@ -1041,7 +964,7 @@ public class Board {
 		}
 		throw new ChessError(String.format("Unexpected piece type: %s", type));
 	}
-
+	
 	private PieceMovement getPawnMovements(Position position) {
 		Square pawnSquare = getSquare(position);
 		PieceInfo pawnInfo = pawnSquare.getPieceInfo();
@@ -1095,13 +1018,13 @@ public class Board {
 			pieceMovementMetaBuilder.build()
 		);
 	}
-
+	
 	private int getPawnPromotionRow(Color color) {
 		return color.isWhite()
 				? WHITE_PAWN_PROMOTION_ROW
 				: BLACK_PAWN_PROMOTION_ROW;
 	}
-
+	
 	private boolean isValidPawnCaptureMovement(Square pawnSquare, Square targetSquare) {
 		if (pawnSquare.getPosition().getColumn() == targetSquare.getPosition().getColumn()) {
 			return false;
@@ -1132,13 +1055,13 @@ public class Board {
 		}
 		return true;
 	}
-
+	
 	private int getEnPassantRow(Color color) {
 		return color.isBlack()
 				? 4
 				: 3;
 	}
-
+	
 	private boolean isValidPawnMovementForward(Square pawnSquare, Square targetSquare) {
 		if (targetSquare.isNotEmpty()) {
 			return false;
@@ -1159,7 +1082,7 @@ public class Board {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Retrieves the initial row number of a pawn piece.
 	 *
@@ -1172,7 +1095,7 @@ public class Board {
 				? WHITE_PAWN_INITIAL_ROW
 				: BLACK_PAWN_INITIAL_ROW;
 	}
-
+	
 	/**
 	 * Retrieves the square object located at the specific position indicated by
 	 * <code>[row, column]</code> pair.
@@ -1185,7 +1108,7 @@ public class Board {
 	private Square getSquare(Position position) {
 		return grid[position.getRow()][position.getColumn()];
 	}
-
+	
 	/**
 	 * Outputs a text based board drawing like as follow:
 	 *
@@ -1239,7 +1162,7 @@ public class Board {
 		}
 		return builder.toString();
 	}
-
+	
 	/**
 	 * Outputs a text based board drawing like as follow:
 	 *
@@ -1276,7 +1199,7 @@ public class Board {
 		}
 		return builder.toString();
 	}
-
+	
 	/**
 	 * An auxiliary class to represent a board square. This class has some method to determine if
 	 * the square is empty, etc.
@@ -1284,15 +1207,15 @@ public class Board {
 	 * @author Welyab Paula
 	 */
 	private static class Square {
-
+		
 		final Position position;
-
+		
 		/**
 		 * The current piece located in this square. An <code>null</code> value indicates a empty
 		 * square.
 		 */
 		PieceInfo pieceInfo;
-
+		
 		/**
 		 * Instantiates a square for the for the given location.
 		 *
@@ -1302,7 +1225,7 @@ public class Board {
 		Square(Position position) {
 			this.position = position;
 		}
-
+		
 		/**
 		 * Adjusts the piece that is currently occupying this square. A <code>null</code> indicates
 		 * that the square is empty.
@@ -1312,14 +1235,14 @@ public class Board {
 		void setPieceInfo(PieceInfo piece) {
 			pieceInfo = piece;
 		}
-
+		
 		/**
 		 * Adjusts this square to be interpreted as empty square.
 		 */
 		void setEmpty() {
 			pieceInfo = null;
 		}
-
+		
 		/**
 		 * Evaluates if this square is not empty.
 		 *
@@ -1329,7 +1252,7 @@ public class Board {
 		boolean isNotEmpty() {
 			return !isEmpty();
 		}
-
+		
 		/**
 		 * Evaluates if this square is empty.
 		 *
@@ -1339,11 +1262,11 @@ public class Board {
 		boolean isEmpty() {
 			return pieceInfo == null;
 		}
-
+		
 		Position getPosition() {
 			return position;
 		}
-
+		
 		/**
 		 * Retrieves the square content code for its current state.
 		 *
@@ -1356,7 +1279,7 @@ public class Board {
 					? SquareContent.EMPTY
 					: getPieceInfo().getPiece().getValue();
 		}
-
+		
 		/**
 		 * Retrieves the piece information for this piece.
 		 *
@@ -1374,26 +1297,26 @@ public class Board {
 			return pieceInfo;
 		}
 	}
-
+	
 	/**
 	 * This class helps to track piece movement and other information during game playing.
 	 *
 	 * @author Welyab Paula
 	 */
 	private static class PieceInfo {
-
+		
 		/**
 		 * The underlying piece associated with this informational set.
 		 */
 		Piece piece;
-
+		
 		/**
 		 * The total number of times that the underlying was moved.
 		 */
 		int movementCount;
-
+		
 		private int lastMovementCount;
-
+		
 		/**
 		 * Creates a new <code>PieceInfo</code> instance.
 		 *
@@ -1402,22 +1325,22 @@ public class Board {
 		PieceInfo(Piece piece) {
 			this.piece = piece;
 		}
-
+		
 		void setLastMovementCount(int lastMovementCount) {
 			this.lastMovementCount = lastMovementCount;
 		}
-
+		
 		int getLastMovementCount() {
 			return lastMovementCount;
 		}
-
+		
 		/**
 		 * Increments by one the movement counter of this piece.
 		 */
 		void incrementMovementCount() {
 			movementCount++;
 		}
-
+		
 		/**
 		 * Adjusts the underlying piece of this informational object. This method is generally used
 		 * during a pawn promotion movement, when the pawn piece turns into another piece.
@@ -1427,7 +1350,7 @@ public class Board {
 		void setPiece(Piece piece) {
 			this.piece = piece;
 		}
-
+		
 		/**
 		 * Retrieves the total amount of times that this piece was moved in the board
 		 *
@@ -1436,7 +1359,7 @@ public class Board {
 		int getMovementCount() {
 			return movementCount;
 		}
-
+		
 		/**
 		 * Retrieves the piece associated with this informational set.
 		 *
@@ -1446,7 +1369,7 @@ public class Board {
 			return piece;
 		}
 	}
-
+	
 	/**
 	 * A direction adjuster is a row adjuster and column adjuster pair that helps the piece movement
 	 * generation to generate the target positions.
@@ -1464,17 +1387,17 @@ public class Board {
 	 * @author Welyab Paula
 	 */
 	private static class DirectionAdjuster {
-
+		
 		/**
 		 * The row adjuster value.
 		 */
 		final int rowAdjuster;
-
+		
 		/**
 		 * The column adjuster value.
 		 */
 		final int columnAdjsuter;
-
+		
 		/**
 		 * Creates a direction adjuster instance using given values.
 		 *
@@ -1485,7 +1408,7 @@ public class Board {
 			this.rowAdjuster = rowAdjuster;
 			this.columnAdjsuter = columnAdjsuter;
 		}
-
+		
 		/**
 		 * Retrieves the row adjuster value.
 		 *
@@ -1494,7 +1417,7 @@ public class Board {
 		int getRowAdjuster() {
 			return rowAdjuster;
 		}
-
+		
 		/**
 		 * Retrieves the column adjuster value.
 		 *
@@ -1504,35 +1427,35 @@ public class Board {
 			return columnAdjsuter;
 		}
 	}
-
+	
 	private static class MoveLog {
-
+		
 		MovementTarget target;
-
+		
 		PieceMovement movement;
-
+		
 		PieceInfo capturedPieceInfo;
-
+		
 		MovementTarget getTarget() {
 			return target;
 		}
-
+		
 		void setTarget(MovementTarget target) {
 			this.target = target;
 		}
-
+		
 		PieceMovement getMovement() {
 			return movement;
 		}
-
+		
 		void setMovement(PieceMovement movement) {
 			this.movement = movement;
 		}
-
+		
 		PieceInfo getCapturedPieceInfo() {
 			return capturedPieceInfo;
 		}
-
+		
 		void setCapturedPieceInfo(PieceInfo capturedPieceInfo) {
 			this.capturedPieceInfo = capturedPieceInfo;
 		}

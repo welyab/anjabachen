@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2019 Welyab da Silva Paula
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.welyab.anjabachen;
 
 import java.util.ArrayList;
@@ -21,41 +36,42 @@ import com.welyab.anjabachen.grammar.FENParser.WhiteKingSideCastlingContext;
 import com.welyab.anjabachen.grammar.FENParser.WhiteQueenSideCastlingContext;
 
 public class FENParser {
-
+	
 	private FenContext fen;
-
+	
 	public FENParser(String fen) {
 		FENLexer lexer = new FENLexer(CharStreams.fromString(fen));
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		com.welyab.anjabachen.grammar.FENParser parser = new com.welyab.anjabachen.grammar.FENParser(tokenStream);
 		this.fen = parser.fen();
 	}
-
-	public static void main(String[] args) {
-		FENParser fenParser = new FENParser("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-		Board board = fenParser.getBoard();
-		System.out.println(board);
-	}
-
+	
 	public Board getBoard() {
 		ParseTreeWalker walker = new ParseTreeWalker();
-		BoardFenConfig boardFenConfig = new BoardFenConfig();
+		FENWalker boardFenConfig = new FENWalker();
 		walker.walk(boardFenConfig, fen);
-		Board board = new Board(false);
-		for (PiecePosition pp : boardFenConfig.pieces) {
-			board.addPiece(pp.piece, pp.position);
-		}
-		return board;
+		return new Board(
+			boardFenConfig.getPieces(),
+			boardFenConfig.getBoardConfig()
+		);
 	}
-
-	private class BoardFenConfig extends FENBaseListener {
-
+	
+	private class FENWalker extends FENBaseListener {
+		
 		List<PiecePosition> pieces = new ArrayList<>();
-
+		
 		BoardConfig.Builder configBuilder = BoardConfig.builder();
-
+		
 		int currentRank = 8;
-
+		
+		List<PiecePosition> getPieces() {
+			return pieces;
+		}
+		
+		BoardConfig getBoardConfig() {
+			return configBuilder.build();
+		}
+		
 		@Override
 		public void enterEnPassantTargetSquare(EnPassantTargetSquareContext ctx) {
 			if (!ctx.getText().equals("-")) {
@@ -64,37 +80,37 @@ public class FENParser {
 				configBuilder = configBuilder.enPassantTargetSquare(Position.of(file, rank));
 			}
 		}
-
+		
 		@Override
 		public void enterHalfMoveClock(HalfMoveClockContext ctx) {
 			configBuilder = configBuilder.halfMoveCounter(Integer.parseInt(ctx.getText()));
 		}
-
+		
 		@Override
 		public void enterWhiteKingSideCastling(WhiteKingSideCastlingContext ctx) {
 			configBuilder = configBuilder.whiteKingSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterWhiteQueenSideCastling(WhiteQueenSideCastlingContext ctx) {
 			configBuilder = configBuilder.whiteQueenSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterBlackKingSideCastling(BlackKingSideCastlingContext ctx) {
 			configBuilder = configBuilder.blackKingSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterBlackQueenSideCastling(BlackQueenSideCastlingContext ctx) {
 			configBuilder = configBuilder.blackQueenSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterSideToMove(SideToMoveContext ctx) {
 			configBuilder = configBuilder.sideToMove(Color.fromColor(ctx.getText().charAt(0)));
 		}
-
+		
 		@Override
 		public void enterPieceDisposition(PieceDispositionContext ctx) {
 			char currentFile = 'a';
@@ -114,31 +130,6 @@ public class FENParser {
 				}
 			}
 			currentRank--;
-		}
-	}
-
-	private static class PiecePosition {
-
-		final Piece piece;
-
-		final Position position;
-
-		PiecePosition(Piece piece, Position position) {
-			this.piece = piece;
-			this.position = position;
-		}
-
-		Piece getPiece() {
-			return piece;
-		}
-
-		Position getPosition() {
-			return position;
-		}
-
-		@Override
-		public String toString() {
-			return "PiecePosition [piece=" + piece + ", position=" + position + "]";
 		}
 	}
 }
