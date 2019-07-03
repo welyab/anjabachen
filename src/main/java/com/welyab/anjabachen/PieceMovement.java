@@ -22,68 +22,57 @@ import java.util.List;
  * This class is a container for the set of available movements for a piece in an specific board
  * state.
  *
+ * <p>
+ * This class implements <code>Iterable</code> in order to deliver each of its
+ * <code>MovementTarget</code> instances.
+ *
  * @author Welyab Paula
+ *
+ * @see MovementBag
+ * @see MovementOrigin
+ * @see MovementTarget
  */
 public class PieceMovement implements Iterable<MovementTarget> {
-	
-	/**
-	 * The piece being moved.
-	 */
-	private final Piece piece;
-	
-	/**
-	 * The initial position of this piece.
-	 */
-	private final Position position;
-	
+
+	/** Origin of the movement. */
+	private final MovementOrigin origin;
+
 	/**
 	 * The list of available targets for the underlying piece.
 	 */
 	private final List<MovementTarget> targets;
-	
+
 	/**
 	 * The metadata associated with this movement set.
 	 */
 	private final PieceMovementMeta meta;
-	
+
 	/**
 	 * Creates a new <code>Movements</code> set for piece.
 	 *
-	 * @param piece The being moved piece.
-	 * @param position The origin position of this being moved piece.
+	 * @param movementOrigin The origin of the movement.
 	 * @param targets The list of available targets for the underlying piece.
 	 * @param meta The metadata associated with this movement set.
 	 */
 	public PieceMovement(
-			Piece piece,
-			Position position,
+			MovementOrigin movementOrigin,
 			List<MovementTarget> targets,
 			PieceMovementMeta meta
 	) {
-		this.piece = piece;
-		this.position = position;
+		origin = movementOrigin;
 		this.targets = targets;
 		this.meta = meta;
 	}
-	
+
 	/**
-	 * Retrieves the being moved piece.
+	 * Retrieves the origin of this movement.
 	 *
-	 * @return The piece.
+	 * @return The origin.
 	 */
-	public Piece getPiece() {
-		return piece;
+	public MovementOrigin getOrigin() {
+		return origin;
 	}
-	
-	/**
-	 * Retrieves the origin position of this piece.
-	 *
-	 * @return The position.
-	 */
-	public Position getPosition() {
-		return position;
-	}
-	
+
 	/**
 	 * Retrieves the list of movement targets.
 	 *
@@ -92,7 +81,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public List<MovementTarget> getTargets() {
 		return targets;
 	}
-	
+
 	/**
 	 * The amount of available movements in this set.
 	 *
@@ -101,7 +90,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public int size() {
 		return targets.size();
 	}
-	
+
 	/**
 	 * Indicates if exists any movement in this set.
 	 *
@@ -110,7 +99,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public boolean isEmpty() {
 		return targets.isEmpty();
 	}
-	
+
 	/**
 	 * Indicates if not exists any movement in this set.
 	 *
@@ -119,7 +108,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public boolean isNotEmpty() {
 		return !isEmpty();
 	}
-	
+
 	/**
 	 * Retrieves the target in the specific index.
 	 *
@@ -130,7 +119,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public MovementTarget getTarget(int index) {
 		return targets.get(index);
 	}
-	
+
 	@Override
 	public Iterator<MovementTarget> iterator() {
 		return targets.iterator();
@@ -144,21 +133,10 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public PieceMovementMeta getMeta() {
 		return meta;
 	}
-	
+
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(piece.name())
-			.append(String.format("[%d, %d]", position.getRow(), position.getColumn()))
-			.append(" -> [");
-		for (int i = 0; i < targets.size(); i++) {
-			MovementTarget target = targets.get(i);
-			if (i > 0) {
-				builder.append(", ");
-			}
-			builder.append(String.format("[%d, %d]", target.getPosition().getRow(), target.getPosition().getColumn()));
-		}
-		builder.append("]");
-		return builder.toString();
+		return "PieceMovement [origin=" + origin + ", targets=" + targets + ", meta=" + meta + "]";
 	}
+
 }

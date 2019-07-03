@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.perft;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,30 +22,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import org.junit.Test;
+import com.welyab.anjabachen.Board;
+import com.welyab.anjabachen.MovementBag;
+import com.welyab.anjabachen.MovementTarget;
+import com.welyab.anjabachen.PieceMovement;
+import com.welyab.anjabachen.PieceMovementMeta;
 
-public class BoardPerfetTest {
+public class Perfet {
 
 	private final List<MetadataInfoPrinter> printers = Collections.unmodifiableList(
 		Arrays.asList(
 			new MetadataInfoPrinter(
-				"Depth",
+				"       Depth",
 				(p, e) -> fixedWidth(p.columnName.length(), e.deepth)
 			),
 			new MetadataInfoPrinter(
-				"Nodes",
+				"      Nodes",
 				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getTotalMovements())
 			),
 			new MetadataInfoPrinter(
-				"Captures",
+				"   Captures",
 				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getCaptureCount())
 			),
 			new MetadataInfoPrinter(
-				"En passant",
+				"  En_passant",
 				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getEnPassantCount())
 			),
 			new MetadataInfoPrinter(
-				"Castling",
+				"     Castling",
 				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getCastlingsCount())
 			),
 			new MetadataInfoPrinter(
@@ -53,19 +57,19 @@ public class BoardPerfetTest {
 				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getPromotionCount())
 			),
 			new MetadataInfoPrinter(
-				"Checks",
+				"     Checks",
 				(p, e) -> fixedWidth(p.columnName.length(), 0)
 			),
 			new MetadataInfoPrinter(
-				"Discovery Checks",
+				"Discovery_Checks",
 				(p, e) -> fixedWidth(p.columnName.length(), 0)
 			),
 			new MetadataInfoPrinter(
-				"Double Checks",
+				"Double  Checks",
 				(p, e) -> fixedWidth(p.columnName.length(), 0)
 			),
 			new MetadataInfoPrinter(
-				"Checkmates",
+				"  Checkmates",
 				(p, e) -> fixedWidth(p.columnName.length(), 0)
 			)
 		)
@@ -107,14 +111,20 @@ public class BoardPerfetTest {
 		}
 	}
 
-	@Test
+	public static void main(String[] args) {
+		new Perfet().position0();
+	}
+
 	public void position0() {
 		walkTree("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 2);
 	}
-	
-	@Test
+
 	public void position1() {
 		walkTree("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 2);
+	}
+
+	public void position3() {
+		walkTree("1q1k6/8/8/8/8/8/8/K6Q w - - 0 1", 3);
 	}
 
 	private void walkTree(String fen, int maxDeepth) {
@@ -147,7 +157,7 @@ public class BoardPerfetTest {
 	private static void calc(Board board, int currentDeepth, int maxDeepth, Map<Integer, PieceMovementMeta> metas) {
 		if (currentDeepth <= maxDeepth) {
 			PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-			PieceMovements movements = board.getMovements();
+			MovementBag movements = board.getMovements();
 			PieceMovementMeta meta = movements.getMeta();
 			metas.put(
 				currentDeepth,
@@ -161,7 +171,7 @@ public class BoardPerfetTest {
 				for (MovementTarget movementTarget : pieceMovement) {
 					Board boardTemp = new Board(board.getFen());
 					boardTemp.move(
-						pieceMovement.getPosition(),
+						pieceMovement.getOrigin().getPosition(),
 						movementTarget.getPosition(),
 						movementTarget.getPiece().getType()
 					);
