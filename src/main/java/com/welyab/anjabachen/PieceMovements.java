@@ -33,6 +33,14 @@ public class PieceMovements implements Iterable<PieceMovement> {
 		return movements.isEmpty();
 	}
 
+	public PieceMovement get(int index) {
+		return movements.get(index);
+	}
+
+	public int size() {
+		return movements.size();
+	}
+	
 	public PieceMovementMeta getMeta() {
 		return meta;
 	}

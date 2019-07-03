@@ -16,6 +16,7 @@
 package com.welyab.anjabachen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -36,42 +37,65 @@ import com.welyab.anjabachen.grammar.FENParser.WhiteKingSideCastlingContext;
 import com.welyab.anjabachen.grammar.FENParser.WhiteQueenSideCastlingContext;
 
 public class FENParser {
-	
-	private FenContext fen;
-	
+
+	private boolean parsed;
+
+	String fen;
+
+	private FenContext fenContext;
+
+	private Board board;
+
+	List<PiecePosition> pieces = new ArrayList<>();
+
+	BoardConfig boardConfig;
+
 	public FENParser(String fen) {
+		this.fen = fen;
 		FENLexer lexer = new FENLexer(CharStreams.fromString(fen));
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		com.welyab.anjabachen.grammar.FENParser parser = new com.welyab.anjabachen.grammar.FENParser(tokenStream);
-		this.fen = parser.fen();
+		this.fenContext = parser.fen();
 	}
-	
+
+	public static FENParser of(String fen) {
+		return new FENParser(fen);
+	}
+
+	public BoardConfig getBoardConfig() {
+		parse();
+		return boardConfig;
+	}
+
+	public List<PiecePosition> getPiecesDisposition() {
+		parse();
+		return Collections.unmodifiableList(pieces);
+	}
+
 	public Board getBoard() {
-		ParseTreeWalker walker = new ParseTreeWalker();
-		FENWalker boardFenConfig = new FENWalker();
-		walker.walk(boardFenConfig, fen);
+		parse();
 		return new Board(
-			boardFenConfig.getPieces(),
-			boardFenConfig.getBoardConfig()
+			pieces,
+			boardConfig
 		);
 	}
-	
+
+	private void parse() {
+		if (parsed) {
+			return;
+		}
+		ParseTreeWalker walker = new ParseTreeWalker();
+		FENWalker boardFenConfig = new FENWalker();
+		walker.walk(boardFenConfig, fenContext);
+		parsed = true;
+	}
+
 	private class FENWalker extends FENBaseListener {
 		
-		List<PiecePosition> pieces = new ArrayList<>();
-		
 		BoardConfig.Builder configBuilder = BoardConfig.builder();
-		
+
 		int currentRank = 8;
-		
-		List<PiecePosition> getPieces() {
-			return pieces;
-		}
-		
-		BoardConfig getBoardConfig() {
-			return configBuilder.build();
-		}
-		
+
 		@Override
 		public void enterEnPassantTargetSquare(EnPassantTargetSquareContext ctx) {
 			if (!ctx.getText().equals("-")) {
@@ -80,37 +104,37 @@ public class FENParser {
 				configBuilder = configBuilder.enPassantTargetSquare(Position.of(file, rank));
 			}
 		}
-		
+
 		@Override
 		public void enterHalfMoveClock(HalfMoveClockContext ctx) {
 			configBuilder = configBuilder.halfMoveCounter(Integer.parseInt(ctx.getText()));
 		}
-		
+
 		@Override
 		public void enterWhiteKingSideCastling(WhiteKingSideCastlingContext ctx) {
 			configBuilder = configBuilder.whiteKingSideCastlingAvailable(true);
 		}
-		
+
 		@Override
 		public void enterWhiteQueenSideCastling(WhiteQueenSideCastlingContext ctx) {
 			configBuilder = configBuilder.whiteQueenSideCastlingAvailable(true);
 		}
-		
+
 		@Override
 		public void enterBlackKingSideCastling(BlackKingSideCastlingContext ctx) {
 			configBuilder = configBuilder.blackKingSideCastlingAvailable(true);
 		}
-		
+
 		@Override
 		public void enterBlackQueenSideCastling(BlackQueenSideCastlingContext ctx) {
 			configBuilder = configBuilder.blackQueenSideCastlingAvailable(true);
 		}
-		
+
 		@Override
 		public void enterSideToMove(SideToMoveContext ctx) {
 			configBuilder = configBuilder.sideToMove(Color.fromColor(ctx.getText().charAt(0)));
 		}
-		
+
 		@Override
 		public void enterPieceDisposition(PieceDispositionContext ctx) {
 			char currentFile = 'a';
@@ -130,6 +154,11 @@ public class FENParser {
 				}
 			}
 			currentRank--;
+		}
+
+		@Override
+		public void exitFen(FenContext ctx) {
+			boardConfig = configBuilder.build();
 		}
 	}
 }

@@ -88,13 +88,10 @@ sideToMove
 
 castlingAbility
 	: none
-	| whiteKingSideCastling
-	| whiteKingSideCastling whiteQueenSideCastling
-	| whiteKingSideCastling whiteQueenSideCastling blackKingSideCastling
-	| whiteKingSideCastling whiteQueenSideCastling blackKingSideCastling blackQueenSideCastling
-	|                       whiteQueenSideCastling blackKingSideCastling blackQueenSideCastling
-	|                                              blackKingSideCastling blackQueenSideCastling
-	|                                                                    blackQueenSideCastling
+	| whiteKingSideCastling  whiteQueenSideCastling? blackKingSideCastling? blackQueenSideCastling?
+	| whiteKingSideCastling? whiteQueenSideCastling  blackKingSideCastling? blackQueenSideCastling?
+	| whiteKingSideCastling? whiteQueenSideCastling? blackKingSideCastling  blackQueenSideCastling?
+	| whiteKingSideCastling? whiteQueenSideCastling? blackKingSideCastling? blackQueenSideCastling
 	;
 
 whiteKingSideCastling:  UpperLetterK;
@@ -109,7 +106,7 @@ enPassantTargetSquare
 
 halfMoveClock
 	: digitZeroToNine
-	| digitOneToFour digitZeroToNine+
+	| digitOneToNine digitZeroToNine
 	| One Zero Zero
 	;
 

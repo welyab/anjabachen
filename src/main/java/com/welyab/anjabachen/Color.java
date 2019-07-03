@@ -65,7 +65,7 @@ public enum Color {
 	 *
 	 * @return The letter color symbol for this color.
 	 */
-	public char getLetterColor() {
+	public char getLetterSymbol() {
 		return letterColor;
 	}
 

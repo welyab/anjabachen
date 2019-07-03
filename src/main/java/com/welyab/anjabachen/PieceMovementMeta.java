@@ -31,6 +31,10 @@ public class PieceMovementMeta {
 		return new Builder();
 	}
 
+	public static PieceMovementMeta empty() {
+		return builder().build();
+	}
+
 	public int getCaptureCount() {
 		return captureCount;
 	}

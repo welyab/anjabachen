@@ -24,7 +24,7 @@ package com.welyab.anjabachen;
  * @see #of(int, int)
  */
 public class Position {
-	
+
 	/**
 	 * Cache for all 64 position available in a chess board.
 	 */
@@ -40,17 +40,17 @@ public class Position {
 		{new Position(7, 0),new Position(7, 1),new Position(7, 2),new Position(7, 3),new Position(7, 4),new Position(7, 5),new Position(7, 6),new Position(7, 7)},
 	};
 	//@formatter:on
-	
+
 	/**
 	 * The row number.
 	 */
 	private final int row;
-	
+
 	/**
 	 * The column number.
 	 */
 	private final int column;
-	
+
 	/**
 	 * Creates a new instance of <code>Position</code> by receive a <code>[row, column]</code> pair.
 	 *
@@ -62,7 +62,7 @@ public class Position {
 		this.row = row;
 		this.column = column;
 	}
-	
+
 	/**
 	 * Retrieves the row number of this position.
 	 *
@@ -71,7 +71,7 @@ public class Position {
 	public int getRow() {
 		return row;
 	}
-	
+
 	/**
 	 * Retrieves the column number of this position.
 	 *
@@ -80,7 +80,7 @@ public class Position {
 	public int getColumn() {
 		return column;
 	}
-	
+
 	/**
 	 * Evaluates if this position object has the same values for given <code>position</code>.
 	 *
@@ -92,7 +92,7 @@ public class Position {
 	public boolean equals(Position position) {
 		return row == position.row && column == position.column;
 	}
-	
+
 	/**
 	 * Evaluates if this position object has the same values for <code>row</code> and
 	 * <code>column</code>.
@@ -106,7 +106,15 @@ public class Position {
 	public boolean equals(int row, int column) {
 		return this.row == row && this.column == column;
 	}
-	
+
+	public char getFile() {
+		return (char) ('a' + column);
+	}
+
+	public int getRank() {
+		return 8 - row;
+	}
+
 	/**
 	 * Creates a new instance of <code>Position</code> by receive a <code>[row, column]</code> pair.
 	 *
@@ -123,7 +131,7 @@ public class Position {
 		}
 		return POSITIONS[row][column];
 	}
-	
+
 	public static Position of(char file, int rank) {
 		file = Character.toLowerCase(file);
 		if (file < 'a' || file > 'h' || rank < 1 || rank > 8) {
@@ -132,7 +140,7 @@ public class Position {
 		// 7 6 5 4 3 2 1 0 row
 		return of(8 - rank, file - 'a');
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("[%d, %d]", row, column);

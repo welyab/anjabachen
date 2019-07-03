@@ -15,92 +15,164 @@
  */
 package com.welyab.anjabachen;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+
 import org.junit.Test;
 
 public class BoardPerfetTest {
 
-	@Test
-	public void f() {
-		String boardString = ""
-				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + ". . p . . . . ." + Board.NEWLINE
-				/* 2 */ + ". . . p . . . ." + Board.NEWLINE
-				/* 3 */ + "K P . . . . . r" + Board.NEWLINE
-				/* 4 */ + ". R . . . p . K" + Board.NEWLINE
-				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 6 */ + ". . . . P . P ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, 0);
-		int deepth = 6;
-		PieceMovementMeta expectedMeta = PieceMovementMeta
-			.builder()
-			.incrementTotalMovements(4085603)
-			.incrementCaptureCount(757163)
-			.incrementPromotionCount(15172)
-			.incrementCastlings(128013)
-			.incrementEnPassantCount(1929)
-			.build();
-		PieceMovementMeta meta = calc(board, deepth);
-		System.out.printf("Deepth:           %10d%n", deepth);
-		System.out.printf(
-			"Nodes:            %10d  %d%n",
-			meta.getTotalMovements(),
-			meta.getTotalMovements() - expectedMeta.getTotalMovements()
-		);
-		System.out.printf(
-			"Capture count:    %10d  %d%n",
-			meta.getCaptureCount(),
-			meta.getCaptureCount() - expectedMeta.getCaptureCount()
-		);
-		System.out.printf(
-			"Promotion count:  %10d  %d%n",
-			meta.getPromotionCount(),
-			meta.getPromotionCount() - expectedMeta.getPromotionCount()
-		);
-		System.out.printf(
-			"Castling count:   %10d  %d%n",
-			meta.getCastlingsCount(),
-			meta.getCastlingsCount() - expectedMeta.getCastlingsCount()
-		);
-		System.out.printf(
-			"En passant count: %10d  %d%n",
-			meta.getEnPassantCount(),
-			meta.getEnPassantCount() - expectedMeta.getEnPassantCount()
-		);
+	private final List<MetadataInfoPrinter> printers = Collections.unmodifiableList(
+		Arrays.asList(
+			new MetadataInfoPrinter(
+				"Depth",
+				(p, e) -> fixedWidth(p.columnName.length(), e.deepth)
+			),
+			new MetadataInfoPrinter(
+				"Nodes",
+				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getTotalMovements())
+			),
+			new MetadataInfoPrinter(
+				"Captures",
+				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getCaptureCount())
+			),
+			new MetadataInfoPrinter(
+				"En passant",
+				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getEnPassantCount())
+			),
+			new MetadataInfoPrinter(
+				"Castling",
+				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getCastlingsCount())
+			),
+			new MetadataInfoPrinter(
+				"Promotions",
+				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getPromotionCount())
+			),
+			new MetadataInfoPrinter(
+				"Checks",
+				(p, e) -> fixedWidth(p.columnName.length(), 0)
+			),
+			new MetadataInfoPrinter(
+				"Discovery Checks",
+				(p, e) -> fixedWidth(p.columnName.length(), 0)
+			),
+			new MetadataInfoPrinter(
+				"Double Checks",
+				(p, e) -> fixedWidth(p.columnName.length(), 0)
+			),
+			new MetadataInfoPrinter(
+				"Checkmates",
+				(p, e) -> fixedWidth(p.columnName.length(), 0)
+			)
+		)
+	);
+
+	private String fixedWidth(int width, int value) {
+		String format = String.format("%%%dd", width);
+		return String.format(format, value);
 	}
 
-	static int b = 0;
+	private class PieceMovementMetaEnhancer {
 
-	static int k = 0;
+		final PieceMovementMeta metadata;
 
-	private static PieceMovementMeta calc(Board board, int depth) {
-		if (depth == 1) {
+		final int deepth;
+
+		public PieceMovementMetaEnhancer(PieceMovementMeta metadata, int deepth) {
+			this.metadata = metadata;
+			this.deepth = deepth;
+		}
+	}
+
+	private class MetadataInfoPrinter {
+
+		final String columnName;
+
+		final BiFunction<MetadataInfoPrinter, PieceMovementMetaEnhancer, String> valueFormatter;
+
+		public MetadataInfoPrinter(
+				String columnName,
+				BiFunction<MetadataInfoPrinter, PieceMovementMetaEnhancer, String> valueFormatter
+		) {
+			this.columnName = columnName;
+			this.valueFormatter = valueFormatter;
+		}
+
+		String format(PieceMovementMetaEnhancer enhancer) {
+			return valueFormatter.apply(this, enhancer);
+		}
+	}
+
+	@Test
+	public void position0() {
+		walkTree("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 2);
+	}
+	
+	@Test
+	public void position1() {
+		walkTree("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 2);
+	}
+
+	private void walkTree(String fen, int maxDeepth) {
+		Map<Integer, PieceMovementMeta> metas = new HashMap<>();
+		calc(new Board(fen), 0, maxDeepth, metas);
+		printInfo(metas);
+	}
+
+	private void printInfo(Map<Integer, PieceMovementMeta> metas) {
+		String columns = printers
+			.stream()
+			.map(p -> p.columnName)
+			.reduce((c1, c2) -> String.format("%s  %s", c1, c2))
+			.get();
+		System.out.println(columns);
+		metas.entrySet()
+			.stream()
+			.sorted((e1, e2) -> e1.getKey() - e2.getKey())
+			.map(e -> new PieceMovementMetaEnhancer(e.getValue(), e.getKey()))
+			.forEach(enhancer -> {
+				String values = printers
+					.stream()
+					.map(p -> p.format(enhancer))
+					.reduce((s1, s2) -> String.format("%s  %s", s1, s2))
+					.get();
+				System.out.println(values);
+			});
+	}
+
+	private static void calc(Board board, int currentDeepth, int maxDeepth, Map<Integer, PieceMovementMeta> metas) {
+		if (currentDeepth <= maxDeepth) {
+			PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
 			PieceMovements movements = board.getMovements();
-			k += movements.getMeta().getTotalMovements();
-			b += movements.getMeta().getTotalMovements();
-			if (b > 5000000) {
-				b = 0;
-				System.out.println("Current count: " + k);
+			PieceMovementMeta meta = movements.getMeta();
+			metas.put(
+				currentDeepth,
+				PieceMovementMeta
+					.builder()
+					.add(meta)
+					.add(metas.getOrDefault(currentDeepth, PieceMovementMeta.empty()))
+					.build()
+			);
+			for (PieceMovement pieceMovement : movements) {
+				for (MovementTarget movementTarget : pieceMovement) {
+					Board boardTemp = new Board(board.getFen());
+					boardTemp.move(
+						pieceMovement.getPosition(),
+						movementTarget.getPosition(),
+						movementTarget.getPiece().getType()
+					);
+					calc(
+						boardTemp,
+						currentDeepth + 1,
+						maxDeepth,
+						metas
+					);
+				}
 			}
-			return movements.getMeta();
 		}
-		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-		for (PieceMovement pieceMovement : board.getMovements()) {
-			for (MovementTarget movementTarget : pieceMovement) {
-				Board boardTemp = new Board(
-					board.toString2(),
-					board.getMovementCount()
-				);
-				boardTemp.move(
-					pieceMovement.getPosition(),
-					movementTarget.getPosition(),
-					movementTarget.getPiece().getType()
-				);
-				PieceMovementMeta pieceMovementMeta = calc(boardTemp, depth - 1);
-				pieceMovementMetaBuilder.add(pieceMovementMeta);
-			}
-		}
-		return pieceMovementMetaBuilder.build();
 	}
 }
