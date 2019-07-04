@@ -112,11 +112,11 @@ public class Perfet {
 	}
 
 	public static void main(String[] args) {
-		new Perfet().position0();
+		new Perfet().position4();
 	}
 
 	public void position0() {
-		walkTree("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 2);
+		walkTree("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);
 	}
 
 	public void position1() {
@@ -124,12 +124,18 @@ public class Perfet {
 	}
 
 	public void position3() {
-		walkTree("1q1k6/8/8/8/8/8/8/K6Q w - - 0 1", 3);
+		walkTree("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 4);
+	}
+	
+	public void position4() {
+		walkTree("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1", 3);
 	}
 
 	private void walkTree(String fen, int maxDeepth) {
 		Map<Integer, PieceMovementMeta> metas = new HashMap<>();
-		calc(new Board(fen), 0, maxDeepth, metas);
+		Board board = new Board(fen);
+		System.out.println(board);
+		calc(board, 0, maxDeepth, metas);
 		printInfo(metas);
 	}
 
