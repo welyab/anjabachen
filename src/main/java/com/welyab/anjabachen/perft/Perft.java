@@ -56,8 +56,10 @@ public class Perft {
 		map.put(0, new ArrayList<>());
 		while(!map.isEmpty()) {
 			Integer currentDepth = map.firstKey();
+			PieceMovementMeta.Builder builder = PieceMovementMeta.builder();
 			while(!map.get(currentDepth).isEmpty()) {
 			}
+			builder.build();
 		}
 		return null;
 	}

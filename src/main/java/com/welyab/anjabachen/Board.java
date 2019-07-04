@@ -355,15 +355,15 @@ public class Board {
 		}
 
 		if (movementOrigin.getPiece().isKing()) {
-			getGameInfo().invalidCastling(movementOrigin.getPiece().getColor());
+			getGameInfo().invalidateCastling(movementOrigin.getPiece().getColor());
 		}
 
 		if (movementOrigin.getPiece().isRook()) {
 			if (getKingSideRookSquare(movementOrigin.getPiece().getColor()).equals(movementOrigin.getPosition())) {
-				getGameInfo().invalidKingSideCastling(movementOrigin.getPiece().getColor());
+				getGameInfo().invalidateKingSideCastling(movementOrigin.getPiece().getColor());
 			} else if (getQueenSideRookSquare(movementOrigin.getPiece().getColor())
 				.equals(movementOrigin.getPosition())) {
-				getGameInfo().invalidQueenSideCastling(movementOrigin.getPiece().getColor());
+				getGameInfo().invalidateQueenSideCastling(movementOrigin.getPiece().getColor());
 			}
 		}
 
@@ -1433,7 +1433,7 @@ public class Board {
 			moveCounter++;
 		}
 
-		void invalidCastling(Color color) {
+		void invalidateCastling(Color color) {
 			if (color.isWhite()) {
 				setWhiteKingSideCastlingAvailable(false);
 				setWhiteQueenSideCastlingAvailable(false);
@@ -1443,7 +1443,7 @@ public class Board {
 			}
 		}
 
-		void invalidQueenSideCastling(Color color) {
+		void invalidateQueenSideCastling(Color color) {
 			if (color.isWhite()) {
 				setWhiteQueenSideCastlingAvailable(false);
 			} else {
@@ -1451,7 +1451,7 @@ public class Board {
 			}
 		}
 
-		void invalidKingSideCastling(Color color) {
+		void invalidateKingSideCastling(Color color) {
 			if (color.isWhite()) {
 				setWhiteKingSideCastlingAvailable(false);
 			} else {
