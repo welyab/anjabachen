@@ -370,6 +370,9 @@ public class Board {
 		getGameInfo().incrementMoveCounter();
 	}
 
+	public void undo() {
+	}
+
 	/**
 	 * The side color that has the next movement.
 	 *
@@ -1334,7 +1337,7 @@ public class Board {
 		}
 
 		GameInfo copy() {
-			GameInfo copy = new GameInfo(this.moveSideAdjuster);
+			GameInfo copy = new GameInfo(moveSideAdjuster);
 			copy.moveCounter = moveCounter;
 			copy.fullMoveCounter = fullMoveCounter;
 			copy.halfMoveCounter = halfMoveCounter;
