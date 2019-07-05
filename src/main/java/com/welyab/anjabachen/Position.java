@@ -125,8 +125,8 @@ public class Position {
 	 * @return A new <code>Position</code> instance.
 	 */
 	public static Position of(int row, int column) {
-		if (row < Constants.MIN_ROW_NUMBER || row > Constants.MAX_ROW_NUMBER
-				|| column < Constants.MIN_COLUMN_NUMBER || column > Constants.MAX_COLUMN_NUMBER) {
+		if (row < GameConstants.MIN_ROW_NUMBER || row > GameConstants.MAX_ROW_NUMBER
+				|| column < GameConstants.MIN_COLUMN_NUMBER || column > GameConstants.MAX_COLUMN_NUMBER) {
 			throw new InvalidPosition(row, column);
 		}
 		return POSITIONS[row][column];

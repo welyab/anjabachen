@@ -41,7 +41,7 @@ public class MovementTarget {
 	/**
 	 * The meta information about this movement.
 	 */
-	private MovementTargetMeta meta;
+	private final int movementFlags;
 
 	/**
 	 * Creates a new target by informing the piece and the <code>[row, column]</code> coordinates of
@@ -51,16 +51,16 @@ public class MovementTarget {
 	 *        order to know which piece should be used as replacement for the pawn. In
 	 *        other scenarios, this field keeps the same piece present in the origin square.
 	 * @param position The destination square position referred by this movement target.
-	 * @param meta Metadata information.
+	 * @param movementFlags The meta information about this movement.
 	 */
 	public MovementTarget(
 			Piece piece,
 			Position position,
-			MovementTargetMeta meta
+			int movementFlags
 	) {
 		this.piece = piece;
 		this.position = position;
-		this.meta = meta;
+		this.movementFlags = movementFlags;
 	}
 
 	/**
@@ -83,13 +83,8 @@ public class MovementTarget {
 		return position;
 	}
 
-	/**
-	 * Retrieves the metadata information of this target movement.
-	 *
-	 * @return The metadata.
-	 */
-	public MovementTargetMeta getMeta() {
-		return meta;
+	public int getMovementFlags() {
+		return movementFlags;
 	}
 
 	@Override
@@ -97,7 +92,7 @@ public class MovementTarget {
 		return String.format(
 			"Target %s %s[%d, %d]",
 			piece,
-			getMeta().isCapture() ? "x" : "",
+			GameConstants.isCapture(getMovementFlags()) ? "x" : "",
 			position.getRow(),
 			position.getColumn()
 		);

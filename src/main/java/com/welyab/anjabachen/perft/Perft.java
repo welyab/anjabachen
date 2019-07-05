@@ -30,7 +30,7 @@ import com.welyab.anjabachen.PieceMovement;
 import com.welyab.anjabachen.PieceMovementMeta;
 
 public class Perft {
-	
+
 	private final List<MetadataInfoPrinter> printers = Collections.unmodifiableList(
 		Arrays.asList(
 			new MetadataInfoPrinter(
@@ -75,30 +75,30 @@ public class Perft {
 			)
 		)
 	);
-	
+
 	private String fixedWidth(int width, int value) {
 		String format = String.format("%%%dd", width);
 		return String.format(format, value);
 	}
-	
+
 	private class PieceMovementMetaEnhancer {
-		
+
 		final PieceMovementMeta metadata;
-		
+
 		final int deepth;
-		
+
 		public PieceMovementMetaEnhancer(PieceMovementMeta metadata, int deepth) {
 			this.metadata = metadata;
 			this.deepth = deepth;
 		}
 	}
-	
+
 	private class MetadataInfoPrinter {
-		
+
 		final String columnName;
-		
+
 		final BiFunction<MetadataInfoPrinter, PieceMovementMetaEnhancer, String> valueFormatter;
-		
+
 		public MetadataInfoPrinter(
 				String columnName,
 				BiFunction<MetadataInfoPrinter, PieceMovementMetaEnhancer, String> valueFormatter
@@ -106,36 +106,36 @@ public class Perft {
 			this.columnName = columnName;
 			this.valueFormatter = valueFormatter;
 		}
-		
+
 		String format(PieceMovementMetaEnhancer enhancer) {
 			return valueFormatter.apply(this, enhancer);
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		new Perft().position1();
+		new Perft().position3();
 	}
-	
+
 	public void position0() {
 		walkTree("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);
 	}
-	
+
 	public void position1() {
 		walkTree("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 4);
 	}
-	
+
 	public void position3() {
-		walkTree("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 3);
+		walkTree("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 6);
 	}
-	
+
 	public void position4() {
 		walkTree("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1", 4);
 	}
-	
+
 	public void position5() {
 		walkTree("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1", 4);
 	}
-	
+
 	private void walkTree(String fen, int maxDeepth) {
 		Map<Integer, PieceMovementMeta> metas = new HashMap<>();
 		Board board = new Board(fen);
@@ -143,7 +143,7 @@ public class Perft {
 		calc(board, 1, maxDeepth, metas);
 		printInfo(metas);
 	}
-	
+
 	private void printInfo(Map<Integer, PieceMovementMeta> metas) {
 		String columns = printers
 			.stream()
@@ -164,7 +164,7 @@ public class Perft {
 				System.out.println(values);
 			});
 	}
-	
+
 	private static void calc(Board board, int currentDeepth, int maxDeepth, Map<Integer, PieceMovementMeta> metas) {
 		if (currentDeepth <= maxDeepth) {
 			PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
