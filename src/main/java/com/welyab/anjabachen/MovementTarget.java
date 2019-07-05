@@ -25,24 +25,24 @@
  * @author Welyab Paula
  */
 public class MovementTarget {
-	
+
 	/**
 	 * If the being moved piece is a pawn during a promotion, this field may be
 	 * used in order to know which piece should be used as replacement for the pawn. In other
 	 * scenarios, this field keeps the same piece present in the origin square.
 	 */
 	private final Piece piece;
-	
+
 	/**
 	 * The destination square position referred by this movement target.
 	 */
 	private final Position position;
-	
+
 	/**
 	 * The meta information about this movement.
 	 */
 	private MovementTargetMeta meta;
-	
+
 	/**
 	 * Creates a new target by informing the piece and the <code>[row, column]</code> coordinates of
 	 * the destination square.
@@ -62,7 +62,7 @@ public class MovementTarget {
 		this.position = position;
 		this.meta = meta;
 	}
-	
+
 	/**
 	 * If the being moved piece is a pawn during a promotion, this method is used to let
 	 * know which piece should be used as replacement for the pawn. In other scenarios,
@@ -73,7 +73,7 @@ public class MovementTarget {
 	public Piece getPiece() {
 		return piece;
 	}
-	
+
 	/**
 	 * Retrieves the destination square position referred by this movement target.
 	 *
@@ -82,7 +82,7 @@ public class MovementTarget {
 	public Position getPosition() {
 		return position;
 	}
-	
+
 	/**
 	 * Retrieves the metadata information of this target movement.
 	 *
@@ -91,9 +91,15 @@ public class MovementTarget {
 	public MovementTargetMeta getMeta() {
 		return meta;
 	}
-	
+
 	@Override
 	public String toString() {
-		return String.format("Target %s [%d, %d]", piece, position.getRow(), position.getColumn());
+		return String.format(
+			"Target %s %s[%d, %d]",
+			piece,
+			getMeta().isCapture() ? "x" : "",
+			position.getRow(),
+			position.getColumn()
+		);
 	}
 }
