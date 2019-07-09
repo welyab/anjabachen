@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -33,7 +34,7 @@ import com.welyab.anjabachen.PieceMovementMeta.Builder;
 /**
  * @author Welyab Paula
  */
-public class Board {
+public class Board implements Copiable<Board> {
 
 	/** FEN notation for the initial position. */
 	private static final String FEN_INITIAL_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -208,7 +209,7 @@ public class Board {
 	/**
 	 * The 2-dimensional array where the pieces are placed.
 	 */
-	private Square[][] grid;
+	private Piece[][] grid;
 
 	private GameInfo gameInfo;
 
@@ -231,14 +232,27 @@ public class Board {
 	}
 
 	public Board(List<PiecePosition> pieces, BoardConfig boardConfig) {
-		grid = createGrid();
-		pieces.forEach(p -> addPiece(p.getPiece(), p.getPosition()));
-		gameInfo = new GameInfo(boardConfig);
-		movementHistory = new ArrayList<>();
+		this(
+			localizedPieceListToGrid(pieces),
+			new GameInfo(boardConfig),
+			new ArrayList<>()
+		);
+	}
+
+	private Board(Piece[][] grid, GameInfo gameInfo, List<MovementLog> movementHistory) {
+		this.grid = grid;
+		this.gameInfo = gameInfo;
+		this.movementHistory = movementHistory;
 		validatePosition();
 	}
 
 	private void validatePosition() {
+	}
+
+	private static Piece[][] localizedPieceListToGrid(List<PiecePosition> pieces) {
+		Piece[][] grid = new Piece[GameConstants.BOARD_SIZE][GameConstants.BOARD_SIZE];
+		pieces.forEach(p -> grid[p.getPosition().getRow()][p.getPosition().getColumn()] = p.getPiece());
+		return grid;
 	}
 
 	private static List<PiecePosition> boardStringToPiecePositionList(String boardString) {
@@ -266,24 +280,12 @@ public class Board {
 		return dispositionList;
 	}
 
-	/**
-	 * Creates a 2-dimensional array with size equals to {@link GameConstants#BOARD_SIZE}.
-	 *
-	 * @return The array.
-	 */
-	private static Square[][] createGrid() {
-		Square[][] g = new Square[GameConstants.BOARD_SIZE][GameConstants.BOARD_SIZE];
-		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
-			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
-				g[row][column] = new Square(Position.of(row, column));
-			}
-		}
-		return g;
-	}
-
 	public void addPiece(Piece piece, Position position) {
-		Square square = getSquare(position);
-		square.setPiece(piece);
+		isInsideBoard(position.getRow(), position.getColumn());
+		grid[position.getRow()][position.getColumn()] = piece;
+		if (piece.isKing()) {
+			gameInfo.setKingPosition(piece.getColor(), position);
+		}
 	}
 
 	public void move(Position originPosition, Position targetPosition) {
@@ -310,7 +312,7 @@ public class Board {
 			throw new MovementException(
 				String.format(
 					"The piece %s located in [%d, %d] can't reach the location [%d, %d]",
-					getSquare(originPosition).getPiece(),
+					grid[originPosition.getRow()][originPosition.getColumn()],
 					originPosition.getRow(), originPosition.getColumn(),
 					targetPosition.getRow(), targetPosition.getColumn()
 				)
@@ -325,10 +327,11 @@ public class Board {
 		Piece capturedPiece = null;
 		if (GameConstants.isCapture(movementTarget.getMovementFlags())
 				&& !GameConstants.isEnPassant(movementTarget.getMovementFlags())) {
-			capturedPiece = getSquare(movementTarget.getPosition()).getPiece();
+			capturedPiece = grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn()];
 		}
-		getSquare(movementTarget.getPosition()).setPiece(movementTarget.getPiece());
-		getSquare(movementOrigin.getPosition()).setEmpty();
+		grid[movementTarget.getPosition().getRow()][movementTarget.getPosition()
+			.getColumn()] = grid[movementOrigin.getPosition().getRow()][movementOrigin.getPosition().getColumn()];
+		grid[movementOrigin.getPosition().getRow()][movementOrigin.getPosition().getColumn()] = null;
 
 		if (GameConstants.isCastling(movementTarget.getMovementFlags())) {
 			Position rookOrigin = Position.of(
@@ -340,19 +343,13 @@ public class Board {
 				movementOrigin.getPosition().getRow(),
 				movementTarget.getPosition().getColumn() + adjuster
 			);
-			getSquare(rookTarget).setPiece(getSquare(rookOrigin).getPiece());
-			getSquare(rookOrigin).setEmpty();
+			grid[rookTarget.getRow()][rookTarget.getColumn()] = grid[rookOrigin.getRow()][rookOrigin.getColumn()];
+			grid[rookOrigin.getRow()][rookOrigin.getColumn()] = null;
 		}
 
 		if (GameConstants.isEnPassant(movementTarget.getMovementFlags())) {
-			Square capturedPawnSquare = getSquare(
-				Position.of(
-					movementOrigin.getPosition().getRow(),
-					movementTarget.getPosition().getColumn()
-				)
-			);
-			capturedPiece = capturedPawnSquare.getPiece();
-			capturedPawnSquare.setEmpty();
+			capturedPiece = grid[movementOrigin.getPosition().getRow()][movementTarget.getPosition().getColumn()];
+			grid[movementOrigin.getPosition().getRow()][movementTarget.getPosition().getColumn()] = null;
 		}
 
 		if (movementOrigin.getPiece().isPawn()
@@ -374,6 +371,7 @@ public class Board {
 		}
 
 		if (movementOrigin.getPiece().isKing()) {
+			gameInfo.setKingPosition(movementOrigin.getPiece().getColor(), movementTarget.getPosition());
 			gameInfo.invalidateCastling(movementOrigin.getPiece().getColor());
 		}
 
@@ -411,7 +409,7 @@ public class Board {
 		);
 	}
 
-	private static class MovementLog {
+	private static class MovementLog implements Copiable<MovementLog> {
 
 		final MovementOrigin movementOrigin;
 
@@ -448,6 +446,16 @@ public class Board {
 		GameInfo getGameInfo() {
 			return gameInfo;
 		}
+
+		@Override
+		public MovementLog copy() {
+			return new MovementLog(
+				movementOrigin,
+				movementTarget,
+				capturedPiece,
+				gameInfo.copy()
+			);
+		}
 	}
 
 	static Map<Piece, Integer> pieceValue = new EnumMap<>(Piece.class);
@@ -479,46 +487,31 @@ public class Board {
 		MovementOrigin movementOrigin = movementLog.getMovementOrigin();
 		MovementTarget movementTarget = movementLog.getMovementTarget();
 
-		Square originSquare = getSquare(movementOrigin.getPosition());
-		Square targetSquare = getSquare(movementTarget.getPosition());
-
-		originSquare.setPiece(movementOrigin.getPiece());
-		targetSquare.setEmpty();
+		grid[movementOrigin.getPosition().getRow()][movementOrigin.getPosition().getColumn()] = movementOrigin
+			.getPiece();
+		grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn()] = null;
 
 		if (GameConstants.isCapture(movementTarget.getMovementFlags())) {
 			if (GameConstants.isEnPassant(movementTarget.getMovementFlags())) {
-				getSquare(
-					Position.of(
-						movementOrigin.getPosition().getRow(),
-						movementTarget.getPosition().getColumn()
-					)
-				).setPiece(movementLog.getCapturedPiece());
+				grid[movementOrigin.getPosition().getRow()][movementTarget.getPosition().getColumn()] = movementLog
+					.getCapturedPiece();
 			} else {
-				targetSquare.setPiece(movementLog.getCapturedPiece());
+				grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn()] = movementLog
+					.getCapturedPiece();
 			}
 		}
 
 		if (GameConstants.isCastling(movementTarget.getMovementFlags())) {
-			Square possibleRookSquare = getSquare(
-				Position.of(
-					movementTarget.getPosition().getRow(),
-					movementTarget.getPosition().getColumn() + 1
-				)
-			);
-			if (possibleRookSquare.isNotEmpty() && possibleRookSquare.getPiece().isRook()) {
-				getSquare(Position.of(movementTarget.getPosition().getRow(), 0))
-					.setPiece(possibleRookSquare.getPiece());
-				possibleRookSquare.setEmpty();
+			if (grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn() + 1] != null
+					&& grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn() + 1]
+						.isRook()) {
+				grid[movementTarget.getPosition().getRow()][0] = grid[movementTarget.getPosition()
+					.getRow()][movementTarget.getPosition().getColumn() + 1];
+				grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn() + 1] = null;
 			} else {
-				Square rookSquare = getSquare(
-					Position.of(
-						movementTarget.getPosition().getRow(),
-						movementTarget.getPosition().getColumn() - 1
-					)
-				);
-				getSquare(Position.of(movementTarget.getPosition().getRow(), 7))
-					.setPiece(rookSquare.getPiece());
-				rookSquare.setEmpty();
+				grid[movementTarget.getPosition().getRow()][7] = grid[movementTarget.getPosition()
+					.getRow()][movementTarget.getPosition().getColumn() - 1];
+				grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn() - 1] = null;
 			}
 		}
 
@@ -531,7 +524,33 @@ public class Board {
 	 * @return The side color.
 	 */
 	public Color getActiveColor() {
-		return (gameInfo.moveCounter + gameInfo.moveSideAdjuster) % 2 == 0 ? Color.WHITE : Color.BLACK;
+		return calculateNextSideToMove(gameInfo.moveCounter, gameInfo.moveSideAdjuster);
+	}
+
+	@Override
+	public Board copy() {
+		return new Board(
+			copyGrid(),
+			gameInfo.copy(),
+			copyMoveHistory()
+		);
+	}
+
+	private List<MovementLog> copyMoveHistory() {
+		return movementHistory
+			.stream()
+			.map(MovementLog::copy)
+			.collect(Collectors.toList());
+	}
+
+	private Piece[][] copyGrid() {
+		Piece[][] copy = new Piece[GameConstants.BOARD_SIZE][GameConstants.BOARD_SIZE];
+		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
+			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
+				copy[row][column] = grid[row][column];
+			}
+		}
+		return copy;
 	}
 
 	public String getFen() {
@@ -542,15 +561,15 @@ public class Board {
 				builder.append('/');
 			}
 			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
-				Square square = getSquare(Position.of(row, column));
-				if (square.isEmpty()) {
+				Piece piece = grid[row][column];
+				if (piece == null) {
 					emptyCounter++;
 				} else {
 					if (emptyCounter > 0) {
 						builder.append(emptyCounter);
 					}
 					emptyCounter = 0;
-					builder.append(square.getPiece().getLetterSymbol());
+					builder.append(piece.getLetterSymbol());
 				}
 			}
 			if (emptyCounter > 0) {
@@ -597,10 +616,10 @@ public class Board {
 	}
 
 	public boolean isCheck() {
-		if (!isKingPresent(getActiveColor())) {
+		if (!gameInfo.isKingPresent(getActiveColor())) {
 			return false;
 		}
-		Position kingPosition = getKingPosition(getActiveColor());
+		Position kingPosition = gameInfo.getKingPosition(getActiveColor());
 		return isUnderAttack(
 			kingPosition,
 			getWaitingColor()
@@ -627,12 +646,12 @@ public class Board {
 	}
 
 	public MovementBag getMovements() {
-		Iterable<Square> squares = this::privateIterator;
+		Iterable<PiecePosition> squares = this::privateIterator;
 		List<PieceMovement> movements = new ArrayList<>(32);
 		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-		for (Square square : squares) {
-			if (square.isNotEmpty() && square.getPiece().getColor().equals(getActiveColor())) {
-				PieceMovement pieceMovement = privateGetMovements(square);
+		for (PiecePosition piecePosition : squares) {
+			if (!piecePosition.isEmpty() && piecePosition.getPiece().getColor().equals(getActiveColor())) {
+				PieceMovement pieceMovement = privateGetMovements(piecePosition.getPosition());
 				if (pieceMovement.isNotEmpty()) {
 					movements.add(pieceMovement);
 					pieceMovementMetaBuilder.add(pieceMovement.getMeta());
@@ -658,11 +677,10 @@ public class Board {
 	 * @throws EmptySquareException If the square at location <code>[row, column]</code> is empty.
 	 */
 	public PieceMovement getMovement(Position position) {
-		Square square = getSquare(position);
-		if (square.isEmpty()) {
+		if (grid[position.getRow()][position.getColumn()] == null) {
 			throw new EmptySquareException(position.getRow(), position.getColumn());
 		}
-		return privateGetMovements(square);
+		return privateGetMovements(position);
 	}
 
 	/**
@@ -671,7 +689,7 @@ public class Board {
 	 *
 	 * @return The stream of squares.
 	 */
-	private Stream<Square> privateStream() {
+	private Stream<PiecePosition> privateStream() {
 		return StreamSupport.stream(
 			Spliterators.spliterator(privateIterator(), GameConstants.SQUARES_COUNT, 0),
 			false
@@ -684,7 +702,7 @@ public class Board {
 	 *
 	 * @return The iterator object.
 	 */
-	private Iterator<Square> privateIterator() {
+	private Iterator<PiecePosition> privateIterator() {
 		return new Iterator<>() {
 
 			final int instantMovementOperationCount = gameInfo.moveCounter;
@@ -697,7 +715,7 @@ public class Board {
 			}
 
 			@Override
-			public Square next() {
+			public PiecePosition next() {
 				if (!hasNext()) {
 					throw new NoSuchElementException("No more squares");
 				}
@@ -709,7 +727,7 @@ public class Board {
 				int row = index / GameConstants.BOARD_SIZE;
 				int column = index % GameConstants.BOARD_SIZE;
 				index++;
-				return getSquare(Position.of(row, column));
+				return new PiecePosition(grid[row][column], Position.of(row, column));
 			}
 		};
 	}
@@ -723,10 +741,10 @@ public class Board {
 	 *
 	 * @return The movements object.
 	 */
-	private PieceMovement privateGetMovements(Square square) {
-		return square.getPiece().isPawn()
-				? getPawnMovements(square)
-				: getNonPawnMovements(square);
+	private PieceMovement privateGetMovements(Position position) {
+		return grid[position.getRow()][position.getColumn()].isPawn()
+				? getPawnMovements(position)
+				: getNonPawnMovements(position);
 	}
 
 	/**
@@ -738,9 +756,13 @@ public class Board {
 	 *
 	 * @return The movements container.
 	 */
-	private PieceMovement getNonPawnMovements(Square square) {
-		int maxMoveLength = getMaxPieceMovementLength(square.getPiece().getType());
-		List<DirectionAdjuster> directionAdjusters = getMovementTemplate(square.getPiece());
+	private PieceMovement getNonPawnMovements(Position square) {
+		int maxMoveLength = getMaxPieceMovementLength(
+			grid[square.getRow()][square.getColumn()].getType()
+		);
+		List<DirectionAdjuster> directionAdjusters = getMovementTemplate(
+			grid[square.getRow()][square.getColumn()]
+		);
 		boolean[] invalidDirection = new boolean[directionAdjusters.size()];
 		List<MovementTarget> targets = new ArrayList<>();
 		Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
@@ -748,18 +770,19 @@ public class Board {
 			for (int t = 0; t < directionAdjusters.size(); t++) {
 				if (!invalidDirection[t]) {
 					DirectionAdjuster directionAdjuster = directionAdjusters.get(t);
-					int targetRow = square.getPosition().getRow() + mLength * directionAdjuster.getRowAdjuster();
-					int targetColumn = square.getPosition().getColumn()
+					int targetRow = square.getRow() + mLength * directionAdjuster.getRowAdjuster();
+					int targetColumn = square.getColumn()
 							+ mLength * directionAdjuster.getColumnAdjuster();
 					if (isInsideBoard(targetRow, targetColumn)) {
-						Square targetSquare = getSquare(Position.of(targetRow, targetColumn));
-						int moveValue = square.getValue() * targetSquare.getValue();
+						Piece targetPiece = grid[targetRow][targetColumn];
+						int moveValue = grid[square.getRow()][square.getColumn()].getValue()
+								* (targetPiece == null ? 0 : targetPiece.getValue());
 						if (moveValue <= 0) {
 							if (moveValue < 0) {
 								invalidDirection[t] = true;
 							}
 							if (!isKingInCheckWithMove(
-								square.getPosition(), Position.of(targetRow, targetColumn), null
+								square, Position.of(targetRow, targetColumn), null
 							)) {
 								int movementFlags = 0;
 								if (moveValue < 0) {
@@ -769,7 +792,7 @@ public class Board {
 								pieceMovementMetaBuilder.incrementTotalMovements();
 								targets.add(
 									new MovementTarget(
-										square.getPiece(),
+										grid[square.getRow()][square.getColumn()],
 										Position.of(targetRow, targetColumn),
 										movementFlags
 									)
@@ -784,14 +807,17 @@ public class Board {
 				}
 			}
 		}
-		if (square.getPiece().isKing()) {
+		if (grid[square.getRow()][square.getColumn()].isKing()) {
 			List<MovementTarget> castlingTargets = getCastlingTargets(square);
 			pieceMovementMetaBuilder.incrementTotalMovements(castlingTargets.size());
 			pieceMovementMetaBuilder.incrementCastlings(castlingTargets.size());
 			targets.addAll(castlingTargets);
 		}
 		return new PieceMovement(
-			new MovementOrigin(square.getPiece(), square.getPosition()),
+			new MovementOrigin(
+				grid[square.getRow()][square.getColumn()],
+				square
+			),
 			targets,
 			pieceMovementMetaBuilder.build()
 		);
@@ -811,34 +837,36 @@ public class Board {
 	 * @return A value <code>true</code> if the king will enter in a check state, or
 	 *         <code>false</code> otherwise.
 	 */
-	private boolean isKingInCheckWithMove(Position originPosition, Position targetPosition,
-			Position capturedPawnEnPassant) {
-		Square square = getSquare(originPosition);
-		Color color = square.getPiece().getColor();
-		if (!isKingPresent(color)) {
+	private boolean isKingInCheckWithMove(
+			Position originPosition,
+			Position targetPosition,
+			Position capturedPawnEnPassant
+	) {
+		if (!gameInfo.isKingPresent(grid[originPosition.getRow()][originPosition.getColumn()].getColor())) {
 			return false;
 		}
-		Square targetSquare = getSquare(targetPosition);
-		Piece temp = null;
-		if (targetSquare.isNotEmpty()) {
-			temp = targetSquare.getPiece();
-		}
-		targetSquare.setPiece(square.getPiece());
-		square.setEmpty();
+		Color color = grid[originPosition.getRow()][originPosition.getColumn()].getColor();
+		Piece temp = grid[targetPosition.getRow()][targetPosition.getColumn()];
+		grid[targetPosition.getRow()][targetPosition.getColumn()] = grid[originPosition.getRow()][originPosition
+			.getColumn()];
+		grid[originPosition.getRow()][originPosition.getColumn()] = null;
 		Piece capturedEnPassantPawn = null;
 		if (capturedPawnEnPassant != null) {
-			capturedEnPassantPawn = getSquare(capturedPawnEnPassant).getPiece();
-			getSquare(capturedPawnEnPassant).setEmpty();
+			capturedEnPassantPawn = grid[capturedPawnEnPassant.getRow()][capturedPawnEnPassant.getColumn()];
+			grid[capturedPawnEnPassant.getRow()][capturedPawnEnPassant.getColumn()] = null;
 		}
-		Position kingPosition = getKingPosition(color);
+		Position kingPosition = grid[targetPosition.getRow()][targetPosition.getColumn()].isKing()
+				? targetPosition
+				: gameInfo.getKingPosition(color);
 		boolean underAttack = isUnderAttack(
 			kingPosition,
-			color.getOpposite()
+			grid[kingPosition.getRow()][kingPosition.getColumn()].getColor().getOpposite()
 		);
-		square.setPiece(targetSquare.getPiece());
-		targetSquare.setPiece(temp);
+		grid[originPosition.getRow()][originPosition.getColumn()] = grid[targetPosition.getRow()][targetPosition
+			.getColumn()];
+		grid[targetPosition.getRow()][targetPosition.getColumn()] = temp;
 		if (capturedPawnEnPassant != null) {
-			getSquare(capturedPawnEnPassant).setPiece(capturedEnPassantPawn);
+			grid[capturedPawnEnPassant.getRow()][capturedPawnEnPassant.getColumn()] = capturedEnPassantPawn;
 		}
 		return underAttack;
 	}
@@ -859,9 +887,8 @@ public class Board {
 					int targetRow = position.getRow() + mLength * directionAdjuster.getRowAdjuster();
 					int targetColumn = position.getColumn() + mLength * directionAdjuster.getColumnAdjuster();
 					if (isInsideBoard(targetRow, targetColumn)) {
-						Square targetSquare = getSquare(Position.of(targetRow, targetColumn));
-						if (targetSquare.isNotEmpty()) {
-							Piece targetPiece = targetSquare.getPiece();
+						if (grid[targetRow][targetColumn] != null) {
+							Piece targetPiece = grid[targetRow][targetColumn];
 							if (targetPiece.getColor().equals(color)
 									&& (targetPiece.isQueen()
 											|| targetPiece.isRook() && (position.getRow() == targetRow
@@ -889,12 +916,9 @@ public class Board {
 			int targetRow = position.getRow() - direction;
 			int targetColumn = position.getColumn() + i;
 			if (isInsideBoard(targetRow, targetColumn)) {
-				Square targetSquare = getSquare(Position.of(targetRow, targetColumn));
-				if (targetSquare.isNotEmpty()) {
-					Piece piece = targetSquare.getPiece();
-					if (piece.isPawn() && piece.getColor().equals(color)) {
-						return true;
-					}
+				Piece piece = grid[targetRow][targetColumn];
+				if (piece != null && piece.isPawn() && piece.getColor().equals(color)) {
+					return true;
 				}
 			}
 		}
@@ -906,10 +930,10 @@ public class Board {
 			int targetRow = position.getRow() + knightMoveTemplate.get(t).getRowAdjuster();
 			int targetColumn = position.getColumn() + knightMoveTemplate.get(t).getColumnAdjuster();
 			if (isInsideBoard(targetRow, targetColumn)) {
-				Square targetSquare = getSquare(Position.of(targetRow, targetColumn));
-				if (targetSquare.isNotEmpty()
-						&& targetSquare.getPiece().isKnight()
-						&& targetSquare.getPiece().getColor().equals(color)) {
+				Piece piece = grid[targetRow][targetColumn];
+				if (piece != null
+						&& piece.isKnight()
+						&& piece.getColor().equals(color)) {
 					return true;
 				}
 			}
@@ -917,60 +941,14 @@ public class Board {
 		return false;
 	}
 
-	/**
-	 * Retrieves the position of the king of the specific color.
-	 *
-	 * @param color The color of the required king piece.
-	 *
-	 * @return The position of the king.
-	 *
-	 * @throws KingNotFound If the king piece is not in the board.
-	 *
-	 * @see #isKingPresent(Color)
-	 */
-	public Position getKingPosition(Color color) {
-		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
-			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
-				Square square = getSquare(Position.of(row, column));
-				if (square.isNotEmpty()
-						&& square.getPiece().isKing()
-						&& square.getPiece().getColor().equals(color)) {
-					return Position.of(row, column);
-				}
-			}
-		}
-		throw new KingNotFound(color);
-	}
-
-	/**
-	 * Evaluates if the king piece of the specific color is present in the board. This board
-	 * implementation allow some operation to be done without king piece.
-	 *
-	 * @param color The color of required king.
-	 *
-	 * @return A value <code>true</code> if the king is present, or <code>false</code> otherwise.
-	 */
-	public boolean isKingPresent(Color color) {
-		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
-			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
-				Square square = getSquare(Position.of(row, column));
-				if (square.isNotEmpty()
-						&& square.getPiece().isKing()
-						&& square.getPiece().getColor().equals(color)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private List<MovementTarget> getCastlingTargets(Square kingSquare) {
+	private List<MovementTarget> getCastlingTargets(Position kingSquare) {
 		List<Position> rookPositions = new ArrayList<>(2);
-		if (gameInfo.isKingSideCastlingAvailable(kingSquare.getPiece().getColor())) {
-			rookPositions.add(getKingSideRookSquare(kingSquare.getPiece().getColor()));
+		Piece kingPiece = grid[kingSquare.getRow()][kingSquare.getColumn()];
+		if (gameInfo.isKingSideCastlingAvailable(kingPiece.getColor())) {
+			rookPositions.add(getKingSideRookSquare(kingPiece.getColor()));
 		}
-		if (gameInfo.isQueenSideCastlingAvailable(kingSquare.getPiece().getColor())) {
-			rookPositions.add(getQueenSideRookSquare(kingSquare.getPiece().getColor()));
+		if (gameInfo.isQueenSideCastlingAvailable(kingPiece.getColor())) {
+			rookPositions.add(getQueenSideRookSquare(kingPiece.getColor()));
 		}
 
 		if (rookPositions.isEmpty()) {
@@ -978,30 +956,29 @@ public class Board {
 		}
 		List<MovementTarget> targets = new ArrayList<>();
 		for (Position rookPosition : rookPositions) {
-			int direction = Integer.signum(rookPosition.getColumn() - kingSquare.getPosition().getColumn());
+			int direction = Integer.signum(rookPosition.getColumn() - kingSquare.getColumn());
 			int tLength = 0;
 			boolean invalidCastling = false;
-			int distance = Math.abs(rookPosition.getColumn() - kingSquare.getPosition().getColumn());
+			int distance = Math.abs(rookPosition.getColumn() - kingSquare.getColumn());
 			while (!invalidCastling && tLength < distance) {
-				int targetColumn = kingSquare.getPosition().getColumn() + tLength * direction;
+				int targetColumn = kingSquare.getColumn() + tLength * direction;
 				if (tLength <= 2 && isUnderAttack(
-					Position.of(kingSquare.getPosition().getRow(), targetColumn),
-					kingSquare.getPiece().getColor().getOpposite()
+					Position.of(kingSquare.getRow(), targetColumn),
+					kingPiece.getColor().getOpposite()
 				)) {
 					invalidCastling = true;
 				}
-				if (tLength > 0
-						&& getSquare(Position.of(kingSquare.getPosition().getRow(), targetColumn)).isNotEmpty()) {
+				if (tLength > 0 && grid[kingSquare.getRow()][targetColumn] != null) {
 					invalidCastling = true;
 				}
 				tLength++;
 			}
 			if (!invalidCastling) {
-				int targetKingColumn = kingSquare.getPosition().getColumn() + 2 * direction;
+				int targetKingColumn = kingSquare.getColumn() + 2 * direction;
 				targets.add(
 					new MovementTarget(
-						kingSquare.getPiece(),
-						Position.of(kingSquare.getPosition().getRow(), targetKingColumn),
+						kingPiece,
+						Position.of(kingSquare.getRow(), targetKingColumn),
 						GameConstants.CASTLING
 					)
 				);
@@ -1094,24 +1071,28 @@ public class Board {
 		throw new ChessError(String.format("Unexpected piece type: %s", type));
 	}
 
-	private PieceMovement getPawnMovements(Square pawnSquare) {
+	private PieceMovement getPawnMovements(Position pawnSquare) {
 		List<MovementTarget> targets = new ArrayList<>();
 		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-		for (DirectionAdjuster directionAjduster : getMovementTemplate(pawnSquare.getPiece())) {
-			int targetRow = pawnSquare.getPosition().getRow() + directionAjduster.getRowAdjuster();
-			int targetColumn = pawnSquare.getPosition().getColumn() + directionAjduster.getColumnAdjuster();
+		for (DirectionAdjuster directionAjduster : getMovementTemplate(
+			grid[pawnSquare.getRow()][pawnSquare.getColumn()]
+		)) {
+			int targetRow = pawnSquare.getRow() + directionAjduster.getRowAdjuster();
+			int targetColumn = pawnSquare.getColumn() + directionAjduster.getColumnAdjuster();
+			Position targetPosition = Position.of(targetRow, targetColumn);
 			if (isInsideBoard(targetRow, targetColumn)) {
-				Square targetSquare = getSquare(Position.of(targetRow, targetColumn));
-				boolean isMovementForward = isValidPawnMovementForward(pawnSquare, targetSquare);
-				boolean isCapture = isValidPawnCaptureMovement(pawnSquare, targetSquare);
-				boolean isEnPassant = isCapture && targetSquare.isEmpty();
+				boolean isMovementForward = isValidPawnMovementForward(pawnSquare, targetPosition);
+				boolean isCapture = isValidPawnCaptureMovement(pawnSquare, targetPosition);
+				boolean isEnPassant = isCapture && grid[targetRow][targetColumn] == null;
 				if ((isMovementForward || isCapture)
 						&& !isKingInCheckWithMove(
-							pawnSquare.getPosition(),
-							targetSquare.getPosition(),
-							isEnPassant ? Position.of(pawnSquare.getPosition().getRow(), targetColumn) : null
+							pawnSquare,
+							targetPosition,
+							isEnPassant ? Position.of(pawnSquare.getRow(), targetColumn) : null
 						)) {
-					boolean isPawnPromotion = targetRow == getPawnPromotionRow(pawnSquare.getPiece().getColor());
+					boolean isPawnPromotion = targetRow == getPawnPromotionRow(
+						grid[pawnSquare.getRow()][pawnSquare.getColumn()].getColor()
+					);
 					List<PieceType> targetPieces = isPawnPromotion
 							? pawnPromotionReplacements
 							: pawnNonPromotionReplacements;
@@ -1132,8 +1113,11 @@ public class Board {
 						pieceMovementMetaBuilder.incrementTotalMovements();
 						targets.add(
 							new MovementTarget(
-								Piece.get(pieceType, pawnSquare.getPiece().getColor()),
-								targetSquare.getPosition(),
+								Piece.get(
+									pieceType,
+									grid[pawnSquare.getRow()][pawnSquare.getColumn()].getColor()
+								),
+								targetPosition,
 								movementFlags
 							)
 						);
@@ -1142,7 +1126,10 @@ public class Board {
 			}
 		}
 		return new PieceMovement(
-			new MovementOrigin(pawnSquare.getPiece(), pawnSquare.getPosition()),
+			new MovementOrigin(
+				grid[pawnSquare.getRow()][pawnSquare.getColumn()],
+				pawnSquare
+			),
 			targets,
 			pieceMovementMetaBuilder.build()
 		);
@@ -1154,34 +1141,35 @@ public class Board {
 				: BLACK_PAWN_PROMOTION_ROW;
 	}
 
-	private boolean isValidPawnCaptureMovement(Square pawnSquare, Square targetSquare) {
-		if (pawnSquare.getPosition().getColumn() == targetSquare.getPosition().getColumn()) {
+	private boolean isValidPawnCaptureMovement(Position pawnSquare, Position targetSquare) {
+		if (pawnSquare.getColumn() == targetSquare.getColumn()) {
 			return false;
 		}
-		int moveValue = pawnSquare.getValue() * targetSquare.getValue();
+		Piece targetPiece = grid[targetSquare.getRow()][targetSquare.getColumn()];
+		int moveValue = grid[pawnSquare.getRow()][pawnSquare.getColumn()].getValue()
+				* (targetPiece == null ? 0 : targetPiece.getValue());
 		if (moveValue < 0) {
 			return true;
 		}
 		return moveValue == 0
 				&& gameInfo.enPassantTargetSquare != null
-				&& gameInfo.enPassantTargetSquare.equals(targetSquare.getPosition());
+				&& gameInfo.enPassantTargetSquare.equals(targetSquare);
 	}
 
-	private boolean isValidPawnMovementForward(Square pawnSquare, Square targetSquare) {
-		if (targetSquare.isNotEmpty()) {
+	private boolean isValidPawnMovementForward(Position pawnSquare, Position targetSquare) {
+		if (grid[targetSquare.getRow()][targetSquare.getColumn()] != null) {
 			return false;
 		}
-		if (pawnSquare.getPosition().getColumn() != targetSquare.getPosition().getColumn()) {
+		if (pawnSquare.getColumn() != targetSquare.getColumn()) {
 			return false;
 		}
-		if (Math.abs(pawnSquare.getPosition().getRow() - targetSquare.getPosition().getRow()) == 2) {
-			int pawnInitialRow = getPawnInitialRow(pawnSquare.getPiece().getColor());
-			if (pawnInitialRow != pawnSquare.getPosition().getRow()) {
+		if (Math.abs(pawnSquare.getRow() - targetSquare.getRow()) == 2) {
+			int pawnInitialRow = getPawnInitialRow(grid[pawnSquare.getRow()][pawnSquare.getColumn()].getColor());
+			if (pawnInitialRow != pawnSquare.getRow()) {
 				return false;
 			}
-			int midRow = (pawnSquare.getPosition().getRow() + targetSquare.getPosition().getRow()) / 2;
-			Square midSquare = getSquare(Position.of(midRow, pawnSquare.getPosition().getColumn()));
-			if (midSquare.isNotEmpty()) {
+			int midRow = (pawnSquare.getRow() + targetSquare.getRow()) / 2;
+			if (grid[midRow][pawnSquare.getColumn()] != null) {
 				return false;
 			}
 		}
@@ -1199,19 +1187,6 @@ public class Board {
 		return color.isWhite()
 				? WHITE_PAWN_INITIAL_ROW
 				: BLACK_PAWN_INITIAL_ROW;
-	}
-
-	/**
-	 * Retrieves the square object located at the specific position indicated by
-	 * <code>[row, column]</code> pair.
-	 *
-	 * @param row The position row number.
-	 * @param column The position column number.
-	 *
-	 * @return The square object.
-	 */
-	private Square getSquare(Position position) {
-		return grid[position.getRow()][position.getColumn()];
 	}
 
 	/**
@@ -1252,13 +1227,12 @@ public class Board {
 		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
 			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
 				builder.append("│");
-				Square square = getSquare(Position.of(row, column));
-				if (square.isEmpty()) {
+				if (grid[row][column] == null) {
 					builder.append("   ");
 				} else {
 					builder
 						.append(' ')
-						.append(square.getPiece().getLetterSymbol())
+						.append(grid[row][column].getLetterSymbol())
 						.append(' ');
 				}
 			}
@@ -1302,97 +1276,18 @@ public class Board {
 		StringBuilder builder = new StringBuilder();
 		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
 			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
-				Square square = getSquare(Position.of(row, column));
 				if (column > 0) {
 					builder.append(' ');
 				}
-				if (square.isEmpty()) {
+				if (grid[row][column] == null) {
 					builder.append('.');
 				} else {
-					builder.append(square.getPiece().getLetterSymbol());
+					builder.append(grid[row][column].getLetterSymbol());
 				}
 			}
 			builder.append(NEWLINE);
 		}
 		return builder.toString();
-	}
-
-	/**
-	 * An auxiliary class to represent a board square. This class has some method to determine if
-	 * the square is empty, etc.
-	 *
-	 * @author Welyab Paula
-	 */
-	private static class Square {
-
-		final Position position;
-
-		Piece piece;
-
-		/**
-		 * Instantiates a square for the for the given location.
-		 *
-		 * @param row The square position row number.
-		 * @param column The square position column number.
-		 */
-		Square(Position position) {
-			this.position = position;
-		}
-
-		void setPiece(Piece piece) {
-			this.piece = piece;
-		}
-
-		/**
-		 * Adjusts this square to be interpreted as empty square.
-		 */
-		void setEmpty() {
-			piece = null;
-		}
-
-		/**
-		 * Evaluates if this square is not empty.
-		 *
-		 * @return A value <code>true</code> if the square is not empty, or <code>false</code>
-		 *         otherwise.
-		 */
-		boolean isNotEmpty() {
-			return !isEmpty();
-		}
-
-		/**
-		 * Evaluates if this square is empty.
-		 *
-		 * @return A value <code>true</code> if the square is empty, or <code>false</code>
-		 *         otherwise.
-		 */
-		boolean isEmpty() {
-			return piece == null;
-		}
-
-		Position getPosition() {
-			return position;
-		}
-
-		/**
-		 * Retrieves the square content code for its current state.
-		 *
-		 * @return The square content value.
-		 *
-		 * @see SquareContent
-		 */
-		int getValue() {
-			return isEmpty()
-					? SquareContent.EMPTY
-					: getPiece().getValue();
-		}
-
-		Piece getPiece() {
-			if (isEmpty()) {
-				throw new EmptySquareException(position.getRow(), position.getColumn());
-			}
-			return piece;
-		}
 	}
 
 	/**
@@ -1453,7 +1348,11 @@ public class Board {
 		}
 	}
 
-	private class GameInfo implements Copiable<GameInfo> {
+	private static Color calculateNextSideToMove(int movementCounter, int movementAdjuster) {
+		return (movementCounter + movementAdjuster) % 2 == 0 ? Color.WHITE : Color.BLACK;
+	}
+
+	private static class GameInfo implements Copiable<GameInfo> {
 
 		int moveSideAdjuster;
 
@@ -1465,12 +1364,33 @@ public class Board {
 
 		Position enPassantTargetSquare = null;
 
-		/**
-		 *
-		 */
+		Position blackKingPosition;
+
+		Position whiteKingPosition;
+
 		int castlingFlags;
 
 		GameInfo() {
+		}
+
+		void setKingPosition(Color color, Position position) {
+			if (color.isWhite()) {
+				whiteKingPosition = position;
+			} else {
+				blackKingPosition = position;
+			}
+		}
+
+		Position getKingPosition(Color color) {
+			return color.isWhite()
+					? whiteKingPosition
+					: blackKingPosition;
+		}
+
+		boolean isKingPresent(Color color) {
+			return color.isWhite()
+					? whiteKingPosition != null
+					: blackKingPosition != null;
 		}
 
 		void decrementMoveCounter() {
@@ -1497,6 +1417,8 @@ public class Board {
 			copy.halfMoveCounter = halfMoveCounter;
 			copy.enPassantTargetSquare = enPassantTargetSquare;
 			copy.castlingFlags = castlingFlags;
+			copy.whiteKingPosition = whiteKingPosition;
+			copy.blackKingPosition = blackKingPosition;
 			return copy;
 		}
 
@@ -1562,7 +1484,7 @@ public class Board {
 			}
 			return new StringBuilder()
 				.append("Next: ")
-				.append(getActiveColor().getName())
+				.append(calculateNextSideToMove(moveCounter, moveSideAdjuster))
 				.append(", ")
 				.append("Full moves: ")
 				.append(fullMoveCounter)

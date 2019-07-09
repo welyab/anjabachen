@@ -23,13 +23,13 @@ package com.welyab.anjabachen;
  * @see Board#Board(java.util.List, BoardConfig)
  */
 class PiecePosition {
-	
+
 	/** The piece. */
 	private final Piece piece;
-	
+
 	/** The position. */
 	private final Position position;
-	
+
 	/**
 	 * Creates a new instance.
 	 *
@@ -40,16 +40,26 @@ class PiecePosition {
 		this.piece = piece;
 		this.position = position;
 	}
-	
+
+	public boolean isEmpty() {
+		return piece == null;
+	}
+
 	/**
 	 * Retrieves the underlying piece.
 	 *
 	 * @return The piece.
 	 */
 	public Piece getPiece() {
+		if (isEmpty()) {
+			throw new EmptySquareException(
+				position.getRow(),
+				position.getColumn()
+			);
+		}
 		return piece;
 	}
-	
+
 	/**
 	 * Retrieves the underlying position.
 	 *
@@ -58,7 +68,7 @@ class PiecePosition {
 	public Position getPosition() {
 		return position;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PiecePosition [piece=" + piece + ", position=" + position + "]";
