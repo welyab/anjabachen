@@ -44,6 +44,6 @@ public class MovementOrigin {
 
 	@Override
 	public String toString() {
-		return "MovementOrigin [piece=" + piece + ", position=" + position + "]";
+		return "Origin " + piece + ", position=" + position + "]";
 	}
 }

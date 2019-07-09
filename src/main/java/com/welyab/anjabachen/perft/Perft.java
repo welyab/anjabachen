@@ -15,190 +15,109 @@
  */
 package com.welyab.anjabachen.perft;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
 import com.welyab.anjabachen.Board;
-import com.welyab.anjabachen.ChessException;
 import com.welyab.anjabachen.MovementBag;
 import com.welyab.anjabachen.MovementTarget;
 import com.welyab.anjabachen.PieceMovement;
 import com.welyab.anjabachen.PieceMovementMeta;
 
+/**
+ * Performs
+ *
+ * @author Welyab Paula
+ */
 public class Perft {
 
-	private final List<MetadataInfoPrinter> printers = Collections.unmodifiableList(
-		Arrays.asList(
-			new MetadataInfoPrinter(
-				"       Depth",
-				(p, e) -> fixedWidth(p.columnName.length(), e.deepth)
-			),
-			new MetadataInfoPrinter(
-				"      Nodes",
-				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getTotalMovements())
-			),
-			new MetadataInfoPrinter(
-				"   Captures",
-				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getCaptureCount())
-			),
-			new MetadataInfoPrinter(
-				"  En_passant",
-				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getEnPassantCount())
-			),
-			new MetadataInfoPrinter(
-				"     Castling",
-				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getCastlingsCount())
-			),
-			new MetadataInfoPrinter(
-				"Promotions",
-				(p, e) -> fixedWidth(p.columnName.length(), e.metadata.getPromotionCount())
-			),
-			new MetadataInfoPrinter(
-				"     Checks",
-				(p, e) -> fixedWidth(p.columnName.length(), 0)
-			),
-			new MetadataInfoPrinter(
-				"Discovery_Checks",
-				(p, e) -> fixedWidth(p.columnName.length(), 0)
-			),
-			new MetadataInfoPrinter(
-				"Double  Checks",
-				(p, e) -> fixedWidth(p.columnName.length(), 0)
-			),
-			new MetadataInfoPrinter(
-				"  Checkmates",
-				(p, e) -> fixedWidth(p.columnName.length(), 0)
-			)
-		)
-	);
+	private static final int MAX_DEPTH = 6;
 
-	private String fixedWidth(int width, int value) {
-		String format = String.format("%%%dd", width);
-		return String.format(format, value);
+	private Board board;
+
+	private int depth;
+
+	public Perft(Board board) {
+		this(board, MAX_DEPTH);
 	}
 
-	private class PieceMovementMetaEnhancer {
-
-		final PieceMovementMeta metadata;
-
-		final int deepth;
-
-		public PieceMovementMetaEnhancer(PieceMovementMeta metadata, int deepth) {
-			this.metadata = metadata;
-			this.deepth = deepth;
-		}
+	public Perft(Board board, int depth) {
+		this(board.getFen(), depth);
 	}
 
-	private class MetadataInfoPrinter {
+	public Perft(String fen) {
+		this(fen, MAX_DEPTH);
+	}
 
-		final String columnName;
-
-		final BiFunction<MetadataInfoPrinter, PieceMovementMetaEnhancer, String> valueFormatter;
-
-		public MetadataInfoPrinter(
-				String columnName,
-				BiFunction<MetadataInfoPrinter, PieceMovementMetaEnhancer, String> valueFormatter
-		) {
-			this.columnName = columnName;
-			this.valueFormatter = valueFormatter;
-		}
-
-		String format(PieceMovementMetaEnhancer enhancer) {
-			return valueFormatter.apply(this, enhancer);
-		}
+	public Perft(String fen, int depth) {
+		board = new Board(fen);
+		this.depth = depth;
 	}
 
 	public static void main(String[] args) {
-		new Perft().position3();
-	}
-
-	public void position0() {
-		walkTree("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 3);
-	}
-
-	public void position1() {
-		walkTree("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 4);
-	}
-
-	public void position3() {
-		walkTree("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", 6);
-	}
-
-	public void position4() {
-		walkTree("r2q1rk1/pP1p2pp/Q4n2/bbp1p3/Np6/1B3NBn/pPPP1PPP/R3K2R b KQ - 0 1", 4);
-	}
-
-	public void position5() {
-		walkTree("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1", 4);
-	}
-
-	private void walkTree(String fen, int maxDeepth) {
-		Map<Integer, PieceMovementMeta> metas = new HashMap<>();
-		Board board = new Board(fen);
-		System.out.println(board);
-		calc(board, 1, maxDeepth, metas);
-		printInfo(metas);
-	}
-
-	private void printInfo(Map<Integer, PieceMovementMeta> metas) {
-		String columns = printers
-			.stream()
-			.map(p -> p.columnName)
-			.reduce((c1, c2) -> String.format("%s  %s", c1, c2))
-			.get();
-		System.out.println(columns);
-		metas.entrySet()
+		Perft perft = new Perft("4k3/3pp3/8/8/8/8/8/4K3 w - - 0 1", 5);
+		System.out.println(perft.board.toString(true));
+		Map<Integer, PieceMovementMeta> accumulators = new HashMap<>();
+		perft.walkTree(perft.board, 1, accumulators);
+		accumulators
+			.entrySet()
 			.stream()
 			.sorted((e1, e2) -> e1.getKey() - e2.getKey())
-			.map(e -> new PieceMovementMetaEnhancer(e.getValue(), e.getKey()))
-			.forEach(enhancer -> {
-				String values = printers
-					.stream()
-					.map(p -> p.format(enhancer))
-					.reduce((s1, s2) -> String.format("%s  %s", s1, s2))
-					.get();
-				System.out.println(values);
-			});
+			.forEach(System.out::println);
 	}
 
-	private static void calc(Board board, int currentDeepth, int maxDeepth, Map<Integer, PieceMovementMeta> metas) {
-		if (currentDeepth <= maxDeepth) {
-			PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-			MovementBag movements = board.getMovements();
-			PieceMovementMeta meta = movements.getMeta();
-			metas.put(
-				currentDeepth,
-				PieceMovementMeta
-					.builder()
-					.add(meta)
-					.add(metas.getOrDefault(currentDeepth, PieceMovementMeta.empty()))
-					.build()
-			);
-			for (PieceMovement pieceMovement : movements) {
-				for (MovementTarget movementTarget : pieceMovement) {
-					try {
-						board.move(
+	private void walkTree(
+			Board board,
+			int currentDepth,
+			Map<Integer, PieceMovementMeta> accumulators
+	) {
+		Map<Integer, List<Board>> map = new HashMap<>();
+		map.put(1, new ArrayList<>());
+		map.get(1).add(board);
+		for (int i = 1; i <= depth; i++) {
+			List<Board> boards = map.remove(i);
+			for (Board b : boards) {
+				MovementBag bag = b.getMovements();
+				mergeAccumulators(i, bag.getMeta(), accumulators);
+				map.put(i + 1, new ArrayList<>());
+				for (PieceMovement pieceMovement : bag) {
+					for (MovementTarget movementTarget : pieceMovement.getTargets()) {
+						b.move(
 							pieceMovement.getOrigin().getPosition(),
 							movementTarget.getPosition(),
 							movementTarget.getPiece().getType()
 						);
-					} catch (ChessException e) {
-						System.out.println(board.toString(true));
-						throw e;
+						map.get(i + 1).add(new Board(b.getFen()));
+						b.undo();
 					}
-					calc(
-						board,
-						currentDeepth + 1,
-						maxDeepth,
-						metas
-					);
-					board.undo();
 				}
 			}
 		}
+	}
+
+	private void mergeAccumulators(
+			int depth,
+			PieceMovementMeta meta,
+			Map<Integer, PieceMovementMeta> accumulators
+	) {
+		accumulators.put(
+			depth,
+			PieceMovementMeta
+				.builder()
+				.add(
+					accumulators.getOrDefault(
+						depth, PieceMovementMeta.empty()
+					)
+				)
+				.add(meta)
+				.build()
+
+		);
+	}
+
+	public void onDepthResult(BiConsumer<Integer, PieceMovementMeta> metadataConsumer) {
 	}
 }

@@ -15,22 +15,36 @@
  */
 package com.welyab.anjabachen;
 
+/**
+ * Indicates an attempt to perform an operation with a square out of board.
+ *
+ * @author Welyab Paula
+ */
 public class InvalidPosition extends ChessException {
-	
+
+	@SuppressWarnings("javadoc")
+	private static final long serialVersionUID = 1L;
+
+	/** The invalid position row number. */
 	private final int row;
-	
+
+	/** The invalid position column number. */
 	private final int column;
-	
+
+	public InvalidPosition(char file, int rank) {
+		this(Position.toRow(rank), Position.toColumn(file));
+	}
+
 	public InvalidPosition(int row, int column) {
 		super(String.format("The position [%d, %d] is invalid", row, column));
 		this.row = row;
 		this.column = column;
 	}
-	
+
 	public int getRow() {
 		return row;
 	}
-	
+
 	public int getColumn() {
 		return column;
 	}

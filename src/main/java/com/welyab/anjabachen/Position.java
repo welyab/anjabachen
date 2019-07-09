@@ -19,9 +19,49 @@ package com.welyab.anjabachen;
  * A <code>Position</code> is a <code>[row, column]</code> pair that locate a specific square in the
  * game board. A instance of <code>Position</code> is immutable class.
  *
+ * <p>
+ * All operation in the the <code>Board</code> class are made in terms of <code>rows</code> and
+ * <code>columns</code>. The board representation is a 2-dimensional array where the top left most
+ * position is in the position <code>[0, 0]</code>, and bottom right most is in the position
+ * <code>[7, 7]</code>. The piece disposition in the board places the blacks in the top of the
+ * 2-dimensional array, and the whites goes to bottom. So, the <code>Board</code> class rarely use
+ * the terms <i>ranks</i> and <i>files</i> to indicate an specific position. But this class contains
+ * some utility method to translate a <code>[file, rank]</code> based position into a
+ * <code>[row, column]</code> position, and vice versa.
+ *
+ * <p>
+ * <pre>
+ *       ┌───┬───┬───┬───┬───┬───┬───┬───┐
+ * [8] 0 │ r │ n │ b │   │ k │ b │ n │ r │
+ *       ├───┼───┼───┼───┼───┼───┼───┼───┤
+ * [7] 1 │   │   │ p │ p │   │ p │ p │ p │
+ *       ├───┼───┼───┼───┼───┼───┼───┼───┤
+ * [6] 2 │ p │ p │   │   │   │   │   │   │
+ *       ├───┼───┼───┼───┼───┼───┼───┼───┤
+ * [5] 3 │   │   │   │   │ p │ Q │ q │   │
+ *       ├───┼───┼───┼───┼───┼───┼───┼───┤
+ * [4] 4 │   │   │ B │   │ P │   │   │   │
+ *       ├───┼───┼───┼───┼───┼───┼───┼───┤
+ * [3] 5 │   │   │   │   │   │   │   │   │
+ *       ├───┼───┼───┼───┼───┼───┼───┼───┤
+ * [2] 6 │ P │ P │ P │ P │   │ P │ P │ P │
+ *       ├───┼───┼───┼───┼───┼───┼───┼───┤
+ * [1] 7 │ R │ N │ B │   │ K │   │ N │ R │
+ *  |  | └───┴───┴───┴───┴───┴───┴───┴───┘
+ *  |  |   0   1   2   3   4   5   6   7 --------+
+ *  |  |  [A] [B] [C] [D] [E] [F] [G] [H]----+   |
+ *  |  |                                     |   |
+ *  |  |                     files <---------+   |
+ *  |  |                   columns <-------------+
+ *  |  +-----> rows
+ *  +--------> ranks
+ * </pre>
+ *
  * @author Welyab Paula
  *
+ * @see Board
  * @see #of(int, int)
+ * @see #of(char, int)
  */
 public class Position {
 
@@ -38,6 +78,22 @@ public class Position {
 		{new Position(5, 0),new Position(5, 1),new Position(5, 2),new Position(5, 3),new Position(5, 4),new Position(5, 5),new Position(5, 6),new Position(5, 7)},
 		{new Position(6, 0),new Position(6, 1),new Position(6, 2),new Position(6, 3),new Position(6, 4),new Position(6, 5),new Position(6, 6),new Position(6, 7)},
 		{new Position(7, 0),new Position(7, 1),new Position(7, 2),new Position(7, 3),new Position(7, 4),new Position(7, 5),new Position(7, 6),new Position(7, 7)},
+	};
+	//@formatter:on
+
+	/**
+	 * Cache all board position based on files and ranks.
+	 */
+	// @formatter:off
+	private static final String[][] POSITIONS_NOTATIONS = {
+		{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"},
+		{"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"},
+		{"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"},
+		{"a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5"},
+		{"a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"},
+		{"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"},
+		{"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"},
+		{"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"}
 	};
 	//@formatter:on
 
@@ -107,10 +163,20 @@ public class Position {
 		return this.row == row && this.column == column;
 	}
 
+	/**
+	 * Retrieves the file letter for the column of this position.
+	 *
+	 * @return The file letter symbol.
+	 */
 	public char getFile() {
 		return (char) ('a' + column);
 	}
 
+	/**
+	 * Retrieves the rank number of the row of this position.
+	 *
+	 * @return The the rank number.
+	 */
 	public int getRank() {
 		return 8 - row;
 	}
@@ -132,13 +198,47 @@ public class Position {
 		return POSITIONS[row][column];
 	}
 
+	/**
+	 * Takes a <code>[file, rank]</code> based position and returns the equivalent
+	 * <code>Position</code> object to it.
+	 *
+	 * @param file The file letter.
+	 * @param rank The rank number.
+	 *
+	 * @return The associated position.
+	 */
 	public static Position of(char file, int rank) {
 		file = Character.toLowerCase(file);
 		if (file < 'a' || file > 'h' || rank < 1 || rank > 8) {
+			throw new InvalidPosition(file, rank);
 		}
-		// 1 2 3 4 5 6 7 8 rank
-		// 7 6 5 4 3 2 1 0 row
 		return of(8 - rank, file - 'a');
+	}
+
+	public static int toRow(int rank) {
+		return 8 - rank;
+	}
+
+	public static int toColumn(int file) {
+		return file - 'a';
+	}
+
+	public static char toFile(int column) {
+		return (char) ('a' + column);
+	}
+
+	public static int toRank(int row) {
+		return 8 - row;
+	}
+
+	/**
+	 * Retrieves a representation of this position object as it appears in a PGN file. For the
+	 * position <code>[row = 0, column = 0]</code> will return the notation <code>"a8"</code>.
+	 *
+	 * @return The PGN position notation.
+	 */
+	public String getPgnPosition() {
+		return POSITIONS_NOTATIONS[row][column];
 	}
 
 	@Override

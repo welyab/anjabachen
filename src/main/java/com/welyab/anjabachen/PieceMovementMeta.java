@@ -17,15 +17,15 @@ package com.welyab.anjabachen;
 
 public class PieceMovementMeta {
 
+	private int totalMovements;
+
 	private int captureCount;
 
-	private int promotionCount;
-
-	private int totalMovements;
+	private int enPassantCount;
 
 	private int castlingsCount;
 
-	private int enPassantCount;
+	private int promotionCount;
 
 	public static Builder builder() {
 		return new Builder();
@@ -53,6 +53,13 @@ public class PieceMovementMeta {
 
 	public int getTotalMovements() {
 		return totalMovements;
+	}
+
+	@Override
+	public String toString() {
+		return "PieceMovementMeta [totalMovements=" + totalMovements + ", captureCount=" + captureCount
+				+ ", enPassantCount=" + enPassantCount + ", castlingsCount=" + castlingsCount + ", promotionCount="
+				+ promotionCount + "]";
 	}
 
 	public static final class Builder {
@@ -120,6 +127,5 @@ public class PieceMovementMeta {
 		public PieceMovementMeta build() {
 			return meta;
 		}
-
 	}
 }
