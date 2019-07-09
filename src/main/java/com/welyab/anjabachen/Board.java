@@ -34,59 +34,59 @@ import com.welyab.anjabachen.PieceMovementMeta.Builder;
  * @author Welyab Paula
  */
 public class Board {
-	
+
 	/** FEN notation for the initial position. */
 	private static final String FEN_INITIAL_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-	
+
 	/**
 	 * The king initial column number position.
 	 */
 	private static final int KING_INITIAL_COLUMN = 4;
-	
+
 	/**
 	 * The black king initial row number position.
 	 */
 	private static final int BLACK_KING_INITIAL_ROW = 0;
-	
+
 	/**
 	 * The white king initial row number position.
 	 */
 	private static final int WHITE_KING_INITIAL_ROW = 7;
-	
+
 	/**
 	 * The king's side rook initial column number position.
 	 */
 	private static final int KING_SIDE_ROOK_INITIAL_COLUMN = 7;
-	
+
 	/**
 	 * The queen's side rook initial column number position.
 	 */
 	private static final int QUEEN_SIDE_ROOK_INITIAL_COLUMN = 0;
-	
+
 	/**
 	 * The black rook initial row number position.
 	 */
 	private static final int BLACK_ROOK_INITIAL_ROW = 0;
-	
+
 	/**
 	 * The white rook initial row number position.
 	 */
 	private static final int WHITE_ROOK_INITIAL_ROW = 7;
-	
+
 	private static final int BLACK_PAWN_PROMOTION_ROW = 7;
-	
+
 	private static final int WHITE_PAWN_PROMOTION_ROW = 0;
-	
+
 	private static final int BLACK_PAWN_INITIAL_ROW = 1;
-	
+
 	private static final int WHITE_PAWN_INITIAL_ROW = 6;
-	
+
 	private static final List<PieceType> pawnNonPromotionReplacements = Collections.unmodifiableList(
 		Arrays.asList(
 			PieceType.PAWN
 		)
 	);
-	
+
 	private static final List<PieceType> pawnPromotionReplacements = Collections.unmodifiableList(
 		Arrays.asList(
 			PieceType.QUEEN,
@@ -95,20 +95,20 @@ public class Board {
 			PieceType.KNIGHT
 		)
 	);
-	
+
 	/**
 	 * New line.
 	 */
 	public static final String NEWLINE = String.format("%n");
-	
+
 	private static final int MASK_BLACK_KING_SIDE_CASTLING_AVAILABLE = 0;
-	
+
 	private static final int MASK_BLACK_QUEEN_SIDE_CASTLING_AVAILABLE = 0;
-	
+
 	private static final int MASK_WHITE_KING_SIDE_CASTLING_AVAILABLE = 0;
-	
+
 	private static final int MASK_WHITE_QUEEN_SIDE_CASTLING_AVAILABLE = 0;
-	
+
 	/**
 	 * The movement template for the king piece.
 	 */
@@ -124,7 +124,7 @@ public class Board {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-	
+
 	/**
 	 * The movement template for the queen piece.
 	 */
@@ -140,7 +140,7 @@ public class Board {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-	
+
 	/**
 	 * The movement template for the rook piece.
 	 */
@@ -152,7 +152,7 @@ public class Board {
 			new DirectionAdjuster(+1, +0)
 		)
 	);
-	
+
 	/**
 	 * The movement template for the bishop piece.
 	 */
@@ -164,7 +164,7 @@ public class Board {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-	
+
 	/**
 	 * The movement template for the knight piece.
 	 */
@@ -180,7 +180,7 @@ public class Board {
 			new DirectionAdjuster(-1, -2)
 		)
 	);
-	
+
 	/**
 	 * The movement template for the black pawn.
 	 */
@@ -192,7 +192,7 @@ public class Board {
 			new DirectionAdjuster(+1, -1)
 		)
 	);
-	
+
 	/**
 	 * The movement template for the white pawn.
 	 */
@@ -204,32 +204,32 @@ public class Board {
 			new DirectionAdjuster(-1, -1)
 		)
 	);
-	
+
 	/**
 	 * The 2-dimensional array where the pieces are placed.
 	 */
 	private Square[][] grid;
-	
+
 	private GameInfo gameInfo;
-	
+
 	private final List<MovementLog> movementHistory;
-	
+
 	public Board() {
 		this(FEN_INITIAL_POSITION);
 	}
-	
+
 	public Board(String fen) {
 		this(FENParser.of(fen));
 	}
-	
+
 	private Board(FENParser fenParser) {
 		this(fenParser.getPiecesDisposition(), fenParser.getBoardConfig());
 	}
-	
+
 	public Board(String piecesDisposition, BoardConfig boardConfig) {
 		this(boardStringToPiecePositionList(piecesDisposition), boardConfig);
 	}
-	
+
 	public Board(List<PiecePosition> pieces, BoardConfig boardConfig) {
 		grid = createGrid();
 		pieces.forEach(p -> addPiece(p.getPiece(), p.getPosition()));
@@ -237,10 +237,10 @@ public class Board {
 		movementHistory = new ArrayList<>();
 		validatePosition();
 	}
-	
+
 	private void validatePosition() {
 	}
-	
+
 	private static List<PiecePosition> boardStringToPiecePositionList(String boardString) {
 		List<PiecePosition> dispositionList = new ArrayList<>();
 		int counter = 0;
@@ -265,7 +265,7 @@ public class Board {
 		}
 		return dispositionList;
 	}
-	
+
 	/**
 	 * Creates a 2-dimensional array with size equals to {@link GameConstants#BOARD_SIZE}.
 	 *
@@ -280,16 +280,16 @@ public class Board {
 		}
 		return g;
 	}
-	
+
 	public void addPiece(Piece piece, Position position) {
 		Square square = getSquare(position);
 		square.setPiece(piece);
 	}
-	
+
 	public void move(Position originPosition, Position targetPosition) {
 		move(originPosition, targetPosition, PieceType.QUEEN);
 	}
-	
+
 	public void move(Position originPosition, Position targetPosition, PieceType toPromotePawn) {
 		toPromotePawn = toPromotePawn == null ? PieceType.QUEEN : toPromotePawn;
 		PieceMovement pieceMovement = getMovement(originPosition);
@@ -305,7 +305,7 @@ public class Board {
 				}
 			}
 		}
-		
+
 		if (target == null) {
 			throw new MovementException(
 				String.format(
@@ -316,10 +316,10 @@ public class Board {
 				)
 			);
 		}
-		
+
 		move(pieceMovement.getOrigin(), target);
 	}
-	
+
 	void move(MovementOrigin movementOrigin, MovementTarget movementTarget) {
 		GameInfo copiedGameInfo = gameInfo.copy();
 		Piece capturedPiece = null;
@@ -329,7 +329,7 @@ public class Board {
 		}
 		getSquare(movementTarget.getPosition()).setPiece(movementTarget.getPiece());
 		getSquare(movementOrigin.getPosition()).setEmpty();
-		
+
 		if (GameConstants.isCastling(movementTarget.getMovementFlags())) {
 			Position rookOrigin = Position.of(
 				movementOrigin.getPosition().getRow(),
@@ -343,7 +343,7 @@ public class Board {
 			getSquare(rookTarget).setPiece(getSquare(rookOrigin).getPiece());
 			getSquare(rookOrigin).setEmpty();
 		}
-		
+
 		if (GameConstants.isEnPassant(movementTarget.getMovementFlags())) {
 			Square capturedPawnSquare = getSquare(
 				Position.of(
@@ -354,7 +354,7 @@ public class Board {
 			capturedPiece = capturedPawnSquare.getPiece();
 			capturedPawnSquare.setEmpty();
 		}
-		
+
 		if (movementOrigin.getPiece().isPawn()
 				&& Math.abs(movementOrigin.getPosition().getRow() - movementTarget.getPosition().getRow()) == 2) {
 			int midRow = (movementOrigin.getPosition().getRow() + movementTarget.getPosition().getRow()) / 2;
@@ -362,21 +362,21 @@ public class Board {
 		} else {
 			gameInfo.enPassantTargetSquare = null;
 		}
-		
+
 		if (movementOrigin.getPiece().isPawn() || GameConstants.isCapture(movementTarget.getMovementFlags())) {
 			gameInfo.halfMoveCounter = 0;
 		} else {
 			gameInfo.halfMoveCounter++;
 		}
-		
+
 		if (movementOrigin.getPiece().isBlack()) {
 			gameInfo.fullMoveCounter++;
 		}
-		
+
 		if (movementOrigin.getPiece().isKing()) {
 			gameInfo.invalidateCastling(movementOrigin.getPiece().getColor());
 		}
-		
+
 		if (movementOrigin.getPiece().isRook()) {
 			if (gameInfo.isKingSideCastlingAvailable(movementOrigin.getPiece().getColor())
 					&& getKingSideRookSquare(movementOrigin.getPiece().getColor()).equals(movementOrigin.getPosition())) {
@@ -387,7 +387,7 @@ public class Board {
 				gameInfo.invalidateQueenSideCastling(movementOrigin.getPiece().getColor());
 			}
 		}
-		
+
 		if (capturedPiece != null && capturedPiece.isRook()) {
 			if (gameInfo.isKingSideCastlingAvailable(capturedPiece.getColor())
 					&& getKingSideRookSquare(capturedPiece.getColor()).equals(movementTarget.getPosition())) {
@@ -398,9 +398,9 @@ public class Board {
 				gameInfo.invalidateQueenSideCastling(capturedPiece.getColor());
 			}
 		}
-		
+
 		gameInfo.moveCounter++;
-		
+
 		movementHistory.add(
 			new MovementLog(
 				movementOrigin,
@@ -410,17 +410,17 @@ public class Board {
 			)
 		);
 	}
-	
+
 	private static class MovementLog {
-		
+
 		final MovementOrigin movementOrigin;
-		
+
 		final MovementTarget movementTarget;
-		
+
 		final Piece capturedPiece;
-		
+
 		final GameInfo gameInfo;
-		
+
 		MovementLog(
 				MovementOrigin movementOrigin,
 				MovementTarget movementTarget,
@@ -432,24 +432,24 @@ public class Board {
 			this.capturedPiece = capturedPiece;
 			this.gameInfo = gameInfo;
 		}
-		
+
 		MovementOrigin getMovementOrigin() {
 			return movementOrigin;
 		}
-		
+
 		MovementTarget getMovementTarget() {
 			return movementTarget;
 		}
-		
+
 		Piece getCapturedPiece() {
 			return capturedPiece;
 		}
-		
+
 		GameInfo getGameInfo() {
 			return gameInfo;
 		}
 	}
-	
+
 	static Map<Piece, Integer> pieceValue = new EnumMap<>(Piece.class);
 	static {
 		pieceValue.put(Piece.BLACK_KING, -900);
@@ -465,26 +465,26 @@ public class Board {
 		pieceValue.put(Piece.WHITE_KNIGHT, 3);
 		pieceValue.put(Piece.WHITE_PAWN, 1);
 	}
-	
+
 	public boolean hasPreviousMovement() {
 		return !movementHistory.isEmpty();
 	}
-	
+
 	public void undo() {
 		if (!hasPreviousMovement()) {
 			throw new MovementException("No previous movement to undo");
 		}
-		
+
 		MovementLog movementLog = movementHistory.remove(movementHistory.size() - 1);
 		MovementOrigin movementOrigin = movementLog.getMovementOrigin();
 		MovementTarget movementTarget = movementLog.getMovementTarget();
-		
+
 		Square originSquare = getSquare(movementOrigin.getPosition());
 		Square targetSquare = getSquare(movementTarget.getPosition());
-		
+
 		originSquare.setPiece(movementOrigin.getPiece());
 		targetSquare.setEmpty();
-		
+
 		if (GameConstants.isCapture(movementTarget.getMovementFlags())) {
 			if (GameConstants.isEnPassant(movementTarget.getMovementFlags())) {
 				getSquare(
@@ -497,7 +497,7 @@ public class Board {
 				targetSquare.setPiece(movementLog.getCapturedPiece());
 			}
 		}
-		
+
 		if (GameConstants.isCastling(movementTarget.getMovementFlags())) {
 			Square possibleRookSquare = getSquare(
 				Position.of(
@@ -521,10 +521,10 @@ public class Board {
 				rookSquare.setEmpty();
 			}
 		}
-		
+
 		setGameInfo(movementLog.getGameInfo());
 	}
-	
+
 	/**
 	 * The side color that has the next movement.
 	 *
@@ -533,7 +533,7 @@ public class Board {
 	public Color getActiveColor() {
 		return (gameInfo.moveCounter + gameInfo.moveSideAdjuster) % 2 == 0 ? Color.WHITE : Color.BLACK;
 	}
-	
+
 	public String getFen() {
 		StringBuilder builder = new StringBuilder();
 		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
@@ -559,7 +559,7 @@ public class Board {
 		}
 		builder.append(' ').append(getActiveColor().getLetterSymbol());
 		builder.append(' ');
-		
+
 		StringBuilder castlingAvaiability = new StringBuilder();
 		if (GameConstants.isWhiteKingSideCastling(gameInfo.castlingFlags)) {
 			castlingAvaiability.append('K');
@@ -578,24 +578,24 @@ public class Board {
 		} else {
 			builder.append(castlingAvaiability);
 		}
-		
+
 		builder.append(' ');
-		
+
 		if (gameInfo.enPassantTargetSquare != null) {
 			builder.append(gameInfo.enPassantTargetSquare.getPgnPosition());
 		} else {
 			builder.append('-');
 		}
-		
+
 		builder.append(' ');
 		builder.append(gameInfo.halfMoveCounter);
-		
+
 		builder.append(' ');
 		builder.append(gameInfo.getFullMoveCounter());
-		
+
 		return builder.toString();
 	}
-	
+
 	public boolean isCheck() {
 		if (!isKingPresent(getActiveColor())) {
 			return false;
@@ -606,17 +606,17 @@ public class Board {
 			getWaitingColor()
 		);
 	}
-	
+
 	public boolean isCheckmate() {
 		return isCheck()
 				&& getMovements().isEmpty();
 	}
-	
+
 	public boolean isStalemate() {
 		return !isCheck()
 				&& getMovements().isEmpty();
 	}
-	
+
 	/**
 	 * The side color that is waiting for the opponent movement.
 	 *
@@ -625,7 +625,7 @@ public class Board {
 	public Color getWaitingColor() {
 		return getActiveColor().getOpposite();
 	}
-	
+
 	public MovementBag getMovements() {
 		Iterable<Square> squares = this::privateIterator;
 		List<PieceMovement> movements = new ArrayList<>(32);
@@ -641,11 +641,11 @@ public class Board {
 		}
 		return new MovementBag(movements, pieceMovementMetaBuilder.build());
 	}
-	
+
 	private void setGameInfo(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
 	}
-	
+
 	/**
 	 * Retrieves the available movements for the piece located at given <code>[row/column]</code>
 	 * position.
@@ -664,7 +664,7 @@ public class Board {
 		}
 		return privateGetMovements(square);
 	}
-	
+
 	/**
 	 * Creates a stream of squares. Its expected that the board stated do not change during
 	 * streaming, otherwise a exception will be thrown.
@@ -677,7 +677,7 @@ public class Board {
 			false
 		);
 	}
-	
+
 	/**
 	 * Creates a iterator for iterate over all squares of this board. It is expected that the board
 	 * state do not change during interaction, otherwise a exception will be thrown.
@@ -686,16 +686,16 @@ public class Board {
 	 */
 	private Iterator<Square> privateIterator() {
 		return new Iterator<>() {
-			
+
 			final int instantMovementOperationCount = gameInfo.moveCounter;
-			
+
 			int index = 0;
-			
+
 			@Override
 			public boolean hasNext() {
 				return index < GameConstants.SQUARES_COUNT;
 			}
-			
+
 			@Override
 			public Square next() {
 				if (!hasNext()) {
@@ -713,7 +713,7 @@ public class Board {
 			}
 		};
 	}
-	
+
 	/**
 	 * The same method for retrieve piece available movements as {@link #getMovements(int, int)},
 	 * but without verification indicated in the documentation.
@@ -728,7 +728,7 @@ public class Board {
 				? getPawnMovements(square)
 				: getNonPawnMovements(square);
 	}
-	
+
 	/**
 	 * Generated the movements for piece located in the given position indicated by
 	 * <code>[row, column]</code> pair.
@@ -796,7 +796,7 @@ public class Board {
 			pieceMovementMetaBuilder.build()
 		);
 	}
-	
+
 	/**
 	 * Evaluates if the movement of the piece located in the square indicated by
 	 * <code>[row, column]</code> to the square target square indicated by
@@ -842,7 +842,7 @@ public class Board {
 		}
 		return underAttack;
 	}
-	
+
 	public boolean isUnderAttack(Position position, Color color) {
 		if (isUnderAttackByKnight(position, color)) {
 			return true;
@@ -880,7 +880,7 @@ public class Board {
 		}
 		return false;
 	}
-	
+
 	private boolean isUnderAttackByPawn(Position position, Color color) {
 		int direction = color.isWhite()
 				? -1
@@ -900,7 +900,7 @@ public class Board {
 		}
 		return false;
 	}
-	
+
 	private boolean isUnderAttackByKnight(Position position, Color color) {
 		for (int t = 0; t < knightMoveTemplate.size(); t++) {
 			int targetRow = position.getRow() + knightMoveTemplate.get(t).getRowAdjuster();
@@ -916,7 +916,7 @@ public class Board {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Retrieves the position of the king of the specific color.
 	 *
@@ -941,7 +941,7 @@ public class Board {
 		}
 		throw new KingNotFound(color);
 	}
-	
+
 	/**
 	 * Evaluates if the king piece of the specific color is present in the board. This board
 	 * implementation allow some operation to be done without king piece.
@@ -963,7 +963,7 @@ public class Board {
 		}
 		return false;
 	}
-	
+
 	private List<MovementTarget> getCastlingTargets(Square kingSquare) {
 		List<Position> rookPositions = new ArrayList<>(2);
 		if (gameInfo.isKingSideCastlingAvailable(kingSquare.getPiece().getColor())) {
@@ -972,7 +972,7 @@ public class Board {
 		if (gameInfo.isQueenSideCastlingAvailable(kingSquare.getPiece().getColor())) {
 			rookPositions.add(getQueenSideRookSquare(kingSquare.getPiece().getColor()));
 		}
-		
+
 		if (rookPositions.isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -1009,19 +1009,19 @@ public class Board {
 		}
 		return targets;
 	}
-	
+
 	private Position getKingSideRookSquare(Color color) {
 		return color.isWhite()
 				? Position.of(WHITE_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN)
 				: Position.of(BLACK_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN);
 	}
-	
+
 	private Position getQueenSideRookSquare(Color color) {
 		return color.isWhite()
 				? Position.of(WHITE_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN)
 				: Position.of(BLACK_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN);
 	}
-	
+
 	/**
 	 * Evaluates if the given position is inside the board bounds.
 	 *
@@ -1035,7 +1035,7 @@ public class Board {
 		return row >= 0 && row < GameConstants.BOARD_SIZE
 				&& column >= 0 && column < GameConstants.BOARD_SIZE;
 	}
-	
+
 	/**
 	 * Retrieves the movement template related to the given piece.
 	 *
@@ -1067,7 +1067,7 @@ public class Board {
 		}
 		throw new ChessError(String.format("Invalid piece: %s", piece));
 	}
-	
+
 	/**
 	 * Retrieves the maximum movement length for a piece movement.
 	 *
@@ -1093,7 +1093,7 @@ public class Board {
 		}
 		throw new ChessError(String.format("Unexpected piece type: %s", type));
 	}
-	
+
 	private PieceMovement getPawnMovements(Square pawnSquare) {
 		List<MovementTarget> targets = new ArrayList<>();
 		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
@@ -1147,13 +1147,13 @@ public class Board {
 			pieceMovementMetaBuilder.build()
 		);
 	}
-	
+
 	private int getPawnPromotionRow(Color color) {
 		return color.isWhite()
 				? WHITE_PAWN_PROMOTION_ROW
 				: BLACK_PAWN_PROMOTION_ROW;
 	}
-	
+
 	private boolean isValidPawnCaptureMovement(Square pawnSquare, Square targetSquare) {
 		if (pawnSquare.getPosition().getColumn() == targetSquare.getPosition().getColumn()) {
 			return false;
@@ -1166,7 +1166,7 @@ public class Board {
 				&& gameInfo.enPassantTargetSquare != null
 				&& gameInfo.enPassantTargetSquare.equals(targetSquare.getPosition());
 	}
-	
+
 	private boolean isValidPawnMovementForward(Square pawnSquare, Square targetSquare) {
 		if (targetSquare.isNotEmpty()) {
 			return false;
@@ -1187,7 +1187,7 @@ public class Board {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Retrieves the initial row number of a pawn piece.
 	 *
@@ -1200,7 +1200,7 @@ public class Board {
 				? WHITE_PAWN_INITIAL_ROW
 				: BLACK_PAWN_INITIAL_ROW;
 	}
-	
+
 	/**
 	 * Retrieves the square object located at the specific position indicated by
 	 * <code>[row, column]</code> pair.
@@ -1213,7 +1213,7 @@ public class Board {
 	private Square getSquare(Position position) {
 		return grid[position.getRow()][position.getColumn()];
 	}
-	
+
 	/**
 	 * Outputs a text based board drawing like as follow:
 	 *
@@ -1245,7 +1245,7 @@ public class Board {
 	public String toString() {
 		return toString(false);
 	}
-	
+
 	public String toString(boolean printCoordinates) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("┌───┬───┬───┬───┬───┬───┬───┬───┐").append(NEWLINE);
@@ -1279,7 +1279,7 @@ public class Board {
 		}
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Outputs a text based board drawing like as follow:
 	 *
@@ -1316,7 +1316,7 @@ public class Board {
 		}
 		return builder.toString();
 	}
-	
+
 	/**
 	 * An auxiliary class to represent a board square. This class has some method to determine if
 	 * the square is empty, etc.
@@ -1324,11 +1324,11 @@ public class Board {
 	 * @author Welyab Paula
 	 */
 	private static class Square {
-		
+
 		final Position position;
-		
+
 		Piece piece;
-		
+
 		/**
 		 * Instantiates a square for the for the given location.
 		 *
@@ -1338,18 +1338,18 @@ public class Board {
 		Square(Position position) {
 			this.position = position;
 		}
-		
+
 		void setPiece(Piece piece) {
 			this.piece = piece;
 		}
-		
+
 		/**
 		 * Adjusts this square to be interpreted as empty square.
 		 */
 		void setEmpty() {
 			piece = null;
 		}
-		
+
 		/**
 		 * Evaluates if this square is not empty.
 		 *
@@ -1359,7 +1359,7 @@ public class Board {
 		boolean isNotEmpty() {
 			return !isEmpty();
 		}
-		
+
 		/**
 		 * Evaluates if this square is empty.
 		 *
@@ -1369,11 +1369,11 @@ public class Board {
 		boolean isEmpty() {
 			return piece == null;
 		}
-		
+
 		Position getPosition() {
 			return position;
 		}
-		
+
 		/**
 		 * Retrieves the square content code for its current state.
 		 *
@@ -1386,7 +1386,7 @@ public class Board {
 					? SquareContent.EMPTY
 					: getPiece().getValue();
 		}
-		
+
 		Piece getPiece() {
 			if (isEmpty()) {
 				throw new EmptySquareException(position.getRow(), position.getColumn());
@@ -1394,7 +1394,7 @@ public class Board {
 			return piece;
 		}
 	}
-	
+
 	/**
 	 * A direction adjuster is a row adjuster and column adjuster pair that helps the piece movement
 	 * generation to generate the target positions.
@@ -1412,17 +1412,17 @@ public class Board {
 	 * @author Welyab Paula
 	 */
 	private static class DirectionAdjuster {
-		
+
 		/**
 		 * The row adjuster value.
 		 */
 		final int rowAdjuster;
-		
+
 		/**
 		 * The column adjuster value.
 		 */
 		final int columnAdjsuter;
-		
+
 		/**
 		 * Creates a direction adjuster instance using given values.
 		 *
@@ -1433,7 +1433,7 @@ public class Board {
 			this.rowAdjuster = rowAdjuster;
 			this.columnAdjsuter = columnAdjsuter;
 		}
-		
+
 		/**
 		 * Retrieves the row adjuster value.
 		 *
@@ -1442,7 +1442,7 @@ public class Board {
 		int getRowAdjuster() {
 			return rowAdjuster;
 		}
-		
+
 		/**
 		 * Retrieves the column adjuster value.
 		 *
@@ -1452,31 +1452,31 @@ public class Board {
 			return columnAdjsuter;
 		}
 	}
-	
+
 	private class GameInfo implements Copiable<GameInfo> {
-		
+
 		int moveSideAdjuster;
-		
+
 		int moveCounter = 0;
-		
+
 		int fullMoveCounter = 1;
-		
+
 		int halfMoveCounter = 0;
-		
+
 		Position enPassantTargetSquare = null;
-		
+
 		/**
 		 *
 		 */
 		int castlingFlags;
-		
+
 		GameInfo() {
 		}
-		
+
 		void decrementMoveCounter() {
 			moveCounter--;
 		}
-		
+
 		GameInfo(BoardConfig config) {
 			moveSideAdjuster = config.getSideToMove().isWhite() ? 0 : 1;
 			fullMoveCounter = config.getFullMoveCounter();
@@ -1487,10 +1487,11 @@ public class Board {
 			castlingFlags |= config.isWhiteKingSideCastlingAvailable() ? GameConstants.BLACK_KING_SIDE_CASTLING : 0;
 			castlingFlags |= config.isWhiteQueenSideCastlingAvailable() ? GameConstants.BLACK_KING_SIDE_CASTLING : 0;
 		}
-		
+
 		@Override
 		public GameInfo copy() {
 			GameInfo copy = new GameInfo();
+			copy.moveSideAdjuster = moveSideAdjuster;
 			copy.moveCounter = moveCounter;
 			copy.fullMoveCounter = fullMoveCounter;
 			copy.halfMoveCounter = halfMoveCounter;
@@ -1498,23 +1499,23 @@ public class Board {
 			copy.castlingFlags = castlingFlags;
 			return copy;
 		}
-		
+
 		int getFullMoveCounter() {
 			return fullMoveCounter;
 		}
-		
+
 		boolean isQueenSideCastlingAvailable(Color color) {
 			return color.isWhite()
 					? GameConstants.isWhiteQueenSideCastling(castlingFlags)
 					: GameConstants.isBlackQueenSideCastling(castlingFlags);
 		}
-		
+
 		boolean isKingSideCastlingAvailable(Color color) {
 			return color.isWhite()
 					? GameConstants.isWhiteKingSideCastling(castlingFlags)
 					: GameConstants.isBlackKingSideCastling(castlingFlags);
 		}
-		
+
 		void invalidateCastling(Color color) {
 			if (color.isWhite()) {
 				castlingFlags &= ~GameConstants.WHITE_KING_SIDE_CASTLING;
@@ -1524,7 +1525,7 @@ public class Board {
 				castlingFlags &= ~GameConstants.BLACK_QUEEN_SIDE_CASTLING;
 			}
 		}
-		
+
 		void invalidateQueenSideCastling(Color color) {
 			if (color.isWhite()) {
 				castlingFlags ^= GameConstants.WHITE_QUEEN_SIDE_CASTLING;
@@ -1532,7 +1533,7 @@ public class Board {
 				castlingFlags ^= GameConstants.BLACK_QUEEN_SIDE_CASTLING;
 			}
 		}
-		
+
 		void invalidateKingSideCastling(Color color) {
 			if (color.isWhite()) {
 				castlingFlags ^= GameConstants.WHITE_KING_SIDE_CASTLING;
@@ -1540,7 +1541,7 @@ public class Board {
 				castlingFlags ^= GameConstants.BLACK_KING_SIDE_CASTLING;
 			}
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuilder castlingFlagsStr = new StringBuilder();

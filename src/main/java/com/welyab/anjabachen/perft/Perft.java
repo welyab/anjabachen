@@ -59,7 +59,7 @@ public class Perft {
 
 	public static void main(String[] args) {
 		Perft perft = new Perft("4k3/3pp3/8/8/8/8/8/4K3 w - - 0 1", 5);
-		System.out.println(perft.board.toString(true));
+		// System.out.println(perft.board.toString(true));
 		Map<Integer, PieceMovementMeta> accumulators = new HashMap<>();
 		perft.walkTree(perft.board, 1, accumulators);
 		accumulators
@@ -82,7 +82,9 @@ public class Perft {
 			for (Board b : boards) {
 				MovementBag bag = b.getMovements();
 				mergeAccumulators(i, bag.getMeta(), accumulators);
-				map.put(i + 1, new ArrayList<>());
+				if (!map.containsKey(i + 1)) {
+					map.put(i + 1, new ArrayList<>());
+				}
 				for (PieceMovement pieceMovement : bag) {
 					for (MovementTarget movementTarget : pieceMovement.getTargets()) {
 						b.move(
