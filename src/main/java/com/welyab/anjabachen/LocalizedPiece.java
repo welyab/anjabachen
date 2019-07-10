@@ -22,7 +22,7 @@ package com.welyab.anjabachen;
  *
  * @see Board#Board(java.util.List, BoardConfig)
  */
-class PiecePosition {
+class LocalizedPiece {
 
 	/** The piece. */
 	private final Piece piece;
@@ -36,13 +36,17 @@ class PiecePosition {
 	 * @param piece The piece.
 	 * @param position The position.
 	 */
-	public PiecePosition(Piece piece, Position position) {
+	public LocalizedPiece(Piece piece, Position position) {
 		this.piece = piece;
 		this.position = position;
 	}
 
 	public boolean isEmpty() {
 		return piece == null;
+	}
+
+	public boolean isNotEmpty() {
+		return !isEmpty();
 	}
 
 	/**
@@ -71,6 +75,6 @@ class PiecePosition {
 
 	@Override
 	public String toString() {
-		return "PiecePosition [piece=" + piece + ", position=" + position + "]";
+		return "LocalizedPiece [piece=" + piece + ", position=" + position + "]";
 	}
 }

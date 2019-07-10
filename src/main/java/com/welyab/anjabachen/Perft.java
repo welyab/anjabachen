@@ -27,32 +27,33 @@ import java.util.function.BiConsumer;
  * @author Welyab Paula
  */
 public class Perft {
-	
+
 	private static final int MAX_DEPTH = 6;
-	
+
 	private Board board;
-	
+
 	private int depth;
-	
+
 	public Perft(Board board) {
 		this(board, MAX_DEPTH);
 	}
-	
+
 	public Perft(Board board, int depth) {
 		this(board.getFen(), depth);
 	}
-	
+
 	public Perft(String fen) {
 		this(fen, MAX_DEPTH);
 	}
-	
+
 	public Perft(String fen, int depth) {
 		board = new Board(fen);
 		this.depth = depth;
 	}
-	
+
 	public static void main(String[] args) {
-		Perft perft = new Perft("4k3/3pp3/8/8/8/8/8/4K3 w - - 0 1", 8);
+		//Perft perft = new Perft("4k3/3pp3/8/8/8/8/8/4K3 w - - 0 1", 8);
+		Perft perft = new Perft("8/8/8/8/8/qk6/8/K7 b - - 0 1", 8);
 		Map<Integer, PieceMovementMeta> accumulators = new HashMap<>();
 		long t1 = System.currentTimeMillis();
 		perft.walk2(perft.board, 1, accumulators);
@@ -64,7 +65,7 @@ public class Perft {
 			.forEach(System.out::println);
 		System.out.println("Time: " + (t2 - t1));
 	}
-	
+
 	public void walk2(
 			Board board,
 			int currentDepth,
@@ -82,7 +83,7 @@ public class Perft {
 			}
 		}
 	}
-	
+
 	private void walkTree(
 			Board board,
 			int currentDepth,
@@ -112,7 +113,7 @@ public class Perft {
 			}
 		}
 	}
-	
+
 	private void mergeAccumulators(
 			int depth,
 			PieceMovementMeta meta,
@@ -129,10 +130,10 @@ public class Perft {
 				)
 				.add(meta)
 				.build()
-		
+
 		);
 	}
-	
+
 	public void onDepthResult(BiConsumer<Integer, PieceMovementMeta> metadataConsumer) {
 	}
 }

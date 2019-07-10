@@ -46,7 +46,7 @@ public class FENParser {
 
 	private Board board;
 
-	List<PiecePosition> pieces = new ArrayList<>();
+	List<LocalizedPiece> pieces = new ArrayList<>();
 
 	BoardConfig boardConfig;
 
@@ -67,7 +67,7 @@ public class FENParser {
 		return boardConfig;
 	}
 
-	public List<PiecePosition> getPiecesDisposition() {
+	public List<LocalizedPiece> getPiecesDisposition() {
 		parse();
 		return Collections.unmodifiableList(pieces);
 	}
@@ -145,7 +145,7 @@ public class FENParser {
 					currentFile += c - '0';
 				} else {
 					pieces.add(
-						new PiecePosition(
+						new LocalizedPiece(
 							Piece.fromLetterSymbol(c),
 							Position.of(currentFile, currentRank)
 						)

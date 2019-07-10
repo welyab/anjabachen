@@ -231,7 +231,7 @@ public class Board implements Copiable<Board> {
 		this(boardStringToPiecePositionList(piecesDisposition), boardConfig);
 	}
 
-	public Board(List<PiecePosition> pieces, BoardConfig boardConfig) {
+	public Board(List<LocalizedPiece> pieces, BoardConfig boardConfig) {
 		this(
 			localizedPieceListToGrid(pieces),
 			new GameInfo(boardConfig),
@@ -243,20 +243,24 @@ public class Board implements Copiable<Board> {
 		this.grid = grid;
 		this.gameInfo = gameInfo;
 		this.movementHistory = movementHistory;
+		privateStream()
+			.filter(LocalizedPiece::isNotEmpty)
+			.filter(p -> p.getPiece().isKing())
+			.forEach(p -> gameInfo.setKingPosition(p.getPiece().getColor(), p.getPosition()));
 		validatePosition();
 	}
 
 	private void validatePosition() {
 	}
 
-	private static Piece[][] localizedPieceListToGrid(List<PiecePosition> pieces) {
+	private static Piece[][] localizedPieceListToGrid(List<LocalizedPiece> pieces) {
 		Piece[][] grid = new Piece[GameConstants.BOARD_SIZE][GameConstants.BOARD_SIZE];
 		pieces.forEach(p -> grid[p.getPosition().getRow()][p.getPosition().getColumn()] = p.getPiece());
 		return grid;
 	}
 
-	private static List<PiecePosition> boardStringToPiecePositionList(String boardString) {
-		List<PiecePosition> dispositionList = new ArrayList<>();
+	private static List<LocalizedPiece> boardStringToPiecePositionList(String boardString) {
+		List<LocalizedPiece> dispositionList = new ArrayList<>();
 		int counter = 0;
 		for (int i = 0; i < boardString.length(); i++) {
 			char c = boardString.charAt(i);
@@ -275,7 +279,7 @@ public class Board implements Copiable<Board> {
 			int row = counter / GameConstants.BOARD_SIZE;
 			int column = counter % GameConstants.BOARD_SIZE;
 			counter++;
-			dispositionList.add(new PiecePosition(piece, Position.of(row, column)));
+			dispositionList.add(new LocalizedPiece(piece, Position.of(row, column)));
 		}
 		return dispositionList;
 	}
@@ -646,12 +650,16 @@ public class Board implements Copiable<Board> {
 	}
 
 	public MovementBag getMovements() {
-		Iterable<PiecePosition> squares = this::privateIterator;
+		return getMovements(true);
+	}
+
+	public MovementBag getMovements(boolean extractCheckFlags) {
+		Iterable<LocalizedPiece> squares = this::privateIterator;
 		List<PieceMovement> movements = new ArrayList<>(32);
 		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-		for (PiecePosition piecePosition : squares) {
+		for (LocalizedPiece piecePosition : squares) {
 			if (!piecePosition.isEmpty() && piecePosition.getPiece().getColor().equals(getActiveColor())) {
-				PieceMovement pieceMovement = privateGetMovements(piecePosition.getPosition());
+				PieceMovement pieceMovement = privateGetMovements(piecePosition.getPosition(), extractCheckFlags);
 				if (pieceMovement.isNotEmpty()) {
 					movements.add(pieceMovement);
 					pieceMovementMetaBuilder.add(pieceMovement.getMeta());
@@ -677,10 +685,14 @@ public class Board implements Copiable<Board> {
 	 * @throws EmptySquareException If the square at location <code>[row, column]</code> is empty.
 	 */
 	public PieceMovement getMovement(Position position) {
+		return getMovement(position, true);
+	}
+
+	public PieceMovement getMovement(Position position, boolean extractExtraFlags) {
 		if (grid[position.getRow()][position.getColumn()] == null) {
 			throw new EmptySquareException(position.getRow(), position.getColumn());
 		}
-		return privateGetMovements(position);
+		return privateGetMovements(position, extractExtraFlags);
 	}
 
 	/**
@@ -689,7 +701,7 @@ public class Board implements Copiable<Board> {
 	 *
 	 * @return The stream of squares.
 	 */
-	private Stream<PiecePosition> privateStream() {
+	private Stream<LocalizedPiece> privateStream() {
 		return StreamSupport.stream(
 			Spliterators.spliterator(privateIterator(), GameConstants.SQUARES_COUNT, 0),
 			false
@@ -702,7 +714,7 @@ public class Board implements Copiable<Board> {
 	 *
 	 * @return The iterator object.
 	 */
-	private Iterator<PiecePosition> privateIterator() {
+	private Iterator<LocalizedPiece> privateIterator() {
 		return new Iterator<>() {
 
 			final int instantMovementOperationCount = gameInfo.moveCounter;
@@ -715,7 +727,7 @@ public class Board implements Copiable<Board> {
 			}
 
 			@Override
-			public PiecePosition next() {
+			public LocalizedPiece next() {
 				if (!hasNext()) {
 					throw new NoSuchElementException("No more squares");
 				}
@@ -727,72 +739,91 @@ public class Board implements Copiable<Board> {
 				int row = index / GameConstants.BOARD_SIZE;
 				int column = index % GameConstants.BOARD_SIZE;
 				index++;
-				return new PiecePosition(grid[row][column], Position.of(row, column));
+				return new LocalizedPiece(grid[row][column], Position.of(row, column));
 			}
 		};
 	}
 
-	/**
-	 * The same method for retrieve piece available movements as {@link #getMovements(int, int)},
-	 * but without verification indicated in the documentation.
-	 *
-	 * @param row The piece position row number.
-	 * @param column The piece position column number.
-	 *
-	 * @return The movements object.
-	 */
-	private PieceMovement privateGetMovements(Position position) {
+	private PieceMovement privateGetMovements(Position position, boolean extractCheckFlags) {
 		return grid[position.getRow()][position.getColumn()].isPawn()
-				? getPawnMovements(position)
-				: getNonPawnMovements(position);
+				? getPawnMovements(position, extractCheckFlags)
+				: getNonPawnMovements(position, extractCheckFlags);
 	}
 
 	/**
-	 * Generated the movements for piece located in the given position indicated by
-	 * <code>[row, column]</code> pair.
-	 *
-	 * @param row The position row number.
-	 * @param column The position column number.
-	 *
-	 * @return The movements container.
+	 * @param position
+	 * @return TODO document it
 	 */
-	private PieceMovement getNonPawnMovements(Position square) {
+	private PieceMovement getNonPawnMovements(Position position, boolean extractCheckFlags) {
 		int maxMoveLength = getMaxPieceMovementLength(
-			grid[square.getRow()][square.getColumn()].getType()
+			grid[position.getRow()][position.getColumn()].getType()
 		);
 		List<DirectionAdjuster> directionAdjusters = getMovementTemplate(
-			grid[square.getRow()][square.getColumn()]
+			grid[position.getRow()][position.getColumn()]
 		);
 		boolean[] invalidDirection = new boolean[directionAdjusters.size()];
+		MovementOrigin movementOrigin = new MovementOrigin(
+			grid[position.getRow()][position.getColumn()],
+			position
+		);
 		List<MovementTarget> targets = new ArrayList<>();
 		Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
 		for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
 			for (int t = 0; t < directionAdjusters.size(); t++) {
 				if (!invalidDirection[t]) {
 					DirectionAdjuster directionAdjuster = directionAdjusters.get(t);
-					int targetRow = square.getRow() + mLength * directionAdjuster.getRowAdjuster();
-					int targetColumn = square.getColumn()
+					int targetRow = position.getRow() + mLength * directionAdjuster.getRowAdjuster();
+					int targetColumn = position.getColumn()
 							+ mLength * directionAdjuster.getColumnAdjuster();
 					if (isInsideBoard(targetRow, targetColumn)) {
 						Piece targetPiece = grid[targetRow][targetColumn];
-						int moveValue = grid[square.getRow()][square.getColumn()].getValue()
+						int moveValue = grid[position.getRow()][position.getColumn()].getValue()
 								* (targetPiece == null ? 0 : targetPiece.getValue());
 						if (moveValue <= 0) {
 							if (moveValue < 0) {
 								invalidDirection[t] = true;
 							}
 							if (!isKingInCheckWithMove(
-								square, Position.of(targetRow, targetColumn), null
+								position, Position.of(targetRow, targetColumn), null
 							)) {
 								int movementFlags = 0;
 								if (moveValue < 0) {
 									pieceMovementMetaBuilder.incrementCaptureCount();
 									movementFlags |= GameConstants.CAPTURE;
 								}
+								if (extractCheckFlags) {
+									movementFlags |= extractCheckFlags(
+										movementOrigin.getPiece(),
+										movementOrigin.getPosition(),
+										movementOrigin.getPiece(),
+										Position.of(targetRow, targetColumn),
+										movementFlags
+									);
+
+									if (GameConstants.isCheck(movementFlags)) {
+										pieceMovementMetaBuilder.incrementCheckCount();
+									}
+
+									if (GameConstants.isDoubleCheck(movementFlags)) {
+										pieceMovementMetaBuilder.incrementDoubleCheckCount();
+									}
+
+									if (GameConstants.isDiscoveryCheck(movementFlags)) {
+										pieceMovementMetaBuilder.incrementDiscoveryCheckCount();
+									}
+
+									if (GameConstants.isCheckmate(movementFlags)) {
+										pieceMovementMetaBuilder.incrementCheckmateCount();
+									}
+
+									if(GameConstants.isStalemate(movementFlags)) {
+										pieceMovementMetaBuilder.incrementStalemateCount(1);
+									}
+								}
 								pieceMovementMetaBuilder.incrementTotalMovements();
 								targets.add(
 									new MovementTarget(
-										grid[square.getRow()][square.getColumn()],
+										grid[position.getRow()][position.getColumn()],
 										Position.of(targetRow, targetColumn),
 										movementFlags
 									)
@@ -807,20 +838,113 @@ public class Board implements Copiable<Board> {
 				}
 			}
 		}
-		if (grid[square.getRow()][square.getColumn()].isKing()) {
-			List<MovementTarget> castlingTargets = getCastlingTargets(square);
+		if (grid[position.getRow()][position.getColumn()].isKing()) {
+			List<MovementTarget> castlingTargets = getCastlingTargets(position);
 			pieceMovementMetaBuilder.incrementTotalMovements(castlingTargets.size());
 			pieceMovementMetaBuilder.incrementCastlings(castlingTargets.size());
 			targets.addAll(castlingTargets);
 		}
 		return new PieceMovement(
-			new MovementOrigin(
-				grid[square.getRow()][square.getColumn()],
-				square
-			),
+			movementOrigin,
 			targets,
 			pieceMovementMetaBuilder.build()
 		);
+	}
+
+	/**
+	 * Verify if the movement described by given parameters is capable to be marked with following
+	 * flags:
+	 *
+	 * <ul>
+	 * <li>{@linkplain GameConstants#CHECK CHECK} - if the movement puts the opposite king in check
+	 * <li>{@linkplain GameConstants#DOUBLE_CHECK DOUBLE_CHECK} - if the movement puts the opposite
+	 * king in check, attacked by two pieces.
+	 * <li>{@linkplain GameConstants#DISCOVERY_CHECK DISCOVERY_CHECK} - if being moved piece don't
+	 * checks the opposite king by itself, but uncover another piece, that attacks the king.
+	 * <li>{@linkplain GameConstants#CHECKMATE CHECKMATE} - the movement puts the opposite king in
+	 * checkmate.
+	 * </ul>
+	 *
+	 * @param originPiece The piece as it is in the origin square.
+	 * @param originPosition The position of the origin square of the being moved piece.
+	 * @param targetPiece The piece as it should be in the target square. This is used for pawn
+	 *        promotions; in other cases, this parameters receive the same value of
+	 *        <code>originPiece</code>.
+	 * @param targetPosition The position of the target square where the piece will stay after
+	 *        movement.
+	 * @param currentMovementFlags The already verified flags for the movement.
+	 *        <p>
+	 *        At this point, this parameter may contain following flags:
+	 *        {@linkplain GameConstants#CAPTURE CAPTURE}, {@linkplain GameConstants#EN_PASSANT
+	 *        EN_PASSANT}, {@linkplain GameConstants#PROMOTION PROMOTION}, and
+	 *        {@linkplain GameConstants#CASTLING CASTLING}.
+	 *
+	 * @return The additional flags, if any.
+	 */
+	private int extractCheckFlags(
+			Piece originPiece,
+			Position originPosition,
+			Piece targetPiece,
+			Position targetPosition,
+			int currentMovementFlags
+	) {
+		MovementOrigin movementOrigin = new MovementOrigin(originPiece, originPosition);
+		MovementTarget movementTarget = new MovementTarget(targetPiece, targetPosition, currentMovementFlags);
+		move(movementOrigin, movementTarget);
+		int flags = evaluateCheckFlags(originPiece.getColor().getOpposite(), originPosition);
+		undo();
+		return flags;
+	}
+
+	public int evaluateCheckFlags(Color kingColor, Position position) {
+		int flags = 0;
+		Position kingPosition = gameInfo.getKingPosition(kingColor);
+		int maxMoveLength = getMaxPieceMovementLength(PieceType.QUEEN);
+		boolean[] invalidDirections = new boolean[queenMoveTemplate.size()];
+		boolean dicovery = false;
+		Color attackerColor = kingColor.getOpposite();
+		for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
+			for (int t = 0; t < queenMoveTemplate.size(); t++) {
+				if (!invalidDirections[t]) {
+					DirectionAdjuster directionAdjuster = queenMoveTemplate.get(t);
+					int targetRow = kingPosition.getRow() + mLength * directionAdjuster.getRowAdjuster();
+					int targetColumn = kingPosition.getColumn() + mLength * directionAdjuster.getColumnAdjuster();
+					if (isInsideBoard(targetRow, targetColumn)) {
+						if (position.equals(targetRow, targetColumn)) {
+							dicovery = true;
+						}
+						if (grid[targetRow][targetColumn] != null) {
+							Piece targetPiece = grid[targetRow][targetColumn];
+							if (targetPiece.getColor().equals(attackerColor)
+									&& (targetPiece.isQueen()
+											|| targetPiece.isRook() && (kingPosition.getRow() == targetRow
+													|| kingPosition.getColumn() == targetColumn)
+											|| targetPiece.isBishop() && kingPosition.getRow() != targetRow
+													&& kingPosition.getColumn() != targetColumn
+											|| targetPiece.isKing() && mLength == 1)) {
+								if (GameConstants.isCheck(flags)) {
+									flags |= GameConstants.DOUBLE_CHECK;
+								}
+								flags |= GameConstants.CHECK;
+								if (dicovery) {
+									flags |= GameConstants.DISCOVERY_CHECK;
+								}
+							} else {
+								invalidDirections[t] = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (getMovements(false).isEmpty()) {
+			if (GameConstants.isCheck(flags)) {
+				flags |= GameConstants.CHECKMATE;
+			} else {
+				flags |= GameConstants.STALEMATE;
+			}
+		}
+		return flags;
 	}
 
 	/**
@@ -1071,7 +1195,7 @@ public class Board implements Copiable<Board> {
 		throw new ChessError(String.format("Unexpected piece type: %s", type));
 	}
 
-	private PieceMovement getPawnMovements(Position pawnSquare) {
+	private PieceMovement getPawnMovements(Position pawnSquare, boolean extractCheckFlags) {
 		List<MovementTarget> targets = new ArrayList<>();
 		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
 		for (DirectionAdjuster directionAjduster : getMovementTemplate(

@@ -38,6 +38,8 @@ public class PieceMovementMeta {
 
 	private int checkmateCount;
 
+	private int stalemateCount;
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -78,8 +80,12 @@ public class PieceMovementMeta {
 		return doubleCheckCount;
 	}
 
-	public int getCheckmateCoutn() {
+	public int getCheckmateCount() {
 		return checkmateCount;
+	}
+
+	public int getStalemateCount() {
+		return stalemateCount;
 	}
 
 	@Override
@@ -87,7 +93,8 @@ public class PieceMovementMeta {
 		return "PieceMovementMeta [totalMovements=" + totalMovements + ", captureCount=" + captureCount
 				+ ", enPassantCount=" + enPassantCount + ", castlingsCount=" + castlingsCount + ", promotionCount="
 				+ promotionCount + ", checkCount=" + checkCount + ", discoveryCheckCount=" + discoveryCheckCount
-				+ ", doubleCheckCount=" + doubleCheckCount + ", checkmateCoutn=" + checkmateCount + "]";
+				+ ", doubleCheckCount=" + doubleCheckCount + ", checkmateCount=" + checkmateCount + ", stalemateCount="
+				+ stalemateCount + "]";
 	}
 
 	public static final class Builder {
@@ -107,7 +114,8 @@ public class PieceMovementMeta {
 			incrementCheckCount(meta.checkCount);
 			incrementDiscoveryCheckCount(meta.discoveryCheckCount);
 			incrementDoubleCheckCount(meta.doubleCheckCount);
-			incrementCheckmateCoutn(meta.checkmateCount);
+			incrementCheckmateCount(meta.checkmateCount);
+			incrementStalemateCount(meta.stalemateCount);
 			return this;
 		}
 
@@ -184,11 +192,20 @@ public class PieceMovementMeta {
 		}
 
 		public Builder incrementCheckmateCount() {
-			return incrementCheckmateCoutn(1);
+			return incrementCheckmateCount(1);
 		}
 
-		public Builder incrementCheckmateCoutn(int checkmateCount) {
+		public Builder incrementCheckmateCount(int checkmateCount) {
 			meta.checkmateCount += checkmateCount;
+			return this;
+		}
+
+		public Builder incrementStalemateCoutn() {
+			return incrementStalemateCount(1);
+		}
+
+		public Builder incrementStalemateCount(int stalemateCount) {
+			meta.stalemateCount += stalemateCount;
 			return this;
 		}
 
