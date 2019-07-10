@@ -17,6 +17,8 @@ package com.welyab.anjabachen;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * This class is a container for the set of available movements for a piece in an specific board
@@ -132,6 +134,10 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	 */
 	public PieceMovementMeta getMeta() {
 		return meta;
+	}
+
+	public Stream<MovementTarget> stream() {
+		return StreamSupport.stream(spliterator(), false);
 	}
 
 	@Override

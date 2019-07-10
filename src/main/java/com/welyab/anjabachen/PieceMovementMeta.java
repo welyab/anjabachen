@@ -15,6 +15,9 @@
  */
 package com.welyab.anjabachen;
 
+/**
+ * @author Welyab Paula
+ */
 public class PieceMovementMeta {
 
 	private int totalMovements;
@@ -26,6 +29,14 @@ public class PieceMovementMeta {
 	private int castlingsCount;
 
 	private int promotionCount;
+
+	private int checkCount;
+
+	private int discoveryCheckCount;
+
+	private int doubleCheckCount;
+
+	private int checkmateCount;
 
 	public static Builder builder() {
 		return new Builder();
@@ -55,11 +66,28 @@ public class PieceMovementMeta {
 		return totalMovements;
 	}
 
+	public int getCheckCount() {
+		return checkCount;
+	}
+
+	public int getDiscoveryCheckCount() {
+		return discoveryCheckCount;
+	}
+
+	public int getDoubleCheckCount() {
+		return doubleCheckCount;
+	}
+
+	public int getCheckmateCoutn() {
+		return checkmateCount;
+	}
+
 	@Override
 	public String toString() {
 		return "PieceMovementMeta [totalMovements=" + totalMovements + ", captureCount=" + captureCount
 				+ ", enPassantCount=" + enPassantCount + ", castlingsCount=" + castlingsCount + ", promotionCount="
-				+ promotionCount + "]";
+				+ promotionCount + ", checkCount=" + checkCount + ", discoveryCheckCount=" + discoveryCheckCount
+				+ ", doubleCheckCount=" + doubleCheckCount + ", checkmateCoutn=" + checkmateCount + "]";
 	}
 
 	public static final class Builder {
@@ -71,11 +99,15 @@ public class PieceMovementMeta {
 		}
 
 		public Builder add(PieceMovementMeta meta) {
-			incrementCaptureCount(meta.captureCount);
-			incrementPromotionCount(meta.promotionCount);
-			incrementCastlings(meta.castlingsCount);
 			incrementTotalMovements(meta.totalMovements);
+			incrementCaptureCount(meta.captureCount);
 			incrementEnPassantCount(meta.enPassantCount);
+			incrementCastlings(meta.castlingsCount);
+			incrementPromotionCount(meta.promotionCount);
+			incrementCheckCount(meta.checkCount);
+			incrementDiscoveryCheckCount(meta.discoveryCheckCount);
+			incrementDoubleCheckCount(meta.doubleCheckCount);
+			incrementCheckmateCoutn(meta.checkmateCount);
 			return this;
 		}
 
@@ -121,6 +153,42 @@ public class PieceMovementMeta {
 
 		public Builder incrementTotalMovements(int totalMovements) {
 			meta.totalMovements += totalMovements;
+			return this;
+		}
+
+		public Builder incrementCheckCount() {
+			return incrementCheckCount(1);
+		}
+
+		public Builder incrementCheckCount(int checkCount) {
+			meta.checkCount += checkCount;
+			return this;
+		}
+
+		public Builder incrementDiscoveryCheckCount() {
+			return incrementDiscoveryCheckCount(1);
+		}
+
+		public Builder incrementDiscoveryCheckCount(int discoveryCheckCount) {
+			meta.discoveryCheckCount += discoveryCheckCount;
+			return this;
+		}
+
+		public Builder incrementDoubleCheckCount() {
+			return incrementDoubleCheckCount(1);
+		}
+
+		public Builder incrementDoubleCheckCount(int doubleCheckCount) {
+			meta.doubleCheckCount += doubleCheckCount;
+			return this;
+		}
+
+		public Builder incrementCheckmateCount() {
+			return incrementCheckmateCoutn(1);
+		}
+
+		public Builder incrementCheckmateCoutn(int checkmateCount) {
+			meta.checkmateCount += checkmateCount;
 			return this;
 		}
 

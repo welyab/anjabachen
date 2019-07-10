@@ -17,6 +17,8 @@ package com.welyab.anjabachen;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A <code>MovementBag</code> is a set of all movements available in the chess board at a specific
@@ -103,5 +105,9 @@ public class MovementBag implements Iterable<PieceMovement> {
 	@Override
 	public Iterator<PieceMovement> iterator() {
 		return movements.iterator();
+	}
+	
+	public Stream<PieceMovement> stream() {
+		return StreamSupport.stream(spliterator(), false);
 	}
 }
