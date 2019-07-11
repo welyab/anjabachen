@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * Performs
@@ -27,45 +28,50 @@ import java.util.function.BiConsumer;
  * @author Welyab Paula
  */
 public class Perft {
-
+	
 	private static final int MAX_DEPTH = 6;
-
+	
 	private Board board;
-
+	
 	private int depth;
-
+	
 	public Perft(Board board) {
 		this(board, MAX_DEPTH);
 	}
-
+	
 	public Perft(Board board, int depth) {
 		this(board.getFen(), depth);
 	}
-
+	
 	public Perft(String fen) {
 		this(fen, MAX_DEPTH);
 	}
-
+	
 	public Perft(String fen, int depth) {
 		board = new Board(fen);
 		this.depth = depth;
 	}
-
+	
 	public static void main(String[] args) {
-		//Perft perft = new Perft("4k3/3pp3/8/8/8/8/8/4K3 w - - 0 1", 8);
-		Perft perft = new Perft("8/8/8/8/8/qk6/8/K7 b - - 0 1", 8);
+		Perft perft = new Perft("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 4);
+		System.out.println(perft.board.toString(true));
+		System.out.println(perft.board.getFen());
 		Map<Integer, PieceMovementMeta> accumulators = new HashMap<>();
 		long t1 = System.currentTimeMillis();
 		perft.walk2(perft.board, 1, accumulators);
 		long t2 = System.currentTimeMillis();
-		accumulators
-			.entrySet()
-			.stream()
-			.sorted((e1, e2) -> e1.getKey() - e2.getKey())
-			.forEach(System.out::println);
+		PerftPrinter perftPrinter = new PerftPrinter();
+		perftPrinter.print(
+			accumulators
+				.entrySet()
+				.stream()
+				.sorted((e1, e2) -> e1.getKey() - e2.getKey())
+				.map(e -> e.getValue())
+				.collect(Collectors.toList())
+		);
 		System.out.println("Time: " + (t2 - t1));
 	}
-
+	
 	public void walk2(
 			Board board,
 			int currentDepth,
@@ -83,7 +89,7 @@ public class Perft {
 			}
 		}
 	}
-
+	
 	private void walkTree(
 			Board board,
 			int currentDepth,
@@ -113,7 +119,7 @@ public class Perft {
 			}
 		}
 	}
-
+	
 	private void mergeAccumulators(
 			int depth,
 			PieceMovementMeta meta,
@@ -130,10 +136,10 @@ public class Perft {
 				)
 				.add(meta)
 				.build()
-
+		
 		);
 	}
-
+	
 	public void onDepthResult(BiConsumer<Integer, PieceMovementMeta> metadataConsumer) {
 	}
 }
