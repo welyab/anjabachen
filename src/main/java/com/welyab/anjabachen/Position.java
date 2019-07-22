@@ -145,8 +145,18 @@ public class Position {
 	 * @return A value <code>true</code> this object has the same values, or <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean equals(Position position) {
-		return row == position.row && column == position.column;
+	@Override
+	public boolean equals(Object position) {
+		if (!(position instanceof Position)) {
+			return false;
+		}
+		Position p = (Position) position;
+		return row == p.row && column == p.column;
+	}
+
+	@Override
+	public int hashCode() {
+		return row * 8 + column;
 	}
 
 	/**
@@ -189,6 +199,9 @@ public class Position {
 	 * @param column The column number.
 	 *
 	 * @return A new <code>Position</code> instance.
+	 *
+	 * @throws InvalidPositionException If the given position <code>[row, column]</code> is out of
+	 *         the board bounds.
 	 */
 	public static Position of(int row, int column) {
 		if (row < GameConstants.MIN_ROW_NUMBER || row > GameConstants.MAX_ROW_NUMBER
@@ -206,27 +219,75 @@ public class Position {
 	 * @param rank The rank number.
 	 *
 	 * @return The associated position.
+	 *
+	 * @throws InvalidPositionException If the given position denotes a location out from board
+	 *         bounds. File and rank based position must stay in the in interval of
+	 *         <code>['a' to 'h']</code> and <code>[1 to 9]</code>.
 	 */
 	public static Position of(char file, int rank) {
 		file = Character.toLowerCase(file);
 		if (file < 'a' || file > 'h' || rank < 1 || rank > 8) {
-			throw new InvalidPositionException(file, rank);
+			throw new InvalidPositionException(toRow(rank), toColumn(file));
 		}
-		return of(8 - rank, file - 'a');
+		return of(toRow(rank), toColumn(file));
 	}
 
+	/**
+	 * Converts a rank number into a row number based on the ANJABACHEN grid system.
+	 *
+	 * <p>
+	 * ANJABACHEN uses a position grid based in rows and columns, not in files (a to b) and ranks (1
+	 * to 8). To know more read the documentation of the class {@link Position}.
+	 *
+	 * @param rank The rank number.
+	 *
+	 * @return The row number.
+	 */
 	public static int toRow(int rank) {
 		return 8 - rank;
 	}
 
+	/**
+	 * Converts a file number into a column number based on the ANJABACHEN grid system.
+	 *
+	 * <p>
+	 * ANJABACHEN uses a position grid based in rows and columns, not in files (a to b) and ranks (1
+	 * to 8). To know more read the documentation of the class {@link Position}.
+	 *
+	 * @param file The file number.
+	 *
+	 * @return The column number.
+	 */
 	public static int toColumn(int file) {
 		return file - 'a';
 	}
 
+	/**
+	 * Converts a column number to the file number.
+	 *
+	 * <p>
+	 * ANJABACHEN uses a position grid based in rows and columns, not in files (a to b) and ranks (1
+	 * to 8). To know more read the documentation of the class {@link Position}.
+	 *
+	 * @param column The column number to be converted.
+	 *
+	 * @return The file number of the position.
+	 */
 	public static char toFile(int column) {
 		return (char) ('a' + column);
 	}
 
+	/**
+	 * Converts a row number to the rank number.
+	 *
+	 * <p>
+	 * ANJABACHEN uses a position grid based in rows and columns, not in files (a to b) and ranks (1
+	 * to 8). To know more read the documentation of the class {@link Position}.
+	 *
+	 * @param row The row number to be converted.
+	 *
+	 * @return The rank number of the position.
+	 */
 	public static int toRank(int row) {
 		return 8 - row;
 	}

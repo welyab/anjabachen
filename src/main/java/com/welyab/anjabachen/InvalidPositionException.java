@@ -31,20 +31,36 @@ public class InvalidPositionException extends ChessException {
 	/** The invalid position column number. */
 	private final int column;
 
-	public InvalidPositionException(char file, int rank) {
-		this(Position.toRow(rank), Position.toColumn(file));
-	}
-
+	/**
+	 * Creates a instance by informing the invalid position <code>[row, column]</code>.
+	 *
+	 * <p>
+	 * This constructor does not receive a <code>Position</code> instance because that type of
+	 * objects are not possible to be created with invalid positions.
+	 *
+	 * @param row The invalid position row number.
+	 * @param column The invalid position column number.
+	 */
 	public InvalidPositionException(int row, int column) {
 		super(String.format("The position [%d, %d] is invalid", row, column));
 		this.row = row;
 		this.column = column;
 	}
 
+	/**
+	 * Retrieves the invalid position row number.
+	 *
+	 * @return The invalid row number.
+	 */
 	public int getRow() {
 		return row;
 	}
 
+	/**
+	 * Retrieves the invalid position column number.
+	 *
+	 * @return The column number.
+	 */
 	public int getColumn() {
 		return column;
 	}
