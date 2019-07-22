@@ -1,17 +1,31 @@
-package com.welyab.anjabachen;
+/*
+ * Copyright (C) 2019 Welyab da Silva Paula
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */package com.welyab.anjabachen;
 
 public class MovementOrigin {
-
+	
 	/**
 	 * The piece being moved.
 	 */
 	private final Piece piece;
-
+	
 	/**
 	 * The initial position of this piece.
 	 */
 	private final Position position;
-
+	
 	/**
 	 * Creates a new movement origin, by specifying the position and the expected piece to be found
 	 * the square.
@@ -23,7 +37,7 @@ public class MovementOrigin {
 		this.piece = piece;
 		this.position = position;
 	}
-
+	
 	/**
 	 * Retrieves the being moved piece.
 	 *
@@ -32,7 +46,7 @@ public class MovementOrigin {
 	public Piece getPiece() {
 		return piece;
 	}
-
+	
 	/**
 	 * Retrieves the origin position of this piece.
 	 *
@@ -41,7 +55,7 @@ public class MovementOrigin {
 	public Position getPosition() {
 		return position;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Origin " + piece + ", position=" + position + "]";

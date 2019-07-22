@@ -20,12 +20,11 @@
 grammar FEN;
 
 fen
-	: piecePlacement        Space 
-	  sideToMove            Space 
-	  castlingAbility       Space 
-	  enPassantTargetSquare Space 
-	  halfMoveClock         Space 
-	  fullMoveCounter       EOF
+	: piecePlacement         Space 
+	  sideToMove             Space 
+	  castlingAbility        Space 
+	  enPassantTargetSquare  Space 
+	  moveCounters?           EOF
 	;
 
 piecePlacement
@@ -102,6 +101,10 @@ blackQueenSideCastling: LowerLetterQ;
 enPassantTargetSquare
 	: none
 	| file (rank3 | rank6)
+	;
+
+moveCounters
+	: halfMoveClock Space fullMoveCounter
 	;
 
 halfMoveClock

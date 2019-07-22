@@ -15,10 +15,6 @@
  */
 package com.welyab.anjabachen;
 
-/**
- * Tests the movement generation logic inside <cod</code>
- *
- * @author Welyab Paula
- */
-public class BoardPerftTest {
+public class PerftResult {
+
 }

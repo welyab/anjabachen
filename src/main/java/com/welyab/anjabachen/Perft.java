@@ -15,131 +15,64 @@
  */
 package com.welyab.anjabachen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 /**
- * Performs
- *
  * @author Welyab Paula
  */
 public class Perft {
-	
-	private static final int MAX_DEPTH = 6;
-	
-	private Board board;
-	
-	private int depth;
-	
-	public Perft(Board board) {
-		this(board, MAX_DEPTH);
-	}
-	
-	public Perft(Board board, int depth) {
-		this(board.getFen(), depth);
-	}
-	
+
+	public static final int DEFAULT_DEPTH = 3;
+
+	private final Board board;
+
+	private final int depth;
+
+	/**
+	 *
+	 * @param fen The <code>FEN</code> representation for the board.
+	 *
+	 * @see FENParser
+	 */
 	public Perft(String fen) {
-		this(fen, MAX_DEPTH);
+		this(fen, DEFAULT_DEPTH);
 	}
-	
+
+	/**
+	 * @param fen
+	 * @param depth
+	 */
 	public Perft(String fen, int depth) {
-		board = new Board(fen);
+		this.board = new Board(fen);
 		this.depth = depth;
 	}
-	
-	public static void main(String[] args) {
-		Perft perft = new Perft("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", 4);
-		System.out.println(perft.board.toString(true));
-		System.out.println(perft.board.getFen());
-		Map<Integer, PieceMovementMeta> accumulators = new HashMap<>();
-		long t1 = System.currentTimeMillis();
-		perft.walk2(perft.board, 1, accumulators);
-		long t2 = System.currentTimeMillis();
-		PerftPrinter perftPrinter = new PerftPrinter();
-		perftPrinter.print(
-			accumulators
-				.entrySet()
-				.stream()
-				.sorted((e1, e2) -> e1.getKey() - e2.getKey())
-				.map(e -> e.getValue())
-				.collect(Collectors.toList())
-		);
-		System.out.println("Time: " + (t2 - t1));
+
+	/**
+	 *
+	 * @return
+	 */
+	public PerftResult execute() {
+		return null;
 	}
-	
-	public void walk2(
-			Board board,
-			int currentDepth,
-			Map<Integer, PieceMovementMeta> accumulators
-	) {
-		if (currentDepth <= depth) {
-			MovementBag movementBag = board.getMovements();
-			mergeAccumulators(currentDepth, movementBag.getMeta(), accumulators);
-			for (PieceMovement pieceMovement : board.getMovements()) {
-				for (MovementTarget movementTarget : pieceMovement) {
-					board.move(pieceMovement.getOrigin(), movementTarget);
-					walk2(board, currentDepth + 1, accumulators);
-					board.undo();
-				}
-			}
+
+	/**
+	 * @param onResult A callback to notify the caller when the result is ready for a specific
+	 *        depth. The first calling is for the movements metadata available for the first
+	 *        movement possibilities, and the second is for the next depth, and so on.
+	 */
+	public void execute(Consumer<PerftResult> onResult) {
+	}
+
+	private void walk(int currentDepth) {
+		if (currentDepth > depth) {
+			return;
 		}
 	}
-	
-	private void walkTree(
-			Board board,
-			int currentDepth,
-			Map<Integer, PieceMovementMeta> accumulators
-	) {
-		Map<Integer, List<Board>> map = new HashMap<>();
-		map.put(1, new ArrayList<>());
-		map.get(1).add(board);
-		for (int i = 1; i <= depth; i++) {
-			List<Board> boards = map.remove(i);
-			for (Board b : boards) {
-				MovementBag bag = b.getMovements();
-				mergeAccumulators(i, bag.getMeta(), accumulators);
-				if (!map.containsKey(i + 1)) {
-					map.put(i + 1, new ArrayList<>());
-				}
-				for (PieceMovement pieceMovement : bag) {
-					for (MovementTarget movementTarget : pieceMovement.getTargets()) {
-						b.move(
-							pieceMovement.getOrigin(),
-							movementTarget
-						);
-						map.get(i + 1).add(new Board(board.getFen()));
-						b.undo();
-					}
-				}
-			}
-		}
-	}
-	
-	private void mergeAccumulators(
-			int depth,
-			PieceMovementMeta meta,
-			Map<Integer, PieceMovementMeta> accumulators
-	) {
-		accumulators.put(
-			depth,
-			PieceMovementMeta
-				.builder()
-				.add(
-					accumulators.getOrDefault(
-						depth, PieceMovementMeta.empty()
-					)
-				)
-				.add(meta)
-				.build()
-		
-		);
-	}
-	
-	public void onDepthResult(BiConsumer<Integer, PieceMovementMeta> metadataConsumer) {
+
+	/**
+	 * If there is some movement tree walking running, this method notifies the process to stop.
+	 * This method just returns when the underlying process stops.
+	 */
+	public void stop() {
 	}
 }

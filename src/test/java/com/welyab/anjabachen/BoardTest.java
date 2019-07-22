@@ -851,7 +851,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForRookInPlacesWhereTheKingIsNotInCheck() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + "K . . R . . . q" + Board.NEWLINE
@@ -864,7 +864,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + "K R R R R R R R" + Board.NEWLINE
@@ -881,7 +881,7 @@ public class BoardTest {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + "K . . . . . . ." + Board.NEWLINE
+				/* 1 */ + "K . . . . . k ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . B . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
@@ -910,7 +910,7 @@ public class BoardTest {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + "K . . . . . . ." + Board.NEWLINE
+				/* 1 */ + "K . . . . k . ." + Board.NEWLINE
 				/* 2 */ + ". . . . N . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE

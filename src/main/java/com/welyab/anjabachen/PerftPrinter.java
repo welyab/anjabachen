@@ -1,4 +1,18 @@
-package com.welyab.anjabachen;
+/*
+ * Copyright (C) 2019 Welyab da Silva Paula
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */package com.welyab.anjabachen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,9 +23,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PerftPrinter {
-	
+
 	private static final String COLUMN_SPACER = "  ";
-	
+
 	private static final List<String> COLUMN_NAMES = Arrays.asList(
 		"Depth",
 		"Nodes",
@@ -25,7 +39,7 @@ public class PerftPrinter {
 		"Checkmates",
 		"Stalemates"
 	);
-	
+
 	public void print(List<PieceMovementMeta> metas) {
 		List<List<String>> values = metas.stream().map(this::metaToString).collect(Collectors.toList());
 		IntStream.range(0, values.size()).forEach(l -> values.get(l).add(0, Integer.toString(l + 1)));
@@ -33,7 +47,7 @@ public class PerftPrinter {
 		Map<Integer, Integer> widthByColumn = widthByColumn(values);
 		values.forEach(l -> printList(l, widthByColumn));
 	}
-	
+
 	private Map<Integer, Integer> widthByColumn(List<List<String>> values) {
 		Map<Integer, Integer> map = new HashMap<>();
 		for (int line = 0; line < values.size(); line++) {
@@ -49,7 +63,7 @@ public class PerftPrinter {
 		}
 		return map;
 	}
-	
+
 	private void printList(List<String> list, Map<Integer, Integer> widthByColumn) {
 		for (int i = 0; i < list.size(); i++) {
 			String s = normalize(list.get(i), widthByColumn.get(i));
@@ -60,7 +74,7 @@ public class PerftPrinter {
 		}
 		System.out.println();
 	}
-	
+
 	private String normalize(String s, int width) {
 		StringBuilder builder = new StringBuilder(width);
 		int x = width - s.length();
@@ -69,7 +83,7 @@ public class PerftPrinter {
 		}
 		return builder.append(s).toString();
 	}
-	
+
 	private List<String> metaToString(PieceMovementMeta meta) {
 		List<String> list = new ArrayList<>();
 		list.add(Integer.toString(meta.getTotalMovements()));
