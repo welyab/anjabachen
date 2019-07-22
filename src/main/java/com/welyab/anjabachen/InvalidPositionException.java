@@ -20,7 +20,7 @@ package com.welyab.anjabachen;
  *
  * @author Welyab Paula
  */
-public class InvalidPosition extends ChessException {
+public class InvalidPositionException extends ChessException {
 
 	@SuppressWarnings("javadoc")
 	private static final long serialVersionUID = 1L;
@@ -31,11 +31,11 @@ public class InvalidPosition extends ChessException {
 	/** The invalid position column number. */
 	private final int column;
 
-	public InvalidPosition(char file, int rank) {
+	public InvalidPositionException(char file, int rank) {
 		this(Position.toRow(rank), Position.toColumn(file));
 	}
 
-	public InvalidPosition(int row, int column) {
+	public InvalidPositionException(int row, int column) {
 		super(String.format("The position [%d, %d] is invalid", row, column));
 		this.row = row;
 		this.column = column;

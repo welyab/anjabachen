@@ -193,7 +193,7 @@ public class Position {
 	public static Position of(int row, int column) {
 		if (row < GameConstants.MIN_ROW_NUMBER || row > GameConstants.MAX_ROW_NUMBER
 				|| column < GameConstants.MIN_COLUMN_NUMBER || column > GameConstants.MAX_COLUMN_NUMBER) {
-			throw new InvalidPosition(row, column);
+			throw new InvalidPositionException(row, column);
 		}
 		return POSITIONS[row][column];
 	}
@@ -210,7 +210,7 @@ public class Position {
 	public static Position of(char file, int rank) {
 		file = Character.toLowerCase(file);
 		if (file < 'a' || file > 'h' || rank < 1 || rank > 8) {
-			throw new InvalidPosition(file, rank);
+			throw new InvalidPositionException(file, rank);
 		}
 		return of(8 - rank, file - 'a');
 	}
