@@ -15,11 +15,18 @@
  */
 package com.welyab.anjabachen;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.pmw.tinylog.Configurator;
+import org.pmw.tinylog.Logger;
 
 /**
  * Tests the movement generation logic inside <cod</code>
@@ -28,12 +35,16 @@ import org.junit.Test;
  */
 public class BoardPerftTest {
 
-	@SuppressWarnings("javadoc")
-	private static final Logger logger = Logger.getLogger(BoardPerftTest.class.getName());
+	static {
+		Configurator
+			.defaultConfig()
+			.formatPattern("{message}")
+			.activate();
+	}
 
 	@Test
 	@SuppressWarnings("javadoc")
-	public void perftTest1() {
+	public void perftTest1() throws IOException {
 		test(
 			"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
 			Map.of(
@@ -95,7 +106,7 @@ public class BoardPerftTest {
 
 	@Test
 	@SuppressWarnings("javadoc")
-	public void perft_r3k2r_p1ppqpb1_bn2pnp1_3PN3_1p2P3_2N2Q1p_PPPBBPPP_R3K2R_w_KQkq_x() {
+	public void perft_r3k2r_p1ppqpb1_bn2pnp1_3PN3_1p2P3_2N2Q1p_PPPBBPPP_R3K2R_w_KQkq_x() throws IOException {
 		test(
 			"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
 			Map.of(
@@ -158,21 +169,32 @@ public class BoardPerftTest {
 	private void test(
 			String fen,
 			Map<Integer, PieceMovementMeta> expectedPerftResults
-	) {
-		logger.info("Executing perft testing");
-		logger.info(String.format("FEN: %s", fen));
+	) throws IOException {
+		Logger.info("Executing perft testing");
+		Logger.info("FEN: {}", fen);
 		Perft perft = new Perft(fen, 3);
 		long t1 = System.currentTimeMillis();
 		Map<Integer, PieceMovementMeta> metas = perft.execute();
 		long t2 = System.currentTimeMillis();
 		PerftPrinter perftPrinter = new PerftPrinter();
+		ByteArrayOutputStream outArray = new ByteArrayOutputStream();
+		PrintWriter printWriter = new PrintWriter(outArray);
 		perftPrinter.print(
 			metas.entrySet()
 				.stream()
 				.sorted((e1, e2) -> e1.getKey() - e2.getKey())
 				.map(e -> e.getValue())
-				.collect(Collectors.toList())
+				.collect(Collectors.toList()),
+			printWriter
 		);
-		System.out.println("Total time: " + (t2 - t1));
+		BufferedReader input = new BufferedReader(
+			new InputStreamReader(new ByteArrayInputStream(outArray.toByteArray()))
+		);
+		String line = null;
+		while ((line = input.readLine()) != null) {
+			Logger.info(line);
+		}
+		Logger.info("Total time: {} ms", t2 - t1);
+		Logger.info("");
 	}
 }

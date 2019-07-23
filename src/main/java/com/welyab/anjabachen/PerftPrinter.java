@@ -14,6 +14,7 @@
  * the License.
  */package com.welyab.anjabachen;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,11 +42,16 @@ public class PerftPrinter {
 	);
 
 	public void print(List<PieceMovementMeta> metas) {
+		print(metas, new PrintWriter(System.out));
+	}
+
+	public void print(List<PieceMovementMeta> metas, PrintWriter writer) {
 		List<List<String>> values = metas.stream().map(this::metaToString).collect(Collectors.toList());
 		IntStream.range(0, values.size()).forEach(l -> values.get(l).add(0, Integer.toString(l + 1)));
 		values.add(0, COLUMN_NAMES);
 		Map<Integer, Integer> widthByColumn = widthByColumn(values);
-		values.forEach(l -> printList(l, widthByColumn));
+		values.forEach(l -> printList(l, widthByColumn, writer));
+		writer.flush();
 	}
 
 	private Map<Integer, Integer> widthByColumn(List<List<String>> values) {
@@ -64,15 +70,15 @@ public class PerftPrinter {
 		return map;
 	}
 
-	private void printList(List<String> list, Map<Integer, Integer> widthByColumn) {
+	private void printList(List<String> list, Map<Integer, Integer> widthByColumn, PrintWriter writer) {
 		for (int i = 0; i < list.size(); i++) {
 			String s = normalize(list.get(i), widthByColumn.get(i));
 			if (i > 0) {
-				System.out.print(COLUMN_SPACER);
+				writer.print(COLUMN_SPACER);
 			}
-			System.out.print(s);
+			writer.print(s);
 		}
-		System.out.println();
+		writer.println();
 	}
 
 	private String normalize(String s, int width) {

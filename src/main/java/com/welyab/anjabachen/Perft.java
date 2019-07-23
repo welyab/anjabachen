@@ -32,15 +32,15 @@ import com.welyab.anjabachen.fen.FenParser;
  * @author Welyab Paula
  */
 public class Perft {
-	
+
 	public static final int DEFAULT_DEPTH = 3;
-	
+
 	private ExecutorService service = Executors.newFixedThreadPool(300);
-	
+
 	private final Board board;
-	
+
 	private final int depth;
-	
+
 	/**
 	 *
 	 * @param fen The <code>FEN</code> representation for the board.
@@ -50,16 +50,16 @@ public class Perft {
 	public Perft(String fen) {
 		this(fen, DEFAULT_DEPTH);
 	}
-	
+
 	/**
 	 * @param fen
 	 * @param depth
 	 */
 	public Perft(String fen, int depth) {
-		this.board = new Board(fen);
+		board = new Board(fen);
 		this.depth = depth;
 	}
-	
+
 	public Map<Integer, PieceMovementMeta> execute() {
 		var metas = new HashMap<Integer, PieceMovementMeta>();
 		try {
@@ -69,7 +69,7 @@ public class Perft {
 		}
 		return metas;
 	}
-	
+
 	private CompletableFuture<Void> walk(
 			Board board,
 			int currentDepth,
@@ -98,7 +98,7 @@ public class Perft {
 		}
 		return future;
 	}
-	
+
 	private void mergeMetas(
 			int depth,
 			PieceMovementMeta meta,
@@ -118,14 +118,14 @@ public class Perft {
 				.build()
 		);
 	}
-	
+
 	/**
 	 * If there is some movement tree walking running, this method notifies the process to stop.
 	 * This method just returns when the underlying process stops.
 	 */
 	public void stop() {
 	}
-	
+
 	/**
 	 * Retrieves the underlying board of this perft generator. The returned board is a copy of the
 	 * internal board; you may change the state of the board and that modifications will not reflect
