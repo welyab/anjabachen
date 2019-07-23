@@ -13,9 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.fen;
 
-public class BoardConfig {
+import com.welyab.anjabachen.Color;
+import com.welyab.anjabachen.Position;
+
+public class GameConfig {
 
 	/** Default side to play next move is white. */
 	public static final Color DEFAULT_SIDE_TO_MOVE = Color.WHITE;
@@ -71,7 +74,7 @@ public class BoardConfig {
 	private Position enPassantTargetSquare;
 
 	@SuppressWarnings("javadoc")
-	private BoardConfig() {
+	private GameConfig() {
 	}
 
 	public Color getSideToMove() {
@@ -110,17 +113,17 @@ public class BoardConfig {
 		return new Builder();
 	}
 
-	public static BoardConfig defaultBlackToMove() {
+	public static GameConfig defaultBlackToMove() {
 		return builder().sideToMove(Color.BLACK).build();
 	}
 
-	public static BoardConfig defaultWhiteToMove() {
+	public static GameConfig defaultWhiteToMove() {
 		return builder().sideToMove(Color.WHITE).build();
 	}
 
 	public static final class Builder {
 
-		BoardConfig boardConfig = new BoardConfig();
+		GameConfig boardConfig = new GameConfig();
 
 		private Builder() {
 		}
@@ -165,7 +168,7 @@ public class BoardConfig {
 			return this;
 		}
 
-		public BoardConfig build() {
+		public GameConfig build() {
 			return boardConfig;
 		}
 	}

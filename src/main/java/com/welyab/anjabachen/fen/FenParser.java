@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.fen;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +24,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import com.welyab.anjabachen.Board;
+import com.welyab.anjabachen.Color;
+import com.welyab.anjabachen.LocalizedPiece;
+import com.welyab.anjabachen.Piece;
+import com.welyab.anjabachen.Position;
 import com.welyab.anjabachen.grammar.FENBaseListener;
 import com.welyab.anjabachen.grammar.FENLexer;
 import com.welyab.anjabachen.grammar.FENParser.BlackKingSideCastlingContext;
@@ -36,42 +41,42 @@ import com.welyab.anjabachen.grammar.FENParser.SideToMoveContext;
 import com.welyab.anjabachen.grammar.FENParser.WhiteKingSideCastlingContext;
 import com.welyab.anjabachen.grammar.FENParser.WhiteQueenSideCastlingContext;
 
-public class FENParser {
-
+public class FenParser {
+	
 	private boolean parsed;
-
+	
 	String fen;
-
+	
 	private FenContext fenContext;
-
+	
 	private Board board;
-
+	
 	List<LocalizedPiece> pieces = new ArrayList<>();
-
-	BoardConfig boardConfig;
-
-	public FENParser(String fen) {
+	
+	GameConfig boardConfig;
+	
+	public FenParser(String fen) {
 		this.fen = fen;
 		FENLexer lexer = new FENLexer(CharStreams.fromString(fen));
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		com.welyab.anjabachen.grammar.FENParser parser = new com.welyab.anjabachen.grammar.FENParser(tokenStream);
 		fenContext = parser.fen();
 	}
-
-	public static FENParser of(String fen) {
-		return new FENParser(fen);
+	
+	public static FenParser of(String fen) {
+		return new FenParser(fen);
 	}
-
-	public BoardConfig getBoardConfig() {
+	
+	public GameConfig getBoardConfig() {
 		parse();
 		return boardConfig;
 	}
-
+	
 	public List<LocalizedPiece> getPiecesDisposition() {
 		parse();
 		return Collections.unmodifiableList(pieces);
 	}
-
+	
 	public Board getBoard() {
 		parse();
 		return new Board(
@@ -79,23 +84,40 @@ public class FENParser {
 			boardConfig
 		);
 	}
-
+	
+	/**
+	 * Parses the underlying FEN string.
+	 *
+	 * @see #getBoard()
+	 * @see #getPiecesDisposition()
+	 */
 	private void parse() {
 		if (parsed) {
 			return;
 		}
 		ParseTreeWalker walker = new ParseTreeWalker();
-		FENWalker boardFenConfig = new FENWalker();
+		FenWalker boardFenConfig = new FenWalker();
 		walker.walk(boardFenConfig, fenContext);
 		parsed = true;
 	}
-
-	private class FENWalker extends FENBaseListener {
-
-		BoardConfig.Builder configBuilder = BoardConfig.builder();
-
+	
+	/**
+	 *
+	 * @author Welyab Paula
+	 */
+	private class FenWalker extends FENBaseListener {
+		
+		/**
+		 * The builder for game configuration.
+		 */
+		GameConfig.Builder configBuilder = GameConfig.builder();
+		
+		/**
+		 * The current rank number (in the FEN string, the first line of represented pieces is the
+		 * 8th rank).
+		 */
 		int currentRank = 8;
-
+		
 		@Override
 		public void enterEnPassantTargetSquare(EnPassantTargetSquareContext ctx) {
 			if (!ctx.getText().equals("-")) {
@@ -104,37 +126,37 @@ public class FENParser {
 				configBuilder = configBuilder.enPassantTargetSquare(Position.of(file, rank));
 			}
 		}
-
+		
 		@Override
 		public void enterHalfMoveClock(HalfMoveClockContext ctx) {
 			configBuilder = configBuilder.halfMoveCounter(Integer.parseInt(ctx.getText()));
 		}
-
+		
 		@Override
 		public void enterWhiteKingSideCastling(WhiteKingSideCastlingContext ctx) {
 			configBuilder = configBuilder.whiteKingSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterWhiteQueenSideCastling(WhiteQueenSideCastlingContext ctx) {
 			configBuilder = configBuilder.whiteQueenSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterBlackKingSideCastling(BlackKingSideCastlingContext ctx) {
 			configBuilder = configBuilder.blackKingSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterBlackQueenSideCastling(BlackQueenSideCastlingContext ctx) {
 			configBuilder = configBuilder.blackQueenSideCastlingAvailable(true);
 		}
-
+		
 		@Override
 		public void enterSideToMove(SideToMoveContext ctx) {
 			configBuilder = configBuilder.sideToMove(Color.fromColor(ctx.getText().charAt(0)));
 		}
-
+		
 		@Override
 		public void enterPieceDisposition(PieceDispositionContext ctx) {
 			char currentFile = 'a';
@@ -155,7 +177,7 @@ public class FENParser {
 			}
 			currentRank--;
 		}
-
+		
 		@Override
 		public void exitFen(FenContext ctx) {
 			boardConfig = configBuilder.build();

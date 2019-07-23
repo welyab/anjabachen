@@ -20,7 +20,7 @@
  *
  * @author Welyab Paula
  */
-public class KingNotFound extends ChessException {
+public class KingNotPresentException extends ChessException {
 
 	@SuppressWarnings("javadoc")
 	private static final long serialVersionUID = 1L;
@@ -35,7 +35,7 @@ public class KingNotFound extends ChessException {
 	 *
 	 * @param color The color side of the required king piece.
 	 */
-	public KingNotFound(Color color) {
+	public KingNotPresentException(Color color) {
 		this.color = color;
 	}
 

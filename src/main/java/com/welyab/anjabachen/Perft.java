@@ -17,6 +17,8 @@ package com.welyab.anjabachen;
 
 import java.util.function.Consumer;
 
+import com.welyab.anjabachen.fen.FenParser;
+
 /**
  * @author Welyab Paula
  */
@@ -32,7 +34,7 @@ public class Perft {
 	 *
 	 * @param fen The <code>FEN</code> representation for the board.
 	 *
-	 * @see FENParser
+	 * @see FenParser
 	 */
 	public Perft(String fen) {
 		this(fen, DEFAULT_DEPTH);
