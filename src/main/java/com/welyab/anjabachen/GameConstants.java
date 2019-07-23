@@ -16,30 +16,30 @@
 package com.welyab.anjabachen;
 
 public class GameConstants {
-
+	
 	/**
 	 * This mark is used by movement generation t indicate that a specific movement is also
 	 * <i>capture</i>.
 	 */
 	public static final int CAPTURE = 0b0000_0000_0000_0001;
-
+	
 	/**
 	 * This mark is used by movement generation to indicate that a specific movement is a <i>en
 	 * passant</i>.
 	 */
 	public static final int EN_PASSANT = 0b0000_0000_0000_0010;
-
+	
 	/**
 	 * This mark is used by movement generation to indicate that a specific movement is a castling.
 	 */
 	public static final int CASTLING = 0b0000_0000_0000_0100;
-
+	
 	/**
 	 * This mark is used by movement generation to indicate that a specific movement is a pawn
 	 * promotion.
 	 */
 	public static final int PROMOTION = 0b0000_0000_0000_1000;
-
+	
 	/**
 	 * This mark is used by movement generation to indicate that a specific movement puts the
 	 * opposite king in check.
@@ -49,7 +49,7 @@ public class GameConstants {
 	 * checks, like <i>discovery check</i>, <i>double check</i>, neither <i>checkmate</i> as well.
 	 */
 	public static final int CHECK = 0b0000_0000_0001_0000;
-
+	
 	/**
 	 * This mark is used by movement generation to indicate that a specific movement puts the
 	 * opposite king in check, not by movement of the piece itself, but by uncovering a same side
@@ -61,7 +61,7 @@ public class GameConstants {
 	 * as well.
 	 */
 	public static final int DISCOVERY_CHECK = 0b0000_0000_0010_0000;
-
+	
 	/**
 	 * This mark is used by movement generation to indicate that a specific movement puts the
 	 * opposite king in check, and also have uncovered another piece that also attacks the opposite
@@ -73,7 +73,7 @@ public class GameConstants {
 	 * as well.
 	 */
 	public static final int DOUBLE_CHECK = 0b0000_0000_0100_0000;
-
+	
 	/**
 	 * This mark is used by movement generation to indicate that a specific movement puts the
 	 * opposite king in checkmate, finishing the game.
@@ -83,80 +83,80 @@ public class GameConstants {
 	 * checks, like <i>discovery check</i>.
 	 */
 	public static final int CHECKMATE = 0b0000_0000_1000_0000;
-
+	
 	public static final int STALEMATE = 0b0000_0001_0000_0000;
-
+	
 	/**
 	 * Flags castling movement is available for the black piece in the king side.
 	 */
 	public static final int BLACK_KING_SIDE_CASTLING = 0b0001;
-
+	
 	/**
 	 * Flags castling movement is available for the black piece in the queen side.
 	 */
 	public static final int BLACK_QUEEN_SIDE_CASTLING = 0b0010;
-
+	
 	/**
 	 * Flags castling movement is available for the white piece in the king side.
 	 */
 	public static final int WHITE_KING_SIDE_CASTLING = 0b0100;
-
+	
 	/**
 	 * Flags castling movement is available for the white piece in the queen side.
 	 */
 	public static final int WHITE_QUEEN_SIDE_CASTLING = 0b1000;
-
+	
 	public static final int BOARD_SIZE = 8;
-
+	
 	/**
 	 * The total amount of squares in the chess board.
 	 */
 	public static final int SQUARES_COUNT = GameConstants.BOARD_SIZE * GameConstants.BOARD_SIZE;
-
+	
 	public static final int MIN_ROW_NUMBER = 0;
-
+	
 	public static final int MAX_ROW_NUMBER = BOARD_SIZE - 1;
-
+	
 	public static final int MIN_COLUMN_NUMBER = 0;
-
+	
 	public static final int MAX_COLUMN_NUMBER = BOARD_SIZE - 1;
-
+	
 	public static boolean isCapture(int movementFlags) {
 		return (movementFlags & CAPTURE) != 0;
 	}
-
+	
 	public static boolean isEnPassant(int movementFlags) {
 		return (movementFlags & EN_PASSANT) != 0;
 	}
-
+	
 	public static boolean isCastling(int movementFlags) {
 		return (movementFlags & CASTLING) != 0;
 	}
-
+	
 	public static boolean isPromotion(int movementFlags) {
 		return (movementFlags & PROMOTION) != 0;
 	}
-
+	
 	public static boolean isCheck(int movementFlags) {
 		return (CHECK & movementFlags) != 0;
 	}
-
+	
 	public static boolean isDiscoveryCheck(int movementFlags) {
 		return (movementFlags & DISCOVERY_CHECK) != 0;
 	}
-
+	
 	public static boolean isDoubleCheck(int movementFlags) {
 		return (movementFlags & DOUBLE_CHECK) != 0;
 	}
-
+	
 	public static boolean isCheckmate(int movementFlags) {
 		return (movementFlags & CHECKMATE) != 0;
 	}
-
+	
 	public static boolean isStalemate(int movementFlags) {
 		return (movementFlags & STALEMATE) != 0;
 	}
-
+	
 	/**
 	 * Evaluates if the movement flags is related with some kind of check (simple check, discovery
 	 * check, double check).
@@ -177,7 +177,7 @@ public class GameConstants {
 	public static boolean isGeneralCheck(int movementFlags) {
 		return (movementFlags & (CHECK | DOUBLE_CHECK | DISCOVERY_CHECK)) != 0;
 	}
-
+	
 	/**
 	 * Evaluates if the given <code>castlingFlags</code> parameter is marked with the flag
 	 * indicating that castling movement is available for black pieces in the king side.
@@ -190,7 +190,7 @@ public class GameConstants {
 	public static boolean isBlackKingSideCastling(int castlingFlags) {
 		return (castlingFlags & BLACK_KING_SIDE_CASTLING) != 0;
 	}
-
+	
 	/**
 	 * Evaluates if the given <code>castlingFlags</code> parameter is marked with the flag
 	 * indicating that castling movement is available for black pieces in the queen side.
@@ -203,7 +203,7 @@ public class GameConstants {
 	public static boolean isBlackQueenSideCastling(int castlingFlags) {
 		return (castlingFlags & BLACK_QUEEN_SIDE_CASTLING) != 0;
 	}
-
+	
 	/**
 	 * Evaluates if the given <code>castlingFlags</code> parameter is marked with the flag
 	 * indicating that castling movement is available for white pieces in the king side.
@@ -216,7 +216,7 @@ public class GameConstants {
 	public static boolean isWhiteKingSideCastling(int castlingFlags) {
 		return (castlingFlags & WHITE_KING_SIDE_CASTLING) != 0;
 	}
-
+	
 	/**
 	 * Evaluates if the given <code>castlingFlags</code> parameter is marked with the flag
 	 * indicating that castling movement is available for white pieces in the queen side.
@@ -229,7 +229,40 @@ public class GameConstants {
 	public static boolean isWhiteQueenSideCastling(int castlingFlags) {
 		return (castlingFlags & WHITE_QUEEN_SIDE_CASTLING) != 0;
 	}
-
+	
+	/**
+	 * Castling flags are encoded into bits of a integer number. The four least significant bits are
+	 * used to store castling flags availability during a game playing.
+	 *
+	 * <pre>
+	 * int flags = 0b000...0000000000000000
+	 *                                 ^^^^
+	 *                                 ||||
+	 * black castling for king side  --+|||
+	 * black castling for queen side ---+||
+	 * white castling for king side  ----+|
+	 * white castling for queen side -----+
+	 * </pre>
+	 *
+	 * @param blackKingSideCastlingAvailable A flag to indicate if the castling movement is
+	 *        available for the black pieces in the king side. If <code>true</code> is informed, the
+	 *        bit associated with this movement is set to <code>1</code>, or <code>0</code>
+	 *        otherwise.
+	 * @param blackQueenSideCastlingAvailable A flag to indicate if the castling movement is
+	 *        available for the black pieces in the queen side. If <code>true</code> is informed,
+	 *        the bit associated with this movement is set to <code>1</code>, or <code>0</code>
+	 *        otherwise.
+	 * @param whiteKingSideCastlingAvailable A flag to indicate if the castling movement is
+	 *        available for the white pieces in the king side. If <code>true</code> is informed,
+	 *        the bit associated with this movement is set to <code>1</code>, or <code>0</code>
+	 *        otherwise.
+	 * @param whiteQueenSideCastlingAvailable A flag to indicate if the castling movement is
+	 *        available for the white pieces in the queen side. If <code>true</code> is informed,
+	 *        the bit associated with this movement is set to <code>1</code>, or <code>0</code>
+	 *        otherwise.
+	 *
+	 * @return The castling flags encoded into the bits of the integer number.
+	 */
 	public static int toCastlingFlags(
 			boolean blackKingSideCastlingAvailable,
 			boolean blackQueenSideCastlingAvailable,
