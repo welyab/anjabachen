@@ -37,7 +37,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForKingOnCenter() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "k . . . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . K . . . ." + Board.NEWLINE
@@ -50,7 +50,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "k . . . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . K K K . . ." + Board.NEWLINE
 				/* 3 */ + ". . K K K . . ." + Board.NEWLINE
@@ -66,8 +66,8 @@ public class BoardTest {
 	public void getMovementsShouldNotGenerateKingMovesBeyondSquareOccupiedBySameColorPiece() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . k . . . . ." + Board.NEWLINE
+				/* 1 */ + "K . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . N . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . K . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
@@ -79,8 +79,8 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . k . . . . ." + Board.NEWLINE
+				/* 1 */ + "K . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . K N K . . ." + Board.NEWLINE
 				/* 3 */ + ". . K K K . . ." + Board.NEWLINE
 				/* 4 */ + ". . K K K . . ." + Board.NEWLINE
@@ -102,7 +102,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . . . . . . k" + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 0));
 		addPieces(board, movements.getTargets());
@@ -115,7 +115,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . . . . . . k" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -124,7 +124,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForKingOnBorder() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
@@ -137,7 +137,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + "K K . . . . . ." + Board.NEWLINE
@@ -153,7 +153,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForQueenOnCenter() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". K . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . Q . . . ." + Board.NEWLINE
@@ -166,7 +166,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + "Q . . Q . . Q ." + Board.NEWLINE
+				/* 0 */ + "Q K . Q . . Q k" + Board.NEWLINE
 				/* 1 */ + ". Q . Q . Q . ." + Board.NEWLINE
 				/* 2 */ + ". . Q Q Q . . ." + Board.NEWLINE
 				/* 3 */ + "Q Q Q Q Q Q Q Q" + Board.NEWLINE
@@ -182,7 +182,7 @@ public class BoardTest {
 	public void getMovementsShouldNotGenerateQueenMovesBeyondSquareOccupiedBySameColorPiece() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + "N . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "N . . k . K . ." + Board.NEWLINE
 				/* 1 */ + ". . . N . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . Q . . . ." + Board.NEWLINE
@@ -195,7 +195,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + "N . . . . . Q ." + Board.NEWLINE
+				/* 0 */ + "N . . k . K Q ." + Board.NEWLINE
 				/* 1 */ + ". Q . N . Q . ." + Board.NEWLINE
 				/* 2 */ + ". . Q Q Q . . ." + Board.NEWLINE
 				/* 3 */ + "Q Q Q Q Q Q Q Q" + Board.NEWLINE
@@ -218,7 +218,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . . k . K . ." + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 7));
 		addPieces(board, movements.getTargets());
@@ -231,7 +231,7 @@ public class BoardTest {
 				/* 4 */ + ". . . Q . . . Q" + Board.NEWLINE
 				/* 5 */ + ". . Q . . . . Q" + Board.NEWLINE
 				/* 6 */ + ". Q . . . . . Q" + Board.NEWLINE
-				/* 7 */ + "Q . . . . . . Q" + Board.NEWLINE;
+				/* 7 */ + "Q . . k . K . Q" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -240,27 +240,27 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForQueenOnBorder() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . Q" + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
+				/* 7 */ + "k . . . . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(4, 7));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . Q . . . Q" + Board.NEWLINE
+				/* 0 */ + "K . . Q . . . Q" + Board.NEWLINE
 				/* 1 */ + ". . . . Q . . Q" + Board.NEWLINE
 				/* 2 */ + ". . . . . Q . Q" + Board.NEWLINE
 				/* 3 */ + ". . . . . . Q Q" + Board.NEWLINE
 				/* 4 */ + "Q Q Q Q Q Q Q Q" + Board.NEWLINE
 				/* 5 */ + ". . . . . . Q Q" + Board.NEWLINE
 				/* 6 */ + ". . . . . Q . Q" + Board.NEWLINE
-				/* 7 */ + ". . . . Q . . Q" + Board.NEWLINE;
+				/* 7 */ + "k . . . Q . . Q" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -269,27 +269,27 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForRookOnCenter() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . R . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . . . . . . k" + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . R . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . R . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . R . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . R . . . ." + Board.NEWLINE
 				/* 3 */ + "R R R R R R R R" + Board.NEWLINE
 				/* 4 */ + ". . . R . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . R . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . R . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . R . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . . R . . . k" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -298,7 +298,7 @@ public class BoardTest {
 	public void getMovementsShouldNotGenerateRookMovesBeyondSquareOccupiedBySameColorPiece() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "k . K . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . N . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . R . . . ." + Board.NEWLINE
@@ -311,7 +311,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "k . K . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . N . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . R . . . ." + Board.NEWLINE
 				/* 3 */ + "R R R R R R R R" + Board.NEWLINE
@@ -327,7 +327,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForRookOnCorner() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . k . K" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
@@ -340,7 +340,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + "R . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "R . . . . k . K" + Board.NEWLINE
 				/* 1 */ + "R . . . . . . ." + Board.NEWLINE
 				/* 2 */ + "R . . . . . . ." + Board.NEWLINE
 				/* 3 */ + "R . . . . . . ." + Board.NEWLINE
@@ -356,7 +356,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForRookBorder() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . k . K" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + "R . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
@@ -369,7 +369,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + "R . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "R . . . . k . K" + Board.NEWLINE
 				/* 1 */ + "R . . . . . . ." + Board.NEWLINE
 				/* 2 */ + "R R R R R R R R" + Board.NEWLINE
 				/* 3 */ + "R . . . . . . ." + Board.NEWLINE
@@ -385,7 +385,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForBishopOnCenter() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". K . k . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . B . . . ." + Board.NEWLINE
@@ -398,7 +398,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + "B . . . . . B ." + Board.NEWLINE
+				/* 0 */ + "B K . k . . B ." + Board.NEWLINE
 				/* 1 */ + ". B . . . B . ." + Board.NEWLINE
 				/* 2 */ + ". . B . B . . ." + Board.NEWLINE
 				/* 3 */ + ". . . B . . . ." + Board.NEWLINE
@@ -414,9 +414,9 @@ public class BoardTest {
 	public void getMovementsShouldNotGenerateBishopMovesBeyondSquareOccupiedBySameColorPiece() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . . . K" + Board.NEWLINE
 				/* 1 */ + ". N . . . . . ." + Board.NEWLINE
-				/* 2 */ + ". . . . N . . ." + Board.NEWLINE
+				/* 2 */ + ". . . . N . . k" + Board.NEWLINE
 				/* 3 */ + ". . . B . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". N . . . . . ." + Board.NEWLINE
@@ -427,9 +427,9 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . . . . . . K" + Board.NEWLINE
 				/* 1 */ + ". N . . . . . ." + Board.NEWLINE
-				/* 2 */ + ". . B . N . . ." + Board.NEWLINE
+				/* 2 */ + ". . B . N . . k" + Board.NEWLINE
 				/* 3 */ + ". . . B . . . ." + Board.NEWLINE
 				/* 4 */ + ". . B . B . . ." + Board.NEWLINE
 				/* 5 */ + ". N . . . B . ." + Board.NEWLINE
@@ -443,7 +443,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForBishopOnCorner() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . k . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
@@ -456,7 +456,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . B" + Board.NEWLINE
+				/* 0 */ + "K . . k . . . B" + Board.NEWLINE
 				/* 1 */ + ". . . . . . B ." + Board.NEWLINE
 				/* 2 */ + ". . . . . B . ." + Board.NEWLINE
 				/* 3 */ + ". . . . B . . ." + Board.NEWLINE
@@ -473,7 +473,7 @@ public class BoardTest {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 1 */ + ". K . . . . k ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
@@ -486,7 +486,7 @@ public class BoardTest {
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 1 */ + ". K . . . . k ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + "B . . . . . . ." + Board.NEWLINE
 				/* 4 */ + ". B . . . . . B" + Board.NEWLINE
@@ -501,7 +501,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForKnightOnCenter() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . N . . . ." + Board.NEWLINE
@@ -514,7 +514,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . N . N . . ." + Board.NEWLINE
 				/* 2 */ + ". N . . . N . ." + Board.NEWLINE
 				/* 3 */ + ". . . N . . . ." + Board.NEWLINE
@@ -530,7 +530,7 @@ public class BoardTest {
 	public void getMovementsShouldNotGenerateBishopMovesBeyondKnightOccupiedBySameColorPiece() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . k . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . B . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . B . ." + Board.NEWLINE
 				/* 3 */ + ". . . N . . . ." + Board.NEWLINE
@@ -543,7 +543,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . k . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . N . B . . ." + Board.NEWLINE
 				/* 2 */ + ". N . . . B . ." + Board.NEWLINE
 				/* 3 */ + ". . . N . . . ." + Board.NEWLINE
@@ -559,7 +559,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementsForKnightOnCorner() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
@@ -572,7 +572,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 0 */ + "K . . . . . . k" + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
@@ -595,7 +595,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
+				/* 7 */ + "K . . . . . . k" + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 4));
 		addPieces(board, movements.getTargets());
@@ -608,7 +608,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
+				/* 7 */ + "K . . . . . . k" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -831,7 +831,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . r k . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 2));
 		addPieces(board, movements.getTargets());
@@ -844,7 +844,7 @@ public class BoardTest {
 				/* 4 */ + ". . Q . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . Q . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . Q . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . Q . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . Q k . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -896,7 +896,7 @@ public class BoardTest {
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + "K . . . . . . ." + Board.NEWLINE
+				/* 1 */ + "K . . . . . k ." + Board.NEWLINE
 				/* 2 */ + ". B . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . B . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . B . . . ." + Board.NEWLINE
@@ -925,7 +925,7 @@ public class BoardTest {
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 1 */ + "K . . . . . . ." + Board.NEWLINE
+				/* 1 */ + "K . . . . k . ." + Board.NEWLINE
 				/* 2 */ + ". . . . N . . ." + Board.NEWLINE
 				/* 3 */ + ". . N . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . N . . . ." + Board.NEWLINE
@@ -947,7 +947,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . r . . . . k" + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 5));
 		addPieces(board, movements.getTargets());
@@ -960,7 +960,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . r . . . . k" + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -969,7 +969,7 @@ public class BoardTest {
 	public void getMovementsShouldGenerateMovementForRookInTheOnlyPlaceWhereItReleasesKingFromCheck() {
 		String boardString = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . K . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . K . . . k ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . . . . R . ." + Board.NEWLINE
@@ -982,7 +982,7 @@ public class BoardTest {
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
 				// - - - - 0 1 2 3 4 5 6 7
-				/* 0 */ + ". . K . . . . ." + Board.NEWLINE
+				/* 0 */ + ". . K . . . k ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 3 */ + ". . R . . R . ." + Board.NEWLINE
@@ -1005,7 +1005,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . B . ." + Board.NEWLINE
-				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . r k . . . ." + Board.NEWLINE;
 		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(6, 5));
 		addPieces(board, movements.getTargets());
@@ -1018,7 +1018,7 @@ public class BoardTest {
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . B . ." + Board.NEWLINE
-				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
+				/* 7 */ + ". . r k . . . ." + Board.NEWLINE;
 		assertEquals(expectedBoard, board.toString2());
 	}
 
@@ -1029,7 +1029,7 @@ public class BoardTest {
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . K . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 2 */ + ". . . . . . . k" + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
@@ -1042,7 +1042,7 @@ public class BoardTest {
 				// - - - - 0 1 2 3 4 5 6 7
 				/* 0 */ + ". . K . . . . ." + Board.NEWLINE
 				/* 1 */ + ". . . . . . . ." + Board.NEWLINE
-				/* 2 */ + ". . . . . . . ." + Board.NEWLINE
+				/* 2 */ + ". . . . . . . k" + Board.NEWLINE
 				/* 3 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 4 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE

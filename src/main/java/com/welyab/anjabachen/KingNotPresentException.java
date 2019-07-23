@@ -36,6 +36,7 @@ public class KingNotPresentException extends ChessException {
 	 * @param color The color side of the required king piece.
 	 */
 	public KingNotPresentException(Color color) {
+		super(String.format("The king of color %s is not present in the board", color.getName()));
 		this.color = color;
 	}
 
