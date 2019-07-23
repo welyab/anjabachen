@@ -15,10 +15,164 @@
  */
 package com.welyab.anjabachen;
 
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.junit.Test;
+
 /**
  * Tests the movement generation logic inside <cod</code>
  *
  * @author Welyab Paula
  */
 public class BoardPerftTest {
+
+	@SuppressWarnings("javadoc")
+	private static final Logger logger = Logger.getLogger(BoardPerftTest.class.getName());
+
+	@Test
+	@SuppressWarnings("javadoc")
+	public void perftTest1() {
+		test(
+			"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+			Map.of(
+				1,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(20)
+					.incrementCaptureCount(0)
+					.incrementEnPassantCount(0)
+					.incrementCastlings(0)
+					.incrementPromotionCount(0)
+					.incrementCheckCount(0)
+					.incrementDiscoveryCheckCount(0)
+					.incrementDoubleCheckCount(0)
+					.incrementCheckmateCount(0)
+					.build(),
+				2,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(400)
+					.incrementCaptureCount(0)
+					.incrementEnPassantCount(0)
+					.incrementCastlings(0)
+					.incrementPromotionCount(0)
+					.incrementCheckCount(0)
+					.incrementDiscoveryCheckCount(0)
+					.incrementDoubleCheckCount(0)
+					.incrementCheckmateCount(0)
+					.build(),
+				3,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(8902)
+					.incrementCaptureCount(0)
+					.incrementEnPassantCount(0)
+					.incrementCastlings(0)
+					.incrementPromotionCount(0)
+					.incrementCheckCount(12)
+					.incrementDiscoveryCheckCount(0)
+					.incrementDoubleCheckCount(0)
+					.incrementCheckmateCount(0)
+					.build(),
+				4,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(197281)
+					.incrementCaptureCount(1576)
+					.incrementEnPassantCount(0)
+					.incrementCastlings(0)
+					.incrementPromotionCount(0)
+					.incrementCheckCount(469)
+					.incrementDiscoveryCheckCount(0)
+					.incrementDoubleCheckCount(0)
+					.incrementCheckmateCount(8)
+					.build()
+			)
+		);
+	}
+
+	@Test
+	@SuppressWarnings("javadoc")
+	public void perft_r3k2r_p1ppqpb1_bn2pnp1_3PN3_1p2P3_2N2Q1p_PPPBBPPP_R3K2R_w_KQkq_x() {
+		test(
+			"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
+			Map.of(
+				1,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(48)
+					.incrementCaptureCount(8)
+					.incrementEnPassantCount(0)
+					.incrementCastlings(2)
+					.incrementPromotionCount(0)
+					.incrementCheckCount(0)
+					.incrementDiscoveryCheckCount(0)
+					.incrementDoubleCheckCount(0)
+					.incrementCheckmateCount(0)
+					.build(),
+				2,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(2039)
+					.incrementCaptureCount(351)
+					.incrementEnPassantCount(1)
+					.incrementCastlings(91)
+					.incrementPromotionCount(0)
+					.incrementCheckCount(3)
+					.incrementDiscoveryCheckCount(0)
+					.incrementDoubleCheckCount(0)
+					.incrementCheckmateCount(0)
+					.build(),
+				3,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(97862)
+					.incrementCaptureCount(17102)
+					.incrementEnPassantCount(45)
+					.incrementCastlings(3162)
+					.incrementPromotionCount(0)
+					.incrementCheckCount(993)
+					.incrementDiscoveryCheckCount(0)
+					.incrementDoubleCheckCount(0)
+					.incrementCheckmateCount(1)
+					.build(),
+				4,
+				PieceMovementMeta
+					.builder()
+					.incrementTotalMovements(4085603)
+					.incrementCaptureCount(757163)
+					.incrementEnPassantCount(1929)
+					.incrementCastlings(128013)
+					.incrementPromotionCount(15172)
+					.incrementCheckCount(25523)
+					.incrementDiscoveryCheckCount(42)
+					.incrementDoubleCheckCount(6)
+					.incrementCheckmateCount(43)
+					.build()
+			)
+		);
+	}
+
+	private void test(
+			String fen,
+			Map<Integer, PieceMovementMeta> expectedPerftResults
+	) {
+		logger.info("Executing perft testing");
+		logger.info(String.format("FEN: %s", fen));
+		Perft perft = new Perft(fen, 3);
+		long t1 = System.currentTimeMillis();
+		Map<Integer, PieceMovementMeta> metas = perft.execute();
+		long t2 = System.currentTimeMillis();
+		PerftPrinter perftPrinter = new PerftPrinter();
+		perftPrinter.print(
+			metas.entrySet()
+				.stream()
+				.sorted((e1, e2) -> e1.getKey() - e2.getKey())
+				.map(e -> e.getValue())
+				.collect(Collectors.toList())
+		);
+		System.out.println("Total time: " + (t2 - t1));
+	}
 }
