@@ -15,6 +15,6 @@
  */package com.welyab.anjabachen.util;
 
 public interface Copiable<T> {
-	
+
 	public T copy();
 }
