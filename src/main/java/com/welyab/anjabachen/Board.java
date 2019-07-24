@@ -32,6 +32,7 @@ import java.util.stream.StreamSupport;
 import com.welyab.anjabachen.PieceMovementMeta.Builder;
 import com.welyab.anjabachen.fen.FenParser;
 import com.welyab.anjabachen.fen.GameConfig;
+import com.welyab.anjabachen.util.Copiable;
 
 /**
  * @author Welyab Paula
