@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Contains some static methods for formating a text based grid information with a head row for
@@ -108,19 +109,15 @@ public class TablePrinter {
 	 * @param config The configuration.
 	 */
 	public static void print(
-			List<String> columns,
+			TablePrinterColumnModel columns,
 			TablePrinterDataModel data,
 			TablePrinterConfig config
 	) {
-		var values = new ArrayList<List<String>>();
-		for (var i = 0; i < data.rowCount(); i++) {
-			var row = new ArrayList<String>();
-			values.add(row);
-			for (var j = 0; j < data.columnCount(); j++) {
-				row.add(data.getValue(i, j));
-			}
-		}
-		print(columns, values, config);
+		print(
+			columns.stream().collect(Collectors.toList()),
+			data,
+			config
+		);
 	}
 
 	/**
@@ -158,22 +155,24 @@ public class TablePrinter {
 	 * The configuration parameter may configure the size of the space between columns, or define
 	 * the output for text stream.
 	 *
-	 * <p>
-	 * This method uses internally the default configuration
-	 * ({@link TablePrinterConfig#defaultConfig()}).
-	 *
 	 * @param columns The columns names.
-	 * @param values The data abstraction. Each entry of the outter list represents a row of data.
+	 * @param data The data abstraction.
+	 * @param config The configuration.
 	 */
 	public static void print(
 			List<String> columns,
-			List<List<String>> values
+			TablePrinterDataModel data,
+			TablePrinterConfig config
 	) {
-		print(
-			columns,
-			values,
-			TablePrinterConfig.defaultConfig()
-		);
+		var values = new ArrayList<List<String>>();
+		for (var i = 0; i < data.rowCount(); i++) {
+			var row = new ArrayList<String>();
+			values.add(row);
+			for (var j = 0; j < data.columnCount(); j++) {
+				row.add(data.getValue(i, j));
+			}
+		}
+		print(columns, values, config);
 	}
 
 	/**
