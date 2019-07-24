@@ -23,8 +23,8 @@ fen
 	: piecePlacement         Space 
 	  sideToMove             Space 
 	  castlingAbility        Space 
-	  enPassantTargetSquare  Space 
-	  moveCounters?           EOF
+	  enPassantTargetSquare   
+	  (Space moveCounters)?  EOF
 	;
 
 piecePlacement
