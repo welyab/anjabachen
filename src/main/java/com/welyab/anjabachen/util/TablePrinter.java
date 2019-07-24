@@ -109,7 +109,7 @@ public class TablePrinter {
 	 */
 	public static void print(
 			List<String> columns,
-			TableData data,
+			TablePrinterDataModel data,
 			TablePrinterConfig config
 	) {
 		var values = new ArrayList<List<String>>();

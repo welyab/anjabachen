@@ -136,7 +136,7 @@ public class TablePrinterTest {
 		var arrayOut = new ByteArrayOutputStream();
 		TablePrinter.print(
 			List.of("Col1", "Column2", "Column    3"),
-			new TableData() {
+			new TablePrinterDataModel() {
 			
 			// @formatter:off
 				String data[][] = {

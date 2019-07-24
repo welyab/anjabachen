@@ -21,17 +21,17 @@ package com.welyab.anjabachen.util;
  *
  * @author Welyab Paula
  */
-public interface TableData {
+public interface TablePrinterDataModel {
 
 	/**
-	 * Retrieve the total number of rows provided by this <code>TableData</code>.
+	 * Retrieve the total number of rows provided by this <code>TablePrinterDataModel</code>.
 	 *
 	 * @return The total number of rows.
 	 */
 	public int rowCount();
 
 	/**
-	 * Retrieves the total number of columns provider by this <code>TableData</code>.
+	 * Retrieves the total number of columns provider by this <code>TablePrinterDataModel</code>.
 	 *
 	 * @return The total number of columns.
 	 */
