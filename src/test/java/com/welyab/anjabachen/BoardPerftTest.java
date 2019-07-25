@@ -43,14 +43,14 @@ import com.welyab.anjabachen.util.TablePrinterDataModel;
  * @author Welyab Paula
  */
 public class BoardPerftTest {
-	
+
 	static {
 		Configurator
 			.defaultConfig()
 			.formatPattern("{message}")
 			.activate();
 	}
-	
+
 	private static final List<T> columnNames = Arrays.asList(
 		new T(
 			"Depth",
@@ -127,14 +127,14 @@ public class BoardPerftTest {
 			)
 		)
 	);
-	
+
 	private static Optional<Integer> extractIntValue(
 			PieceMovementMeta meta,
 			Function<PieceMovementMeta, Integer> extractor
 	) {
 		return Optional.ofNullable(meta).map(extractor::apply);
 	}
-	
+
 	private static String formatValue(
 			Optional<Integer> expectedValue,
 			Optional<Integer> calculatedValue
@@ -148,37 +148,37 @@ public class BoardPerftTest {
 			.append(calculatedValue.orElse(0) - expectedValue.orElse(0))
 			.toString();
 	}
-	
+
 	@FunctionalInterface
 	private interface ValueFormatter {
-		
+
 		String format(
 				int depth,
 				PieceMovementMeta expectedMeta,
 				PieceMovementMeta calculatedMeta
 		);
 	}
-	
+
 	private static class ColumnModel implements TablePrinterColumnModel {
-		
+
 		@Override
 		public int columnCount() {
 			return columnNames.size();
 		}
-		
+
 		@Override
 		public String getColumnName(int columnNumber) {
 			return columnNames.get(columnNumber).columnName;
 		}
-		
+
 	}
-	
+
 	private static class T {
-		
+
 		final String columnName;
-		
+
 		final ValueFormatter valueFormatter;
-		
+
 		public T(
 				String columnName,
 				ValueFormatter valueFormatter
@@ -186,18 +186,18 @@ public class BoardPerftTest {
 			this.columnName = columnName;
 			this.valueFormatter = valueFormatter;
 		}
-		
+
 		public ValueFormatter getValueFormatter() {
 			return valueFormatter;
 		}
 	}
-	
+
 	private static class DataModel implements TablePrinterDataModel {
-		
+
 		private Map<Integer, PieceMovementMeta> expectedMetadata;
-		
+
 		private Map<Integer, PieceMovementMeta> calculatedMetadata;
-		
+
 		public DataModel(
 				Map<Integer, PieceMovementMeta> expectedMetadata,
 				Map<Integer, PieceMovementMeta> calculatedMetadata
@@ -205,17 +205,17 @@ public class BoardPerftTest {
 			this.expectedMetadata = expectedMetadata;
 			this.calculatedMetadata = calculatedMetadata;
 		}
-		
+
 		@Override
 		public int rowCount() {
 			return expectedMetadata.size();
 		}
-		
+
 		@Override
 		public int columnCount() {
 			return columnNames.size();
 		}
-		
+
 		@Override
 		public String getValue(int row, int column) {
 			return columnNames.get(column)
@@ -227,7 +227,7 @@ public class BoardPerftTest {
 				);
 		}
 	}
-	
+
 	private void test(
 			String fen,
 			Map<Integer, PieceMovementMeta> expectedPerftResults
@@ -237,9 +237,9 @@ public class BoardPerftTest {
 		Logger.info("FEN: {}", fen);
 		Perft perft = new Perft(fen, expectedPerftResults.size());
 		Board board = perft.getBoard();
-		printBoard(board);
+		// printBoard(board);
 		Map<Integer, PieceMovementMeta> calculatedMetadatas = perft.execute();
-		
+
 		var byteOut = new ByteArrayOutputStream();
 		var writer = new PrintWriter(byteOut);
 		TablePrinter.print(
@@ -262,17 +262,17 @@ public class BoardPerftTest {
 		while ((line = reader.readLine()) != null) {
 			Logger.info(line);
 		}
-		
+
 		Logger.info(">> Legend: ");
 		Logger.info(">> * expected calcualted difference");
 		Logger.info(">> * - indicates a difference between expected and calculated value");
 		Logger.info(">> expecetd - indicates the expected value for perft");
 		Logger.info(">> calculated - the perft result calculated by the program");
 		Logger.info(">> difference - the difference between expected and calculated values");
-		
+
 		Logger.info("");
 	}
-	
+
 	private static void printBoard(Board board) throws IOException {
 		var reader = new BufferedReader(new StringReader(board.toString()));
 		var line = "";
@@ -286,17 +286,17 @@ public class BoardPerftTest {
 			firstLine = false;
 		}
 	}
-	
+
 	private String s(int expected, int actual) {
 		return String.format(
 			"%s c=%d e=%d d=%d",
-			(expected - actual) == 0 ? "" : "*",
+			expected - actual == 0 ? "" : "*",
 			expected,
 			actual,
 			expected - actual
 		);
 	}
-	
+
 	@Test
 	@SuppressWarnings("javadoc")
 	public void perft_8_2p5_3p4_KP5r_1R3p1k_8_4P1P1_8_w_x_x_() throws IOException {
@@ -367,24 +367,24 @@ public class BoardPerftTest {
 					.incrementDiscoveryCheckCount(1292)
 					.incrementDoubleCheckCount(3)
 					.incrementCheckmateCount(0)
-					.build(),
-				6,
-				PieceMovementMeta
-					.builder()
-					.incrementTotalMovements(11030083)
-					.incrementCaptureCount(940350)
-					.incrementEnPassantCount(33325)
-					.incrementCastlings(0)
-					.incrementPromotionCount(7552)
-					.incrementCheckCount(452473)
-					.incrementDiscoveryCheckCount(26067)
-					.incrementDoubleCheckCount(0)
-					.incrementCheckmateCount(2733)
-					.build()
+					.build()//,
+//				6,
+//				PieceMovementMeta
+//					.builder()
+//					.incrementTotalMovements(11030083)
+//					.incrementCaptureCount(940350)
+//					.incrementEnPassantCount(33325)
+//					.incrementCastlings(0)
+//					.incrementPromotionCount(7552)
+//					.incrementCheckCount(452473)
+//					.incrementDiscoveryCheckCount(26067)
+//					.incrementDoubleCheckCount(0)
+//					.incrementCheckmateCount(2733)
+//					.build()
 			)
 		);
 	}
-	
+
 	@Test
 	@SuppressWarnings("javadoc")
 	public void perft_rnbqkbnr_pppppppp_8_8_8_8_PPPPPPPP_RNBQKBNR_w_KQkq_x_0_1() throws IOException {
@@ -446,7 +446,7 @@ public class BoardPerftTest {
 			)
 		);
 	}
-	
+
 	@Test
 	@SuppressWarnings("javadoc")
 	public void perft_r3k2r_p1ppqpb1_bn2pnp1_3PN3_1p2P3_2N2Q1p_PPPBBPPP_R3K2R_w_KQkq_x()

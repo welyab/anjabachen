@@ -258,7 +258,7 @@ public class Position {
 	 *
 	 * @return The column number.
 	 */
-	public static int toColumn(int file) {
+	public static int toColumn(char file) {
 		return file - 'a';
 	}
 

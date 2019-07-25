@@ -26,13 +26,13 @@ import com.welyab.anjabachen.fen.FenParser;
  * @author Welyab Paula
  */
 public class Perft {
-	
+
 	public static final int DEFAULT_DEPTH = 3;
-	
+
 	private final Board board;
-	
+
 	private final int depth;
-	
+
 	/**
 	 *
 	 * @param fen The <code>FEN</code> representation for the board.
@@ -42,7 +42,7 @@ public class Perft {
 	public Perft(String fen) {
 		this(fen, DEFAULT_DEPTH);
 	}
-	
+
 	/**
 	 * @param fen
 	 * @param depth
@@ -51,14 +51,14 @@ public class Perft {
 		board = new Board(fen);
 		this.depth = depth;
 	}
-	
+
 	public Map<Integer, PieceMovementMeta> execute() {
 		var metas = new HashMap<Integer, PieceMovementMeta>();
 		Board boardCopy = board.copy();
 		walk(boardCopy, 1, metas, new ArrayList<String>());
 		return metas;
 	}
-	
+
 	private void walk(
 			Board board,
 			int currentDepth,
@@ -75,6 +75,15 @@ public class Perft {
 						pieceMovement.getOrigin().getPosition().getPgnPosition()
 								+ movementTarget.getPosition().getPgnPosition()
 					);
+//					if (currentDepth == 5 && GameConstants.isDiscoveryCheck(movementTarget.getMovementFlags())) {
+//						for (int i = 0; i < path.size(); i++) {
+//							if (i > 0) {
+//								System.out.print(" ");
+//							}
+//							System.out.print(path.get(i));
+//						}
+//						System.out.println();
+//					}
 					walk(board, currentDepth + 1, metas, path);
 					path.remove(path.size() - 1);
 					board.undo();
@@ -90,35 +99,36 @@ public class Perft {
 			// System.out.println();
 		}
 	}
-	
+
 	private void mergeMetas(
 			int depth,
 			PieceMovementMeta meta,
 			Map<Integer, PieceMovementMeta> metas
-	) {
+			) {
 		metas.put(
 			depth,
 			PieceMovementMeta
 				.builder()
-				.add(meta)
+				.add(meta
+		)
 				.add(
 					metas.getOrDefault(
 						depth,
 						PieceMovementMeta.empty()
-					)
-				)
+						)
+						)
 				.build()
-		);
+				);
+				}
+
+				/**
+				 * If there is some movement tree walking running, this method notifies the
+				 * process to stop.
+				 * This method just returns when the underlying process stops.
+				 */
+				public void stop() {
 	}
-	
-	/**
-	 * If there is some movement tree walking running, this method notifies the
-	 * process to stop.
-	 * This method just returns when the underlying process stops.
-	 */
-	public void stop() {
-	}
-	
+
 	/**
 	 * Retrieves the underlying board of this perft generator. The returned
 	 * board is a copy of the
