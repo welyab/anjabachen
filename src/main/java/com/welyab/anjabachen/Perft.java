@@ -15,10 +15,14 @@
  */
 package com.welyab.anjabachen;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.welyab.anjabachen.fen.FenParser;
 
@@ -26,13 +30,16 @@ import com.welyab.anjabachen.fen.FenParser;
  * @author Welyab Paula
  */
 public class Perft {
-
+	
 	public static final int DEFAULT_DEPTH = 3;
-
+	
+	// private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
+	private final ExecutorService threadPool = Executors.newCachedThreadPool();
+	
 	private final Board board;
-
+	
 	private final int depth;
-
+	
 	/**
 	 *
 	 * @param fen The <code>FEN</code> representation for the board.
@@ -42,7 +49,7 @@ public class Perft {
 	public Perft(String fen) {
 		this(fen, DEFAULT_DEPTH);
 	}
-
+	
 	/**
 	 * @param fen
 	 * @param depth
@@ -51,84 +58,90 @@ public class Perft {
 		board = new Board(fen);
 		this.depth = depth;
 	}
-
-	public Map<Integer, PieceMovementMeta> execute() {
+	
+	public void divide() {
+	}
+	
+	public Map<Integer, PieceMovementMeta> perft() {
+		return perft(true);
+	}
+	
+	public Map<Integer, PieceMovementMeta> perft(boolean extractExtraFlags) {
 		var metas = new HashMap<Integer, PieceMovementMeta>();
 		Board boardCopy = board.copy();
-		walk(boardCopy, 1, metas, new ArrayList<String>());
+		try {
+			walk(
+				boardCopy,
+				1,
+				Collections.synchronizedMap(metas),
+				extractExtraFlags
+			).get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
 		return metas;
 	}
-
-	private void walk(
+	
+	private CompletableFuture<Void> walk(
 			Board board,
 			int currentDepth,
 			Map<Integer, PieceMovementMeta> metas,
-			List<String> path
-	) {
+			boolean extractExtraFlags
+	) throws InterruptedException, ExecutionException {
+		CompletableFuture<Void> futures = CompletableFuture.completedFuture(null);
 		if (currentDepth <= depth) {
-			var movements = board.getMovements();
-			mergeMetas(currentDepth, movements.getMeta(), metas);
-			for (var pieceMovement : movements) {
-				for (MovementTarget movementTarget : pieceMovement) {
-					board.move(pieceMovement.getOrigin(), movementTarget);
-					path.add(
-						pieceMovement.getOrigin().getPosition().getPgnPosition()
-								+ movementTarget.getPosition().getPgnPosition()
-					);
-//					if (currentDepth == 5 && GameConstants.isDiscoveryCheck(movementTarget.getMovementFlags())) {
-//						for (int i = 0; i < path.size(); i++) {
-//							if (i > 0) {
-//								System.out.print(" ");
-//							}
-//							System.out.print(path.get(i));
-//						}
-//						System.out.println();
-//					}
-					walk(board, currentDepth + 1, metas, path);
-					path.remove(path.size() - 1);
-					board.undo();
-				}
+			MovementBag movementBag = board.getMovements();
+			mergeMetas(currentDepth, movementBag.getMeta(), metas);
+			for (PieceMovement pieceMovement : movementBag) {
+				Board copy = board.copy();
+				Future<CompletableFuture<Void>> future = threadPool.submit(() -> {
+					CompletableFuture<Void> allOfInternal = CompletableFuture.completedFuture(null);
+					for (MovementTarget movementTarget : pieceMovement) {
+						copy.move(pieceMovement.getOrigin(), movementTarget);
+						allOfInternal = CompletableFuture.allOf(
+							walk(copy, currentDepth + 1, metas, extractExtraFlags),
+							allOfInternal
+						);
+						copy.undo();
+					}
+					return allOfInternal;
+				});
+				futures = CompletableFuture.allOf(futures, future.get());
 			}
-		} else {
-			// for (int i = 0; i < path.size(); i++) {
-			// if (i > 0) {
-			// System.out.print(" ");
-			// }
-			// System.out.print(path.get(i));
-			// }
-			// System.out.println();
 		}
+		return futures;
 	}
-
+	
 	private void mergeMetas(
 			int depth,
 			PieceMovementMeta meta,
 			Map<Integer, PieceMovementMeta> metas
-			) {
+	) {
 		metas.put(
 			depth,
 			PieceMovementMeta
 				.builder()
-				.add(meta
-		)
+				.add(
+					meta
+				)
 				.add(
 					metas.getOrDefault(
 						depth,
 						PieceMovementMeta.empty()
-						)
-						)
+					)
+				)
 				.build()
-				);
-				}
-
-				/**
-				 * If there is some movement tree walking running, this method notifies the
-				 * process to stop.
-				 * This method just returns when the underlying process stops.
-				 */
-				public void stop() {
+		);
 	}
-
+	
+	/**
+	 * If there is some movement tree walking running, this method notifies the
+	 * process to stop.
+	 * This method just returns when the underlying process stops.
+	 */
+	public void stop() {
+	}
+	
 	/**
 	 * Retrieves the underlying board of this perft generator. The returned
 	 * board is a copy of the

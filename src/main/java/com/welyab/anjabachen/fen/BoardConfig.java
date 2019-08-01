@@ -18,7 +18,7 @@ package com.welyab.anjabachen.fen;
 import com.welyab.anjabachen.Color;
 import com.welyab.anjabachen.Position;
 
-public class GameConfig {
+public class BoardConfig {
 
 	/** Default side to play next move is white. */
 	public static final Color DEFAULT_SIDE_TO_MOVE = Color.WHITE;
@@ -74,7 +74,7 @@ public class GameConfig {
 	private Position enPassantTargetSquare;
 
 	@SuppressWarnings("javadoc")
-	private GameConfig() {
+	private BoardConfig() {
 	}
 
 	public Color getSideToMove() {
@@ -113,17 +113,17 @@ public class GameConfig {
 		return new Builder();
 	}
 
-	public static GameConfig defaultBlackToMove() {
+	public static BoardConfig defaultBlackToMove() {
 		return builder().sideToMove(Color.BLACK).build();
 	}
 
-	public static GameConfig defaultWhiteToMove() {
+	public static BoardConfig defaultWhiteToMove() {
 		return builder().sideToMove(Color.WHITE).build();
 	}
 
 	public static final class Builder {
 
-		GameConfig boardConfig = new GameConfig();
+		BoardConfig boardConfig = new BoardConfig();
 
 		private Builder() {
 		}
@@ -168,7 +168,7 @@ public class GameConfig {
 			return this;
 		}
 
-		public GameConfig build() {
+		public BoardConfig build() {
 			return boardConfig;
 		}
 	}

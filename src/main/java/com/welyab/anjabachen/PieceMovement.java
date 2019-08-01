@@ -35,20 +35,20 @@ import java.util.stream.StreamSupport;
  * @see MovementTarget
  */
 public class PieceMovement implements Iterable<MovementTarget> {
-
+	
 	/** Origin of the movement. */
 	private final MovementOrigin origin;
-
+	
 	/**
 	 * The list of available targets for the underlying piece.
 	 */
 	private final List<MovementTarget> targets;
-
+	
 	/**
 	 * The metadata associated with this movement set.
 	 */
 	private final PieceMovementMeta meta;
-
+	
 	/**
 	 * Creates a new <code>Movements</code> set for piece.
 	 *
@@ -65,7 +65,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 		this.targets = targets;
 		this.meta = meta;
 	}
-
+	
 	/**
 	 * Retrieves the origin of this movement.
 	 *
@@ -74,7 +74,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public MovementOrigin getOrigin() {
 		return origin;
 	}
-
+	
 	/**
 	 * Retrieves the list of movement targets.
 	 *
@@ -83,7 +83,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public List<MovementTarget> getTargets() {
 		return targets;
 	}
-
+	
 	/**
 	 * The amount of available movements in this set.
 	 *
@@ -92,7 +92,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public int size() {
 		return targets.size();
 	}
-
+	
 	/**
 	 * Indicates if exists any movement in this set.
 	 *
@@ -101,7 +101,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public boolean isEmpty() {
 		return targets.isEmpty();
 	}
-
+	
 	/**
 	 * Indicates if not exists any movement in this set.
 	 *
@@ -110,7 +110,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public boolean isNotEmpty() {
 		return !isEmpty();
 	}
-
+	
 	/**
 	 * Retrieves the target in the specific index.
 	 *
@@ -121,12 +121,12 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public MovementTarget getTarget(int index) {
 		return targets.get(index);
 	}
-
+	
 	@Override
 	public Iterator<MovementTarget> iterator() {
 		return targets.iterator();
 	}
-
+	
 	/**
 	 * Retrieves the metadata associated with this piece movement.
 	 *
@@ -135,14 +135,14 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public PieceMovementMeta getMeta() {
 		return meta;
 	}
-
+	
 	public Stream<MovementTarget> stream() {
 		return StreamSupport.stream(spliterator(), false);
 	}
-
+	
 	@Override
 	public String toString() {
 		return "PieceMovement [origin=" + origin + ", targets=" + targets + ", meta=" + meta + "]";
 	}
-
+	
 }

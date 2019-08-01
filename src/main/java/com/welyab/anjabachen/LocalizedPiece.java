@@ -15,6 +15,8 @@
  */
 package com.welyab.anjabachen;
 
+import com.welyab.anjabachen.fen.BoardConfig;
+
 /**
  * A simple pair of <code>Piece</code> and <code>Position</code> objects.
  *
@@ -41,10 +43,24 @@ public class LocalizedPiece {
 		this.position = position;
 	}
 	
+	/**
+	 * Evaluates if the square represented by this underlying <code>[row, column]</code> location is
+	 * empty.
+	 * 
+	 * @return A value <code>true</code> if the square represented by this object is empty, or
+	 *         <code>false</code> otherwise.
+	 */
 	public boolean isEmpty() {
 		return piece == null;
 	}
 	
+	/**
+	 * Evaluates if the square represented by this underlying <code>[row, column]</code> location is
+	 * not empty.
+	 * 
+	 * @return A value <code>true</code> if the square represented by this object is not empty, or
+	 *         <code>false</code> otherwise.
+	 */
 	public boolean isNotEmpty() {
 		return !isEmpty();
 	}

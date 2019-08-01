@@ -19,77 +19,77 @@ package com.welyab.anjabachen;
  * @author Welyab Paula
  */
 public class PieceMovementMeta {
-
+	
 	private static final PieceMovementMeta EMPTY = builder().build();
-
+	
 	private int totalMovements;
-
+	
 	private int captureCount;
-
+	
 	private int enPassantCount;
-
+	
 	private int castlingsCount;
-
+	
 	private int promotionCount;
-
+	
 	private int checkCount;
-
+	
 	private int discoveryCheckCount;
-
+	
 	private int doubleCheckCount;
-
+	
 	private int checkmateCount;
-
+	
 	private int stalemateCount;
-
+	
 	public static Builder builder() {
 		return new Builder();
 	}
-
+	
 	public static PieceMovementMeta empty() {
 		return EMPTY;
 	}
-
+	
 	public int getCaptureCount() {
 		return captureCount;
 	}
-
+	
 	public int getPromotionCount() {
 		return promotionCount;
 	}
-
+	
 	public int getCastlingsCount() {
 		return castlingsCount;
 	}
-
+	
 	public int getEnPassantCount() {
 		return enPassantCount;
 	}
-
+	
 	public int getTotalMovements() {
 		return totalMovements;
 	}
-
+	
 	public int getCheckCount() {
 		return checkCount;
 	}
-
+	
 	public int getDiscoveryCheckCount() {
 		return discoveryCheckCount;
 	}
-
+	
 	public int getDoubleCheckCount() {
 		return doubleCheckCount;
 	}
-
+	
 	public int getCheckmateCount() {
 		return checkmateCount;
 	}
-
+	
 	public int getStalemateCount() {
 		return stalemateCount;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "PieceMovementMeta [totalMovements=" + totalMovements + ", captureCount=" + captureCount
@@ -98,15 +98,15 @@ public class PieceMovementMeta {
 				+ ", doubleCheckCount=" + doubleCheckCount + ", checkmateCount=" + checkmateCount + ", stalemateCount="
 				+ stalemateCount + "]";
 	}
-
+	
 	public static final class Builder {
-
+		
 		private final PieceMovementMeta meta;
-
+		
 		private Builder() {
 			meta = new PieceMovementMeta();
 		}
-
+		
 		public Builder add(PieceMovementMeta meta) {
 			incrementTotalMovements(meta.totalMovements);
 			incrementCaptureCount(meta.captureCount);
@@ -120,97 +120,97 @@ public class PieceMovementMeta {
 			incrementStalemateCount(meta.stalemateCount);
 			return this;
 		}
-
+		
 		public Builder incrementCaptureCount() {
 			return incrementCaptureCount(1);
 		}
-
+		
 		public Builder incrementCaptureCount(int captureCount) {
 			meta.captureCount += captureCount;
 			return this;
 		}
-
+		
 		public Builder incrementPromotionCount() {
 			return incrementPromotionCount(1);
 		}
-
+		
 		public Builder incrementPromotionCount(int promotionCount) {
 			meta.promotionCount += promotionCount;
 			return this;
 		}
-
+		
 		public Builder incrementTotalMovements() {
 			return incrementTotalMovements(1);
 		}
-
+		
 		public Builder incrementCastlings() {
 			return incrementCastlings(1);
 		}
-
+		
 		public Builder incrementCastlings(int castlingsCount) {
 			meta.castlingsCount += castlingsCount;
 			return this;
 		}
-
+		
 		public Builder incrementEnPassantCount() {
 			return incrementEnPassantCount(1);
 		}
-
+		
 		public Builder incrementEnPassantCount(int enPassantCount) {
 			meta.enPassantCount += enPassantCount;
 			return this;
 		}
-
+		
 		public Builder incrementTotalMovements(int totalMovements) {
 			meta.totalMovements += totalMovements;
 			return this;
 		}
-
+		
 		public Builder incrementCheckCount() {
 			return incrementCheckCount(1);
 		}
-
+		
 		public Builder incrementCheckCount(int checkCount) {
 			meta.checkCount += checkCount;
 			return this;
 		}
-
+		
 		public Builder incrementDiscoveryCheckCount() {
 			return incrementDiscoveryCheckCount(1);
 		}
-
+		
 		public Builder incrementDiscoveryCheckCount(int discoveryCheckCount) {
 			meta.discoveryCheckCount += discoveryCheckCount;
 			return this;
 		}
-
+		
 		public Builder incrementDoubleCheckCount() {
 			return incrementDoubleCheckCount(1);
 		}
-
+		
 		public Builder incrementDoubleCheckCount(int doubleCheckCount) {
 			meta.doubleCheckCount += doubleCheckCount;
 			return this;
 		}
-
+		
 		public Builder incrementCheckmateCount() {
 			return incrementCheckmateCount(1);
 		}
-
+		
 		public Builder incrementCheckmateCount(int checkmateCount) {
 			meta.checkmateCount += checkmateCount;
 			return this;
 		}
-
+		
 		public Builder incrementStalemateCount() {
 			return incrementStalemateCount(1);
 		}
-
+		
 		public Builder incrementStalemateCount(int stalemateCount) {
 			meta.stalemateCount += stalemateCount;
 			return this;
 		}
-
+		
 		public PieceMovementMeta build() {
 			return meta;
 		}

@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.welyab.anjabachen.fen.GameConfig;
+import com.welyab.anjabachen.fen.BoardConfig;
 
 /**
  * Unit tests for the <code>Board</code> class.
@@ -45,7 +45,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -74,7 +74,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -103,7 +103,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . k" + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 0));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -132,7 +132,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(4, 0));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -161,7 +161,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -190,7 +190,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -219,7 +219,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . k . K . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 7));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -248,7 +248,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + "k . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(4, 7));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -277,7 +277,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . k" + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -306,7 +306,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -335,7 +335,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + "R . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(7, 0));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -364,7 +364,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(2, 0));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -393,7 +393,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -422,7 +422,7 @@ public class BoardTest {
 				/* 5 */ + ". N . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -451,7 +451,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + "B . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(7, 0));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -480,7 +480,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . B . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(7, 4));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -509,7 +509,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -538,7 +538,7 @@ public class BoardTest {
 				/* 5 */ + ". . B . B . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -567,7 +567,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . N" + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(7, 7));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -596,7 +596,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + "K . . . . . . k" + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 4));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -635,7 +635,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertTrue(board.isUnderAttack(Position.of(2, 2), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(2, 4), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(3, 4), Color.WHITE));
@@ -654,7 +654,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertTrue(board.isUnderAttack(Position.of(1, 2), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(5, 6), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(0, 5), Color.WHITE));
@@ -673,7 +673,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertTrue(board.isUnderAttack(Position.of(2, 0), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(6, 3), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(2, 6), Color.WHITE));
@@ -692,7 +692,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertTrue(board.isUnderAttack(Position.of(0, 1), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(4, 5), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(5, 0), Color.WHITE));
@@ -711,7 +711,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertTrue(board.isUnderAttack(Position.of(0, 2), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(4, 4), Color.WHITE));
 		assertTrue(board.isUnderAttack(Position.of(3, 1), Color.WHITE));
@@ -730,7 +730,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertFalse(board.isUnderAttack(Position.of(3, 6), Color.WHITE));
 	}
 
@@ -747,7 +747,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertFalse(board.isUnderAttack(Position.of(3, 6), Color.WHITE));
 	}
 
@@ -764,7 +764,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertFalse(board.isUnderAttack(Position.of(7, 3), Color.WHITE));
 	}
 
@@ -781,7 +781,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertFalse(board.isUnderAttack(Position.of(7, 3), Color.WHITE));
 	}
 
@@ -798,7 +798,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertFalse(board.isUnderAttack(Position.of(6, 6), Color.WHITE));
 	}
 
@@ -815,7 +815,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		assertFalse(board.isUnderAttack(Position.of(6, 6), Color.WHITE));
 	}
 
@@ -832,7 +832,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r k . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 2));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -861,7 +861,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 3));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -890,7 +890,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . b ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 2));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -919,7 +919,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . b ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(2, 4));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -948,7 +948,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r . . . . k" + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(0, 5));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -977,7 +977,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 5));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -1006,7 +1006,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . B . ." + Board.NEWLINE
 				/* 7 */ + ". . r k . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(6, 5));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -1035,7 +1035,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . r . N . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(7, 4));
 		addPieces(board, movements.getTargets());
 		String expectedBoard = ""
@@ -1064,7 +1064,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . r . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 5));
 		assertTrue(movements.isEmpty());
 	}
@@ -1082,7 +1082,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . R ." + Board.NEWLINE
 				/* 6 */ + ". . . r . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(5, 6));
 		assertTrue(movements.isEmpty());
 	}
@@ -1100,7 +1100,7 @@ public class BoardTest {
 				/* 5 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . q . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(4, 1));
 		assertTrue(movements.isEmpty());
 	}
@@ -1118,7 +1118,7 @@ public class BoardTest {
 				/* 5 */ + ". . . q . . . ." + Board.NEWLINE
 				/* 6 */ + ". . . . . . . ." + Board.NEWLINE
 				/* 7 */ + ". . . . . . . ." + Board.NEWLINE;
-		Board board = new Board(boardString, GameConfig.defaultWhiteToMove());
+		Board board = new Board(boardString, BoardConfig.defaultWhiteToMove());
 		PieceMovement movements = board.getMovement(Position.of(3, 2));
 		assertTrue(movements.isEmpty());
 	}

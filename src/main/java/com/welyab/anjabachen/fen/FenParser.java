@@ -53,7 +53,7 @@ public class FenParser {
 	
 	List<LocalizedPiece> pieces = new ArrayList<>();
 	
-	GameConfig boardConfig;
+	BoardConfig boardConfig;
 	
 	public FenParser(String fen) {
 		this.fen = fen;
@@ -67,7 +67,7 @@ public class FenParser {
 		return new FenParser(fen);
 	}
 	
-	public GameConfig getBoardConfig() {
+	public BoardConfig getBoardConfig() {
 		parse();
 		return boardConfig;
 	}
@@ -110,7 +110,7 @@ public class FenParser {
 		/**
 		 * The builder for game configuration.
 		 */
-		GameConfig.Builder configBuilder = GameConfig.builder();
+		BoardConfig.Builder configBuilder = BoardConfig.builder();
 		
 		/**
 		 * The current rank number (in the FEN string, the first line of represented pieces is the
