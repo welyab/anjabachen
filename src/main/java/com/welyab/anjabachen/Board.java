@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Spliterators;
@@ -344,13 +342,12 @@ public class Board implements Copiable<Board> {
 		MovementTarget target = null;
 		for (int i = 0; i < pieceMovement.size(); i++) {
 			MovementTarget currentTarget = pieceMovement.getTarget(i);
-			if (currentTarget.getPosition().equals(targetPosition)) {
-				if (GameConstants.isPromotion(currentTarget.getMovementFlags())
-						&& currentTarget.getPiece().getType().equals(toPromotePawn)
-						|| !GameConstants.isPromotion(currentTarget.getMovementFlags())) {
-					target = currentTarget;
-					break;
-				}
+			if (currentTarget.getPosition().equals(targetPosition)
+					&& GameConstants.isPromotion(currentTarget.getMovementFlags())
+					&& currentTarget.getPiece().getType().equals(toPromotePawn)
+					|| !GameConstants.isPromotion(currentTarget.getMovementFlags())) {
+				target = currentTarget;
+				break;
 			}
 		}
 		
@@ -368,6 +365,11 @@ public class Board implements Copiable<Board> {
 		move(pieceMovement.getOrigin(), target);
 	}
 	
+	/**
+	 * 
+	 * @param movementOrigin
+	 * @param movementTarget
+	 */
 	void move(MovementOrigin movementOrigin, MovementTarget movementTarget) {
 		GameInfo copiedGameInfo = gameInfo.copy();
 		Piece capturedPiece = null;
@@ -455,32 +457,34 @@ public class Board implements Copiable<Board> {
 		);
 	}
 	
-	static Map<Piece, Integer> pieceValue = new EnumMap<>(Piece.class);
-	static {
-		pieceValue.put(Piece.BLACK_KING, -900);
-		pieceValue.put(Piece.BLACK_QUEEN, -9);
-		pieceValue.put(Piece.BLACK_ROOK, -5);
-		pieceValue.put(Piece.BLACK_BISHOP, -3);
-		pieceValue.put(Piece.BLACK_KNIGHT, -3);
-		pieceValue.put(Piece.BLACK_PAWN, -1);
-		pieceValue.put(Piece.WHITE_KING, 900);
-		pieceValue.put(Piece.WHITE_QUEEN, 9);
-		pieceValue.put(Piece.WHITE_ROOK, 5);
-		pieceValue.put(Piece.WHITE_BISHOP, 2);
-		pieceValue.put(Piece.WHITE_KNIGHT, 3);
-		pieceValue.put(Piece.WHITE_PAWN, 1);
-	}
-	
 	public boolean hasPreviousMovement() {
 		return !movementHistory.isEmpty();
 	}
 	
+	public void rendo() {
+	}
+	
+	/**
+	 * 
+	 */
 	public void undoAll() {
 		while (hasPreviousMovement()) {
 			undo();
 		}
 	}
 	
+	/**
+	 * Undoes the last movement made on the board. The movement is not removed from game history and
+	 * can be redone.
+	 * 
+	 * <p>
+	 * However, if a different movement is done, a new entry entry is registered in the game history
+	 * as game variant branch of its original line. There is no limit for game variants
+	 * registered in the game history. The {@link #rendo()} operation is made over current game
+	 * line.
+	 * 
+	 * @throws MovementException If there is not movement to undo.
+	 */
 	public void undo() {
 		if (!hasPreviousMovement()) {
 			throw new MovementException("No previous movement to undo");
@@ -521,10 +525,25 @@ public class Board implements Copiable<Board> {
 		gameInfo = movementLog.gameInfo;
 	}
 	
+	/**
+	 * Evaluates if the given position locates a empty square in the board.
+	 * 
+	 * @param position The position.
+	 * 
+	 * @return A value <code>true</code> if the square indicated by given position is empty, or
+	 *         <code>false</code> otherwise.
+	 */
 	public boolean isEmpty(Position position) {
 		return grid[position.getRow()][position.getColumn()] == null;
 	}
 	
+	/**
+	 * Retrieves the piece located in the given position.
+	 * 
+	 * @param position The position.
+	 * 
+	 * @return The piece located in the given position.
+	 */
 	public Piece getPiece(Position position) {
 		if (grid[position.getRow()][position.getColumn()] == null) {
 			throw new EmptySquareException(position.getRow(), position.getColumn());
@@ -532,25 +551,44 @@ public class Board implements Copiable<Board> {
 		return grid[position.getRow()][position.getColumn()];
 	}
 	
+	/**
+	 * Retrieves a valid movement from the list of possible movement available in the board.
+	 * 
+	 * @return The movement.
+	 * 
+	 * @throws MovementException If there is not valid movement available in the board. The board
+	 *         may be in a checkmate or draw state...
+	 * 
+	 * @see #moveRandom()
+	 */
 	public Movement getRandomMovement() {
 		MovementBag bag = getMovements();
+		if (bag.isEmpty()) {
+			throw new MovementException("No valid movement available. Checkmate?");
+		}
 		PieceMovement pieceMovement = bag.get(random.nextInt(bag.size()));
 		MovementTarget target = pieceMovement.getTarget(random.nextInt(pieceMovement.size()));
 		return new Movement(pieceMovement.getOrigin(), target);
 	}
 	
+	/**
+	 * The total movements made since board creation. The movement starts in zero is incremented
+	 * after each white or black movement.
+	 * 
+	 * @return The movement count.
+	 */
 	public int getMovementCount() {
 		return gameInfo.moveCounter;
 	}
 	
-	public Movement getMovement(int moveNumber) {
-		MovementLog movementLog = movementHistory.get(moveNumber);
-		return new Movement(
-			movementLog.getMovementOrigin(),
-			movementLog.getMovementTarget()
-		);
-	}
-	
+	/**
+	 * Performs
+	 * 
+	 * @throws MovementException If there is not valid movement available in the board. The board
+	 *         may be in a checkmate or draw state...
+	 * 
+	 * @see #getRandomMovement()
+	 */
 	public void moveRandom() {
 		Movement movement = getRandomMovement();
 		move(movement.getOrigin(), movement.getTarget());
@@ -585,7 +623,28 @@ public class Board implements Copiable<Board> {
 		return !getAttackers(position, attackerColor).isEmpty();
 	}
 	
+	/**
+	 * 
+	 * @param squarePosition
+	 * @param attackerColor
+	 * 
+	 * @return
+	 */
 	public List<Position> getAttackers(Position squarePosition, Color attackerColor) {
+		var attackers = new ArrayList<Position>();
+		attackers.addAll(getAttackersFromKingQueenRookBishop(squarePosition, attackerColor));
+		attackers.addAll(getAttackersFromKnight(squarePosition, attackerColor));
+		attackers.addAll(getAttackersFromPawn(squarePosition, attackerColor));
+		return attackers;
+	}
+	
+	/**
+	 * 
+	 * @param squarePosition
+	 * @param attackerColor
+	 * @return
+	 */
+	private List<Position> getAttackersFromKingQueenRookBishop(Position squarePosition, Color attackerColor) {
 		int maxMoveLength = getMaxPieceMovementLength(PieceType.QUEEN);
 		boolean[] invalidDirections = new boolean[queenMoveTemplate.size()];
 		List<Position> attackers = new ArrayList<>();
@@ -613,7 +672,11 @@ public class Board implements Copiable<Board> {
 				}
 			}
 		}
-		
+		return attackers;
+	}
+	
+	private List<Position> getAttackersFromKnight(Position squarePosition, Color attackerColor) {
+		List<Position> attackers = new ArrayList<>();
 		for (int t = 0; t < knightMoveTemplate.size(); t++) {
 			int targetRow = squarePosition.getRow() + knightMoveTemplate.get(t).rowAdjuster;
 			int targetColumn = squarePosition.getColumn() + knightMoveTemplate.get(t).columnAdjuster;
@@ -626,7 +689,11 @@ public class Board implements Copiable<Board> {
 				}
 			}
 		}
-		
+		return attackers;
+	}
+	
+	private List<Position> getAttackersFromPawn(Position squarePosition, Color attackerColor) {
+		List<Position> attackers = new ArrayList<>();
 		int direction = attackerColor.isWhite()
 				? -1
 				: 1;
@@ -640,7 +707,6 @@ public class Board implements Copiable<Board> {
 				}
 			}
 		}
-		
 		return attackers;
 	}
 	
@@ -850,6 +916,12 @@ public class Board implements Copiable<Board> {
 				: getKingQueenRookBishopKnightMovements(position, extractCheckFlags);
 	}
 	
+	/**
+	 * 
+	 * @param position
+	 * @param extractCheckFlags
+	 * @return
+	 */
 	private PieceMovement getKingQueenRookBishopKnightMovements(
 			Position position,
 			boolean extractCheckFlags
@@ -899,7 +971,10 @@ public class Board implements Copiable<Board> {
 										movementFlags
 									);
 									
-									updatePieceMovementMetaWithExtraFlags(pieceMovementMetaBuilder, movementFlags);
+									updatePieceMovementMetaWithExtraFlags(
+										pieceMovementMetaBuilder,
+										movementFlags
+									);
 								}
 								pieceMovementMetaBuilder.incrementTotalMovements();
 								targets.add(

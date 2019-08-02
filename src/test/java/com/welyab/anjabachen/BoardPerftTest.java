@@ -375,33 +375,33 @@ public class BoardPerftTest {
 					.incrementDiscoveryCheckCount(1292)
 					.incrementDoubleCheckCount(3)
 					.incrementCheckmateCount(0)
-					.build(),
-				6,
-				PieceMovementMeta
-					.builder()
-					.incrementTotalMovements(11030083)
-					.incrementCaptureCount(940350)
-					.incrementEnPassantCount(33325)
-					.incrementCastlings(0)
-					.incrementPromotionCount(7552)
-					.incrementCheckCount(452473)
-					.incrementDiscoveryCheckCount(26067)
-					.incrementDoubleCheckCount(0)
-					.incrementCheckmateCount(2733)
-					.build(),
-				7,
-				PieceMovementMeta
-					.builder()
-					.incrementTotalMovements(178633661)
-					.incrementCaptureCount(14519036)
-					.incrementEnPassantCount(294874)
-					.incrementCastlings(0)
-					.incrementPromotionCount(140024)
-					.incrementCheckCount(12797406)
-					.incrementDiscoveryCheckCount(370630)
-					.incrementDoubleCheckCount(3612)
-					.incrementCheckmateCount(87)
-					.build()
+					.build()// ,
+				// 6,
+				// PieceMovementMeta
+				// .builder()
+				// .incrementTotalMovements(11030083)
+				// .incrementCaptureCount(940350)
+				// .incrementEnPassantCount(33325)
+				// .incrementCastlings(0)
+				// .incrementPromotionCount(7552)
+				// .incrementCheckCount(452473)
+				// .incrementDiscoveryCheckCount(26067)
+				// .incrementDoubleCheckCount(0)
+				// .incrementCheckmateCount(2733)
+				// .build(),
+				// 7,
+				// PieceMovementMeta
+				// .builder()
+				// .incrementTotalMovements(178633661)
+				// .incrementCaptureCount(14519036)
+				// .incrementEnPassantCount(294874)
+				// .incrementCastlings(0)
+				// .incrementPromotionCount(140024)
+				// .incrementCheckCount(12797406)
+				// .incrementDiscoveryCheckCount(370630)
+				// .incrementDoubleCheckCount(3612)
+				// .incrementCheckmateCount(87)
+				// .build()
 			)
 		);
 	}
@@ -479,18 +479,6 @@ public class BoardPerftTest {
 					.build()
 			)
 		);
-	}
-	
-	public static void main(String[] args) throws IOException {
-		List<Path> paths = Files
-			.list(Paths.get("C:/Users/welyab/Desktop/boards"))
-			.filter(p -> p.getFileName().toString().endsWith(".png"))
-			.collect(Collectors.toList());
-		for (int i = 0; i < paths.size(); i++) {
-			Path path = paths.get(i);
-			Files.move(path, path.getParent().resolve(String.format("%05d.png", i + 1)));
-			System.out.printf("Renamed #%05d: %s%n", i + 1, path);
-		}
 	}
 	
 	@Test

@@ -15,14 +15,8 @@
  */
 package com.welyab.anjabachen;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import com.welyab.anjabachen.fen.FenParser;
 
@@ -32,9 +26,6 @@ import com.welyab.anjabachen.fen.FenParser;
 public class Perft {
 	
 	public static final int DEFAULT_DEPTH = 3;
-	
-	// private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
-	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 	
 	private final Board board;
 	
@@ -69,47 +60,32 @@ public class Perft {
 	public Map<Integer, PieceMovementMeta> perft(boolean extractExtraFlags) {
 		var metas = new HashMap<Integer, PieceMovementMeta>();
 		Board boardCopy = board.copy();
-		try {
-			walk(
-				boardCopy,
-				1,
-				Collections.synchronizedMap(metas),
-				extractExtraFlags
-			).get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
+		walk(
+			boardCopy,
+			1,
+			metas,
+			extractExtraFlags
+		);
 		return metas;
 	}
 	
-	private CompletableFuture<Void> walk(
+	private void walk(
 			Board board,
 			int currentDepth,
 			Map<Integer, PieceMovementMeta> metas,
 			boolean extractExtraFlags
-	) throws InterruptedException, ExecutionException {
-		CompletableFuture<Void> futures = CompletableFuture.completedFuture(null);
+	) {
 		if (currentDepth <= depth) {
 			MovementBag movementBag = board.getMovements();
 			mergeMetas(currentDepth, movementBag.getMeta(), metas);
 			for (PieceMovement pieceMovement : movementBag) {
-				Board copy = board.copy();
-				Future<CompletableFuture<Void>> future = threadPool.submit(() -> {
-					CompletableFuture<Void> allOfInternal = CompletableFuture.completedFuture(null);
-					for (MovementTarget movementTarget : pieceMovement) {
-						copy.move(pieceMovement.getOrigin(), movementTarget);
-						allOfInternal = CompletableFuture.allOf(
-							walk(copy, currentDepth + 1, metas, extractExtraFlags),
-							allOfInternal
-						);
-						copy.undo();
-					}
-					return allOfInternal;
-				});
-				futures = CompletableFuture.allOf(futures, future.get());
+				for (MovementTarget movementTarget : pieceMovement) {
+					board.move(pieceMovement.getOrigin(), movementTarget);
+					walk(board, currentDepth + 1, metas, extractExtraFlags);
+					board.undo();
+				}
 			}
 		}
-		return futures;
 	}
 	
 	private void mergeMetas(
