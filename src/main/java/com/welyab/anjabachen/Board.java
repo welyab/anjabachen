@@ -37,57 +37,57 @@ import com.welyab.anjabachen.util.Copiable;
  * @author Welyab Paula
  */
 public class Board implements Copiable<Board> {
-
+	
 	/** FEN notation for the initial position. */
 	private static final String FEN_INITIAL_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
+	
 	/**
 	 * The king's side rook initial column number position.
 	 */
 	private static final int KING_SIDE_ROOK_INITIAL_COLUMN = 7;
-
+	
 	/**
 	 * The queen's side rook initial column number position.
 	 */
 	private static final int QUEEN_SIDE_ROOK_INITIAL_COLUMN = 0;
-
+	
 	/**
 	 * The black rook initial row number position.
 	 */
 	private static final int BLACK_ROOK_INITIAL_ROW = 0;
-
+	
 	/**
 	 * The white rook initial row number position.
 	 */
 	private static final int WHITE_ROOK_INITIAL_ROW = 7;
-
+	
 	/**
 	 * The row number where black pawns are promoted.
 	 */
 	private static final int BLACK_PAWN_PROMOTION_ROW = 7;
-
+	
 	/**
 	 * The row number where white pawns are promoted.
 	 */
 	private static final int WHITE_PAWN_PROMOTION_ROW = 0;
-
+	
 	/**
 	 * The initial row, in the usual game, where the black pawns are placed.
 	 */
 	private static final int BLACK_PAWN_INITIAL_ROW = 1;
-
+	
 	/**
 	 * The initial row, in the usual game, where the white pawns are placed.
 	 */
 	private static final int WHITE_PAWN_INITIAL_ROW = 6;
-
+	
 	/**
 	 * A random number generator used manily in the method that provides random movements.
 	 *
 	 * @see #getRandomMovement()
 	 */
 	private static final Random random = new Random();
-
+	
 	/**
 	 * When a pawn is not promoting to another piece, the target piece is the same. This field
 	 * exists for facilitate compatibility with {@link #pawnPromotionReplacements}.
@@ -97,7 +97,7 @@ public class Board implements Copiable<Board> {
 			PieceType.PAWN
 		)
 	);
-
+	
 	/**
 	 * The list of possible replacements for a promoting pawn.
 	 */
@@ -109,12 +109,12 @@ public class Board implements Copiable<Board> {
 			PieceType.KNIGHT
 		)
 	);
-
+	
 	/**
 	 * New line.
 	 */
 	public static final String NEWLINE = String.format("%n");
-
+	
 	/**
 	 * The movement template for the king piece.
 	 */
@@ -130,7 +130,7 @@ public class Board implements Copiable<Board> {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the queen piece.
 	 */
@@ -146,7 +146,7 @@ public class Board implements Copiable<Board> {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the rook piece.
 	 */
@@ -158,7 +158,7 @@ public class Board implements Copiable<Board> {
 			new DirectionAdjuster(+1, +0)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the bishop piece.
 	 */
@@ -170,7 +170,7 @@ public class Board implements Copiable<Board> {
 			new DirectionAdjuster(+1, +1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the knight piece.
 	 */
@@ -186,7 +186,7 @@ public class Board implements Copiable<Board> {
 			new DirectionAdjuster(-1, -2)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the black pawn.
 	 */
@@ -198,7 +198,7 @@ public class Board implements Copiable<Board> {
 			new DirectionAdjuster(+1, -1)
 		)
 	);
-
+	
 	/**
 	 * The movement template for the white pawn.
 	 */
@@ -210,22 +210,22 @@ public class Board implements Copiable<Board> {
 			new DirectionAdjuster(-1, -1)
 		)
 	);
-
+	
 	/**
 	 * The 2-dimensional array where the pieces are placed.
 	 */
 	private Piece[][] grid;
-
+	
 	/**
 	 * The game info associated with this board.
 	 */
 	private GameInfo gameInfo;
-
+	
 	/**
 	 * Movement log for undo and redo.
 	 */
 	private final List<MovementLog> movementHistory;
-
+	
 	/**
 	 * Creates a new board with the pieces in the initial position and the white pieces turned to
 	 * make next movement.
@@ -256,7 +256,7 @@ public class Board implements Copiable<Board> {
 	public Board() {
 		this(FEN_INITIAL_POSITION);
 	}
-
+	
 	/**
 	 * Creates a new board with using a FEN string.
 	 *
@@ -265,12 +265,12 @@ public class Board implements Copiable<Board> {
 	public Board(String fen) {
 		this(FenParser.of(fen));
 	}
-
+	
 	@SuppressWarnings("javadoc")
 	private Board(FenParser fenParser) {
 		this(fenParser.getPiecesDisposition(), fenParser.getBoardConfig());
 	}
-
+	
 	/**
 	 * Creates a board
 	 *
@@ -280,7 +280,7 @@ public class Board implements Copiable<Board> {
 	public Board(String piecesDisposition, BoardConfig boardConfig) {
 		this(boardStringToPiecePositionList(piecesDisposition), boardConfig);
 	}
-
+	
 	public Board(List<LocalizedPiece> pieces, BoardConfig boardConfig) {
 		this(
 			localizedPieceListToGrid(pieces),
@@ -288,7 +288,7 @@ public class Board implements Copiable<Board> {
 			new ArrayList<>()
 		);
 	}
-
+	
 	@SuppressWarnings("javadoc")
 	private Board(Piece[][] grid, GameInfo gameInfo, List<MovementLog> movementHistory) {
 		this.grid = grid;
@@ -299,13 +299,13 @@ public class Board implements Copiable<Board> {
 			.filter(p -> p.getPiece().isKing())
 			.forEach(p -> gameInfo.setKingPosition(p.getPiece().getColor(), p.getPosition()));
 	}
-
+	
 	private static Piece[][] localizedPieceListToGrid(List<LocalizedPiece> pieces) {
 		Piece[][] grid = new Piece[GameConstants.BOARD_SIZE][GameConstants.BOARD_SIZE];
 		pieces.forEach(p -> grid[p.getPosition().getRow()][p.getPosition().getColumn()] = p.getPiece());
 		return grid;
 	}
-
+	
 	private static List<LocalizedPiece> boardStringToPiecePositionList(String boardString) {
 		List<LocalizedPiece> dispositionList = new ArrayList<>();
 		int counter = 0;
@@ -330,7 +330,7 @@ public class Board implements Copiable<Board> {
 		}
 		return dispositionList;
 	}
-
+	
 	public void addPiece(Piece piece, Position position) {
 		if (!isInsideBoard(position.getRow(), position.getColumn())) {
 			throw new InvalidPositionException(position.getRow(), position.getColumn());
@@ -340,7 +340,7 @@ public class Board implements Copiable<Board> {
 			gameInfo.setKingPosition(piece.getColor(), position);
 		}
 	}
-
+	
 	/**
 	 * Moves the piece located in position informed by <code>originPosition</code> parameter to the
 	 * location indicated by <code>targetPosition</code> parameter. If the movement is a pawn
@@ -363,7 +363,7 @@ public class Board implements Copiable<Board> {
 	public void move(Position originPosition, Position targetPosition) {
 		move(originPosition, targetPosition, PieceType.QUEEN);
 	}
-
+	
 	/**
 	 * Moves the piece located in position informed by <code>originPosition</code> parameter to the
 	 * location indicated by <code>targetPosition</code> parameter.
@@ -401,7 +401,7 @@ public class Board implements Copiable<Board> {
 				break;
 			}
 		}
-
+		
 		if (target == null) {
 			throw new MovementException(
 				String.format(
@@ -412,10 +412,10 @@ public class Board implements Copiable<Board> {
 				)
 			);
 		}
-
+		
 		move(pieceMovement.getOrigin(), target);
 	}
-
+	
 	/**
 	 * Moves the piece located in the origin parameter to the target parameter. The
 	 * <code>movement target</code> parameter has a set of flags that indicate if the movement is a
@@ -440,7 +440,7 @@ public class Board implements Copiable<Board> {
 		grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn()] = movementTarget
 			.getPiece();
 		grid[movementOrigin.getPosition().getRow()][movementOrigin.getPosition().getColumn()] = null;
-
+		
 		if (GameConstants.isCastling(movementTarget.getMovementFlags())) {
 			Position rookOrigin = Position.of(
 				movementOrigin.getPosition().getRow(),
@@ -454,12 +454,12 @@ public class Board implements Copiable<Board> {
 			grid[rookTarget.getRow()][rookTarget.getColumn()] = grid[rookOrigin.getRow()][rookOrigin.getColumn()];
 			grid[rookOrigin.getRow()][rookOrigin.getColumn()] = null;
 		}
-
+		
 		if (GameConstants.isEnPassant(movementTarget.getMovementFlags())) {
 			capturedPiece = grid[movementOrigin.getPosition().getRow()][movementTarget.getPosition().getColumn()];
 			grid[movementOrigin.getPosition().getRow()][movementTarget.getPosition().getColumn()] = null;
 		}
-
+		
 		if (movementOrigin.getPiece().isPawn()
 				&& Math.abs(movementOrigin.getPosition().getRow() - movementTarget.getPosition().getRow()) == 2) {
 			int midRow = (movementOrigin.getPosition().getRow() + movementTarget.getPosition().getRow()) / 2;
@@ -467,22 +467,22 @@ public class Board implements Copiable<Board> {
 		} else {
 			gameInfo.enPassantTargetSquare = null;
 		}
-
+		
 		if (movementOrigin.getPiece().isPawn() || GameConstants.isCapture(movementTarget.getMovementFlags())) {
 			gameInfo.halfMoveCounter = 0;
 		} else {
 			gameInfo.halfMoveCounter++;
 		}
-
+		
 		if (movementOrigin.getPiece().isBlack()) {
 			gameInfo.fullMoveCounter++;
 		}
-
+		
 		if (movementOrigin.getPiece().isKing()) {
 			gameInfo.setKingPosition(movementOrigin.getPiece().getColor(), movementTarget.getPosition());
 			gameInfo.invalidateCastling(movementOrigin.getPiece().getColor());
 		}
-
+		
 		if (movementOrigin.getPiece().isRook()) {
 			if (gameInfo.isKingSideCastlingAvailable(movementOrigin.getPiece().getColor())
 					&& getKingSideRookPosition(movementOrigin.getPiece().getColor()).equals(movementOrigin.getPosition())) {
@@ -493,7 +493,7 @@ public class Board implements Copiable<Board> {
 				gameInfo.invalidateQueenSideCastling(movementOrigin.getPiece().getColor());
 			}
 		}
-
+		
 		if (capturedPiece != null && capturedPiece.isRook()) {
 			if (gameInfo.isKingSideCastlingAvailable(capturedPiece.getColor())
 					&& getKingSideRookPosition(capturedPiece.getColor()).equals(movementTarget.getPosition())) {
@@ -504,9 +504,9 @@ public class Board implements Copiable<Board> {
 				gameInfo.invalidateQueenSideCastling(capturedPiece.getColor());
 			}
 		}
-
+		
 		gameInfo.moveCounter++;
-
+		
 		movementHistory.add(
 			new MovementLog(
 				movementOrigin,
@@ -516,7 +516,7 @@ public class Board implements Copiable<Board> {
 			)
 		);
 	}
-
+	
 	/**
 	 * Redoes a previously undone movement. If there are branch variants, this method always uses
 	 * its main line.
@@ -524,7 +524,7 @@ public class Board implements Copiable<Board> {
 	public void redo() {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
-
+	
 	/**
 	 * Evaluates if there is a previous movement in the movement history of this game.
 	 *
@@ -534,7 +534,7 @@ public class Board implements Copiable<Board> {
 	public boolean hasPreviousMovement() {
 		return !movementHistory.isEmpty();
 	}
-
+	
 	/**
 	 * Undo all movements made with this board. If the board state is in a branch variant, the
 	 * undoing continues going to the parent branch until reach the last initial board state.
@@ -544,7 +544,7 @@ public class Board implements Copiable<Board> {
 			undo();
 		}
 	}
-
+	
 	/**
 	 * Undoes the last movement made on the board. The movement is not removed from game history and
 	 * can be redone.
@@ -561,15 +561,15 @@ public class Board implements Copiable<Board> {
 		if (!hasPreviousMovement()) {
 			throw new MovementException("No previous movement to undo");
 		}
-
+		
 		MovementLog movementLog = movementHistory.remove(movementHistory.size() - 1);
 		MovementOrigin movementOrigin = movementLog.movementOrigin;
 		MovementTarget movementTarget = movementLog.movementTarget;
-
+		
 		grid[movementOrigin.getPosition().getRow()][movementOrigin.getPosition().getColumn()] = movementOrigin
 			.getPiece();
 		grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn()] = null;
-
+		
 		if (GameConstants.isCapture(movementTarget.getMovementFlags())) {
 			if (GameConstants.isEnPassant(movementTarget.getMovementFlags())) {
 				grid[movementOrigin.getPosition().getRow()][movementTarget.getPosition()
@@ -579,7 +579,7 @@ public class Board implements Copiable<Board> {
 					.getColumn()] = movementLog.capturedPiece;
 			}
 		}
-
+		
 		if (GameConstants.isCastling(movementTarget.getMovementFlags())) {
 			if (grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn() + 1] != null
 					&& grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn() + 1]
@@ -593,10 +593,10 @@ public class Board implements Copiable<Board> {
 				grid[movementTarget.getPosition().getRow()][movementTarget.getPosition().getColumn() - 1] = null;
 			}
 		}
-
+		
 		gameInfo = movementLog.gameInfo;
 	}
-
+	
 	/**
 	 * Evaluates if the given position locates a empty square in the board.
 	 *
@@ -608,7 +608,7 @@ public class Board implements Copiable<Board> {
 	public boolean isEmpty(Position position) {
 		return grid[position.getRow()][position.getColumn()] == null;
 	}
-
+	
 	/**
 	 * Retrieves the piece located in the given position.
 	 *
@@ -622,7 +622,7 @@ public class Board implements Copiable<Board> {
 		}
 		return grid[position.getRow()][position.getColumn()];
 	}
-
+	
 	/**
 	 * Retrieves a valid movement from the list of possible movement available in the board.
 	 *
@@ -642,7 +642,7 @@ public class Board implements Copiable<Board> {
 		MovementTarget target = pieceMovement.getTarget(random.nextInt(pieceMovement.size()));
 		return new Movement(pieceMovement.getOrigin(), target);
 	}
-
+	
 	/**
 	 * The total movements made since board creation. The movement starts in zero is incremented
 	 * after each white or black movement.
@@ -652,7 +652,7 @@ public class Board implements Copiable<Board> {
 	public int getMovementCount() {
 		return gameInfo.moveCounter;
 	}
-
+	
 	/**
 	 * Performs
 	 *
@@ -665,7 +665,7 @@ public class Board implements Copiable<Board> {
 		Movement movement = getRandomMovement();
 		move(movement.getOrigin(), movement.getTarget());
 	}
-
+	
 	/**
 	 * The side color that has the next movement.
 	 *
@@ -674,7 +674,7 @@ public class Board implements Copiable<Board> {
 	public Color getActiveColor() {
 		return gameInfo.getActiveColor();
 	}
-
+	
 	@Override
 	public Board copy() {
 		return new Board(
@@ -683,7 +683,7 @@ public class Board implements Copiable<Board> {
 			copyMoveHistory()
 		);
 	}
-
+	
 	/**
 	 * Retrieves the position of the king piece.
 	 *
@@ -700,7 +700,7 @@ public class Board implements Copiable<Board> {
 		}
 		return gameInfo.getKingPosition(color);
 	}
-
+	
 	/**
 	 * Evaluates if the given position is attacked by a piece of the specific color.
 	 *
@@ -713,7 +713,7 @@ public class Board implements Copiable<Board> {
 	public boolean isUnderAttack(Position position, Color attackerColor) {
 		return !getAttackers(position, attackerColor).isEmpty();
 	}
-
+	
 	/**
 	 * Given a position, this method returns the list of positions where there are a piece of the
 	 * specific color attacking the informed location.
@@ -730,7 +730,7 @@ public class Board implements Copiable<Board> {
 		attackers.addAll(getAttackersFromPawn(squarePosition, attackerColor));
 		return attackers;
 	}
-
+	
 	/**
 	 * Given a position, this method returns the list of positions where there are any of king,
 	 * queen, rook or bishop of the specific color attacking the informed location.
@@ -770,7 +770,7 @@ public class Board implements Copiable<Board> {
 		}
 		return attackers;
 	}
-
+	
 	/**
 	 * Given a position, this method returns the list of positions where there are a knight of the
 	 * specific color attacking the informed location.
@@ -796,7 +796,7 @@ public class Board implements Copiable<Board> {
 		}
 		return attackers;
 	}
-
+	
 	/**
 	 * Given a position, this method returns the list of positions where there are a pawn of the
 	 * specific color attacking the informed location.
@@ -823,7 +823,7 @@ public class Board implements Copiable<Board> {
 		}
 		return attackers;
 	}
-
+	
 	/**
 	 * Creates a copy of the movement history object.
 	 *
@@ -835,7 +835,7 @@ public class Board implements Copiable<Board> {
 			.map(MovementLog::copy)
 			.collect(Collectors.toList());
 	}
-
+	
 	/**
 	 * Creates a new grid (<code>Piece[][]</code>) copy the current grid to the new grid.
 	 *
@@ -850,7 +850,7 @@ public class Board implements Copiable<Board> {
 		}
 		return copy;
 	}
-
+	
 	/**
 	 * Generates a FEN string for the current board string.
 	 *
@@ -883,7 +883,7 @@ public class Board implements Copiable<Board> {
 		}
 		builder.append(' ').append(getActiveColor().getLetterSymbol());
 		builder.append(' ');
-
+		
 		StringBuilder castlingAvaiability = new StringBuilder();
 		if (GameConstants.isWhiteKingSideCastling(gameInfo.castlingFlags)) {
 			castlingAvaiability.append('K');
@@ -902,24 +902,24 @@ public class Board implements Copiable<Board> {
 		} else {
 			builder.append(castlingAvaiability);
 		}
-
+		
 		builder.append(' ');
-
+		
 		if (gameInfo.enPassantTargetSquare != null) {
 			builder.append(gameInfo.enPassantTargetSquare.getPgnPosition());
 		} else {
 			builder.append('-');
 		}
-
+		
 		builder.append(' ');
 		builder.append(gameInfo.halfMoveCounter);
-
+		
 		builder.append(' ');
 		builder.append(gameInfo.getFullMoveCounter());
-
+		
 		return builder.toString();
 	}
-
+	
 	/**
 	 * Indicates if the current game state is a position where the king of active color is in check,
 	 * i.e, is under attacking of a enemy piece.
@@ -941,7 +941,7 @@ public class Board implements Copiable<Board> {
 			getWaitingColor()
 		).isEmpty();
 	}
-
+	
 	/**
 	 * Evaluates if the game finishing with checkmate.
 	 *
@@ -956,7 +956,7 @@ public class Board implements Copiable<Board> {
 		return isCheck()
 				&& getMovements().isEmpty();
 	}
-
+	
 	/**
 	 * Evaluates if the game finishing with stale mate.
 	 *
@@ -971,7 +971,7 @@ public class Board implements Copiable<Board> {
 		return !isCheck()
 				&& getMovements().isEmpty();
 	}
-
+	
 	/**
 	 * Evaluates if the game if finishing with a draw. Not that situations like stalemate
 	 * ({@linkplain #isStalemate()} isStalemate) are also considered a draw.
@@ -982,7 +982,7 @@ public class Board implements Copiable<Board> {
 	public boolean isDraw() {
 		throw new UnsupportedOperationException("Not implemented yet.");
 	}
-
+	
 	/**
 	 * The side color that is waiting for the opponent movement.
 	 *
@@ -991,7 +991,7 @@ public class Board implements Copiable<Board> {
 	public Color getWaitingColor() {
 		return getActiveColor().getOpposite();
 	}
-
+	
 	/**
 	 * Generates all valid movements available for the active color considering the current board
 	 * state.
@@ -1004,7 +1004,7 @@ public class Board implements Copiable<Board> {
 	public MovementBag getMovements() {
 		return getMovements(true);
 	}
-
+	
 	/**
 	 * Generates all valid movements available for the active color considering the current board
 	 * state.
@@ -1031,7 +1031,7 @@ public class Board implements Copiable<Board> {
 		}
 		return new MovementBag(movements, pieceMovementMetaBuilder.build());
 	}
-
+	
 	/**
 	 * Retrieves the available movements for the piece located at given position.
 	 *
@@ -1047,7 +1047,7 @@ public class Board implements Copiable<Board> {
 	public PieceMovement getMovement(Position position) {
 		return getMovement(position, true);
 	}
-
+	
 	/**
 	 * Retrieves the available movements for the piece located at given position.
 	 *
@@ -1062,7 +1062,7 @@ public class Board implements Copiable<Board> {
 		}
 		return privateGetMovements(position, extractExtraFlags);
 	}
-
+	
 	/**
 	 * Creates a stream of squares. Its expected that the board stated do not change during
 	 * streaming, otherwise a exception will be thrown.
@@ -1075,7 +1075,7 @@ public class Board implements Copiable<Board> {
 			false
 		);
 	}
-
+	
 	/**
 	 * Creates a iterator for iterate over all squares of this board. It is expected that the board
 	 * state do not change during interaction, otherwise a exception will be thrown.
@@ -1085,23 +1085,23 @@ public class Board implements Copiable<Board> {
 	private Iterator<LocalizedPiece> privateIterator() {
 		return new BoardPieceIterator();
 	}
-
+	
 	@SuppressWarnings("javadoc")
 	private class BoardPieceIterator implements Iterator<LocalizedPiece> {
-
+		
 		final int instantMovementOperationCount;
-
+		
 		BoardPieceIterator() {
 			instantMovementOperationCount = gameInfo.moveCounter;
 		}
-
+		
 		int index = 0;
-
+		
 		@Override
 		public boolean hasNext() {
 			return index < GameConstants.SQUARES_COUNT;
 		}
-
+		
 		@Override
 		public LocalizedPiece next() {
 			if (!hasNext()) {
@@ -1117,15 +1117,15 @@ public class Board implements Copiable<Board> {
 			index++;
 			return new LocalizedPiece(grid[row][column], Position.of(row, column));
 		}
-	};
-
+	}
+	
 	@SuppressWarnings("javadoc")
 	private PieceMovement privateGetMovements(Position position, boolean extractCheckFlags) {
 		return grid[position.getRow()][position.getColumn()].isPawn()
 				? getPawnMovements(position, extractCheckFlags)
 				: getKingQueenRookBishopKnightMovements(position, extractCheckFlags);
 	}
-
+	
 	/**
 	 * Generate movements for the piece located in the given position. This method expect that the
 	 * piece square is not empty, and piece should any of king, queen, rook bishop or knight.
@@ -1185,7 +1185,7 @@ public class Board implements Copiable<Board> {
 										Position.of(targetRow, targetColumn),
 										movementFlags
 									);
-
+									
 									updatePieceMovementMetaWithExtraFlags(
 										pieceMovementMetaBuilder,
 										movementFlags
@@ -1226,7 +1226,7 @@ public class Board implements Copiable<Board> {
 			pieceMovementMetaBuilder.build()
 		);
 	}
-
+	
 	/**
 	 * Verify if the movement described by given parameters is capable to be marked with following
 	 * flags:
@@ -1273,7 +1273,7 @@ public class Board implements Copiable<Board> {
 		undo();
 		return flags;
 	}
-
+	
 	/**
 	 * This method verifies if the given <code>movementFlags</code> parameter has the markers for
 	 * {@linkplain GameConstants#CHECK CHECK}, {@linkplain GameConstants#DOUBLE_CHECK DOUBLE_CHECK},
@@ -1290,24 +1290,24 @@ public class Board implements Copiable<Board> {
 		if (GameConstants.isCheck(movementFlags)) {
 			builder.incrementCheckCount();
 		}
-
+		
 		if (GameConstants.isDoubleCheck(movementFlags)) {
 			builder.incrementDoubleCheckCount();
 		}
-
+		
 		if (GameConstants.isDiscoveryCheck(movementFlags)) {
 			builder.incrementDiscoveryCheckCount();
 		}
-
+		
 		if (GameConstants.isCheckmate(movementFlags)) {
 			builder.incrementCheckmateCount();
 		}
-
+		
 		if (GameConstants.isStalemate(movementFlags)) {
 			builder.incrementStalemateCount();
 		}
 	}
-
+	
 	/**
 	 * This method may be called after a movement in order to extract the following movement flags:
 	 * {@linkplain GameConstants#CHECK CHECK}, {@linkplain GameConstants#DOUBLE_CHECK DOUBLE_CHECK},
@@ -1334,7 +1334,7 @@ public class Board implements Copiable<Board> {
 		}
 		return flags;
 	}
-
+	
 	/**
 	 * This method may be called after a movement in order to extract the following movement flags:
 	 * {@linkplain GameConstants#CHECK CHECK}, {@linkplain GameConstants#DOUBLE_CHECK DOUBLE_CHECK},
@@ -1395,7 +1395,7 @@ public class Board implements Copiable<Board> {
 		}
 		return flags;
 	}
-
+	
 	/**
 	 * Extract extra movement flags from the current board state considering attacks of a knight
 	 * piece.
@@ -1434,7 +1434,7 @@ public class Board implements Copiable<Board> {
 		}
 		return flags;
 	}
-
+	
 	/**
 	 * Extract extra movement flags from the current board state considering attacks of pawn piece.
 	 *
@@ -1473,7 +1473,7 @@ public class Board implements Copiable<Board> {
 		}
 		return flags;
 	}
-
+	
 	/**
 	 * Evaluates if, by moving the a piece from given origin position to the informed target
 	 * position, the king of same color will be in check.
@@ -1504,6 +1504,7 @@ public class Board implements Copiable<Board> {
 		grid[targetPosition.getRow()][targetPosition.getColumn()] = grid[originPosition.getRow()][originPosition
 			.getColumn()];
 		grid[originPosition.getRow()][originPosition.getColumn()] = null;
+		
 		Piece capturedEnPassantPawn = null;
 		if (capturedPawnEnPassant != null) {
 			capturedEnPassantPawn = grid[capturedPawnEnPassant.getRow()][capturedPawnEnPassant.getColumn()];
@@ -1524,7 +1525,7 @@ public class Board implements Copiable<Board> {
 		}
 		return underAttack;
 	}
-
+	
 	/**
 	 * Generated the castling movement targets for the king piece located in the given position.
 	 *
@@ -1543,7 +1544,7 @@ public class Board implements Copiable<Board> {
 		if (gameInfo.isQueenSideCastlingAvailable(kingPiece.getColor())) {
 			rookPositions.add(getQueenSideRookPosition(kingPiece.getColor()));
 		}
-
+		
 		if (rookPositions.isEmpty()) {
 			return Collections.emptyList();
 		}
@@ -1590,7 +1591,7 @@ public class Board implements Copiable<Board> {
 		}
 		return targets;
 	}
-
+	
 	/**
 	 * Retrieves the position king's side rook piece. This method does not check if the rook piece
 	 * is placed in the square.
@@ -1604,7 +1605,7 @@ public class Board implements Copiable<Board> {
 				? Position.of(WHITE_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN)
 				: Position.of(BLACK_ROOK_INITIAL_ROW, KING_SIDE_ROOK_INITIAL_COLUMN);
 	}
-
+	
 	/**
 	 * Retrieves the position queen's side rook piece. This method does not check if the rook piece
 	 * is placed in the square.
@@ -1618,7 +1619,7 @@ public class Board implements Copiable<Board> {
 				? Position.of(WHITE_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN)
 				: Position.of(BLACK_ROOK_INITIAL_ROW, QUEEN_SIDE_ROOK_INITIAL_COLUMN);
 	}
-
+	
 	/**
 	 * Evaluates if the given position is inside the board bounds.
 	 *
@@ -1632,7 +1633,7 @@ public class Board implements Copiable<Board> {
 		return row >= 0 && row < GameConstants.BOARD_SIZE
 				&& column >= 0 && column < GameConstants.BOARD_SIZE;
 	}
-
+	
 	/**
 	 * Retrieves the movement template related to the given piece.
 	 *
@@ -1664,7 +1665,7 @@ public class Board implements Copiable<Board> {
 		}
 		throw new ChessError(String.format("Invalid piece: %s", piece));
 	}
-
+	
 	/**
 	 * Retrieves the maximum movement length for a piece movement.
 	 *
@@ -1690,7 +1691,7 @@ public class Board implements Copiable<Board> {
 		}
 		throw new ChessError(String.format("Unexpected piece type: %s", type));
 	}
-
+	
 	/**
 	 * Generates the available movements for the pawn piece located in the given position.
 	 *
@@ -1778,7 +1779,7 @@ public class Board implements Copiable<Board> {
 			pieceMovementMetaBuilder.build()
 		);
 	}
-
+	
 	/**
 	 * Retrieves the row number for promotion of pawn pieces, for a specific color.
 	 *
@@ -1791,7 +1792,7 @@ public class Board implements Copiable<Board> {
 				? WHITE_PAWN_PROMOTION_ROW
 				: BLACK_PAWN_PROMOTION_ROW;
 	}
-
+	
 	/**
 	 * Evaluates if the movement of pawn is valid whether interpreted as a capturing movement (not a
 	 * forwarding movement). This method make use of the {@link #gameInfo} in order to know if a
@@ -1817,7 +1818,7 @@ public class Board implements Copiable<Board> {
 				&& gameInfo.enPassantTargetSquare != null
 				&& gameInfo.enPassantTargetSquare.equals(targetPosition);
 	}
-
+	
 	/**
 	 * Evaluates if the movement of pawn is valid whether interpreted as a forwarding movement (not
 	 * capture).
@@ -1849,7 +1850,7 @@ public class Board implements Copiable<Board> {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Retrieves the initial row number of a pawn piece.
 	 *
@@ -1862,7 +1863,7 @@ public class Board implements Copiable<Board> {
 				? WHITE_PAWN_INITIAL_ROW
 				: BLACK_PAWN_INITIAL_ROW;
 	}
-
+	
 	/**
 	 * Outputs a text based board drawing like as follow:
 	 *
@@ -1894,7 +1895,7 @@ public class Board implements Copiable<Board> {
 	public String toString() {
 		return toString(false);
 	}
-
+	
 	/**
 	 * Outputs a text based board drawing like as follow, given the possibility for drawing the
 	 * board coordinates:
@@ -1986,7 +1987,7 @@ public class Board implements Copiable<Board> {
 		}
 		return builder.toString();
 	}
-
+	
 	/**
 	 * Outputs a text based board drawing like as follow:
 	 *
@@ -2022,7 +2023,7 @@ public class Board implements Copiable<Board> {
 		}
 		return builder.toString();
 	}
-
+	
 	/**
 	 * A direction adjuster is a row adjuster and column adjuster pair that helps the piece movement
 	 * generation to generate the target positions.
@@ -2040,17 +2041,17 @@ public class Board implements Copiable<Board> {
 	 * @author Welyab Paula
 	 */
 	private static class DirectionAdjuster {
-
+		
 		/**
 		 * The row adjuster value.
 		 */
 		final int rowAdjuster;
-
+		
 		/**
 		 * The column adjuster value.
 		 */
 		final int columnAdjuster;
-
+		
 		/**
 		 * Creates a direction adjuster instance using given values.
 		 *
@@ -2062,35 +2063,35 @@ public class Board implements Copiable<Board> {
 			columnAdjuster = columnAdjsuter;
 		}
 	}
-
+	
 	/**
 	 * This class keeps information about a movement in order to allow board to undo that movement.
 	 *
 	 * @author Welyab Paula
 	 */
 	private static class MovementLog implements Copiable<MovementLog> {
-
+		
 		/**
 		 * The movement origin.
 		 */
 		final MovementOrigin movementOrigin;
-
+		
 		/**
 		 * The movement target.
 		 */
 		final MovementTarget movementTarget;
-
+		
 		/**
 		 * The captured piece, if any. This field may be <code>null</code> if the movement does not
 		 * represent a capture.
 		 */
 		final Piece capturedPiece;
-
+		
 		/**
 		 * The game information before the movement be done.
 		 */
 		final GameInfo gameInfo;
-
+		
 		@SuppressWarnings("javadoc")
 		MovementLog(
 				MovementOrigin movementOrigin,
@@ -2103,7 +2104,7 @@ public class Board implements Copiable<Board> {
 			this.capturedPiece = capturedPiece;
 			this.gameInfo = gameInfo;
 		}
-
+		
 		@Override
 		public MovementLog copy() {
 			return new MovementLog(
@@ -2114,7 +2115,7 @@ public class Board implements Copiable<Board> {
 			);
 		}
 	}
-
+	
 	/**
 	 * The <code>GameInfo</code> class holds some informations during the game playing, as castling
 	 * flags and <i>en passant</i> availability, etc.
@@ -2122,23 +2123,23 @@ public class Board implements Copiable<Board> {
 	 * @author Welyab Paula
 	 */
 	private static class GameInfo implements Copiable<GameInfo> {
-
+		
 		/**
 		 * The move side adjuster.
 		 */
 		int moveSideAdjuster;
-
+		
 		/**
 		 * A half movement counter to be used internally by the game engine.
 		 */
 		int moveCounter = 0;
-
+		
 		/**
 		 * The full movement counter. This value starts in one (initial game position) and is
 		 * incremented after each black piece movement.
 		 */
 		int fullMoveCounter = 1;
-
+		
 		/**
 		 * The half move counter is a auxiliary information to help help the engine detect a draw by
 		 * the "Fifty-move Rule". This counter is set to zero during pawn movements or piece
@@ -2152,7 +2153,7 @@ public class Board implements Copiable<Board> {
 		 * @see Board#move(MovementOrigin, MovementTarget)
 		 */
 		int halfMoveCounter = 0;
-
+		
 		/**
 		 * This field is used by movement generator in order to let pawn capture other pawns using
 		 * <i>en passant</i> movement.
@@ -2166,25 +2167,25 @@ public class Board implements Copiable<Board> {
 		 * @see Board#getPawnMovements(Position, boolean)
 		 */
 		Position enPassantTargetSquare = null;
-
+		
 		/**
 		 * The current position of the black king piece. This field is updated for each king
 		 * movement.
 		 */
 		Position blackKingPosition;
-
+		
 		/**
 		 * The current position of the white king piece. This field is updated for each king
 		 * movement.
 		 */
 		Position whiteKingPosition;
-
+		
 		/**
 		 * Castling flags indicate which castling movements are available for the pieces white/black
 		 * for the king side or queen side.
 		 */
 		int castlingFlags;
-
+		
 		@SuppressWarnings("javadoc")
 		GameInfo(BoardConfig config) {
 			this(
@@ -2203,7 +2204,7 @@ public class Board implements Copiable<Board> {
 				null
 			);
 		}
-
+		
 		@SuppressWarnings("javadoc")
 		GameInfo(
 				int moveSideAdjuster,
@@ -2224,7 +2225,7 @@ public class Board implements Copiable<Board> {
 			this.blackKingPosition = blackKingPosition;
 			this.whiteKingPosition = whiteKingPosition;
 		}
-
+		
 		@Override
 		public GameInfo copy() {
 			return new GameInfo(
@@ -2238,7 +2239,7 @@ public class Board implements Copiable<Board> {
 				whiteKingPosition
 			);
 		}
-
+		
 		/**
 		 * Retrieves the color side that should make the next movement.
 		 *
@@ -2247,7 +2248,7 @@ public class Board implements Copiable<Board> {
 		Color getActiveColor() {
 			return (moveCounter + moveSideAdjuster) % 2 == 0 ? Color.WHITE : Color.BLACK;
 		}
-
+		
 		/**
 		 * Set the position of the king piece, according to the given color.
 		 *
@@ -2264,7 +2265,7 @@ public class Board implements Copiable<Board> {
 				blackKingPosition = position;
 			}
 		}
-
+		
 		/**
 		 * Retrieves the position of the king piece, according to the given color.
 		 *
@@ -2284,7 +2285,7 @@ public class Board implements Copiable<Board> {
 					? whiteKingPosition
 					: blackKingPosition;
 		}
-
+		
 		/**
 		 * Evaluates if the king piece of the specific color is present in the board.
 		 *
@@ -2301,7 +2302,7 @@ public class Board implements Copiable<Board> {
 					? whiteKingPosition != null
 					: blackKingPosition != null;
 		}
-
+		
 		/**
 		 * Retrieves the full movement counter.
 		 *
@@ -2310,7 +2311,7 @@ public class Board implements Copiable<Board> {
 		int getFullMoveCounter() {
 			return fullMoveCounter;
 		}
-
+		
 		/**
 		 * Evaluates if the castling movement for the queen side is available for the pieces of the
 		 * specific color.
@@ -2325,7 +2326,7 @@ public class Board implements Copiable<Board> {
 					? GameConstants.isWhiteQueenSideCastling(castlingFlags)
 					: GameConstants.isBlackQueenSideCastling(castlingFlags);
 		}
-
+		
 		/**
 		 * Evaluates if the castling movement for the king side is available for the pieces of the
 		 * specific color.
@@ -2340,7 +2341,7 @@ public class Board implements Copiable<Board> {
 					? GameConstants.isWhiteKingSideCastling(castlingFlags)
 					: GameConstants.isBlackKingSideCastling(castlingFlags);
 		}
-
+		
 		/**
 		 * Invalidate the castling movement for the pieces of the specific color.
 		 *
@@ -2350,7 +2351,7 @@ public class Board implements Copiable<Board> {
 			invalidateKingSideCastling(color);
 			invalidateQueenSideCastling(color);
 		}
-
+		
 		/**
 		 * Invalidate the castling movement for the queen side for the specific color.
 		 *
@@ -2363,7 +2364,7 @@ public class Board implements Copiable<Board> {
 				castlingFlags &= ~GameConstants.BLACK_QUEEN_SIDE_CASTLING;
 			}
 		}
-
+		
 		/**
 		 * Invalidate the castling movement for the king side for the specific color.
 		 *
@@ -2376,7 +2377,7 @@ public class Board implements Copiable<Board> {
 				castlingFlags &= ~GameConstants.BLACK_KING_SIDE_CASTLING;
 			}
 		}
-
+		
 		@Override
 		public String toString() {
 			StringBuilder castlingFlagsStr = new StringBuilder();
