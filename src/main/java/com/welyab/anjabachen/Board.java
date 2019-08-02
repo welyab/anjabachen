@@ -860,6 +860,38 @@ public class Board implements Copiable<Board> {
 	 */
 	public String getFen() {
 		StringBuilder builder = new StringBuilder();
+		encodeFenPieceDisposition(builder);
+		
+		builder
+			.append(' ')
+			.append(getActiveColor().getLetterSymbol())
+			.append(' ');
+		
+		encodeFenCastlingFlags(builder);
+		
+		builder.append(' ');
+		
+		if (gameInfo.enPassantTargetSquare != null) {
+			builder.append(gameInfo.enPassantTargetSquare.getPgnPosition());
+		} else {
+			builder.append('-');
+		}
+		
+		builder.append(' ');
+		builder.append(gameInfo.halfMoveCounter);
+		
+		builder.append(' ');
+		builder.append(gameInfo.getFullMoveCounter());
+		
+		return builder.toString();
+	}
+	
+	/**
+	 * Encode the piece disposition for FEN string.
+	 * 
+	 * @param builder The string builder where the encoded string will be placed.
+	 */
+	private void encodeFenPieceDisposition(StringBuilder builder) {
 		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
 			int emptyCounter = 0;
 			if (row > 0) {
@@ -881,9 +913,14 @@ public class Board implements Copiable<Board> {
 				builder.append(emptyCounter);
 			}
 		}
-		builder.append(' ').append(getActiveColor().getLetterSymbol());
-		builder.append(' ');
-		
+	}
+	
+	/**
+	 * Encode the castling flags for the FEN string.
+	 * 
+	 * @param builder The string builder where the encoded string will be placed.
+	 */
+	private void encodeFenCastlingFlags(StringBuilder builder) {
 		StringBuilder castlingAvaiability = new StringBuilder();
 		if (GameConstants.isWhiteKingSideCastling(gameInfo.castlingFlags)) {
 			castlingAvaiability.append('K');
@@ -902,22 +939,6 @@ public class Board implements Copiable<Board> {
 		} else {
 			builder.append(castlingAvaiability);
 		}
-		
-		builder.append(' ');
-		
-		if (gameInfo.enPassantTargetSquare != null) {
-			builder.append(gameInfo.enPassantTargetSquare.getPgnPosition());
-		} else {
-			builder.append('-');
-		}
-		
-		builder.append(' ');
-		builder.append(gameInfo.halfMoveCounter);
-		
-		builder.append(' ');
-		builder.append(gameInfo.getFullMoveCounter());
-		
-		return builder.toString();
 	}
 	
 	/**
@@ -1504,7 +1525,6 @@ public class Board implements Copiable<Board> {
 		grid[targetPosition.getRow()][targetPosition.getColumn()] = grid[originPosition.getRow()][originPosition
 			.getColumn()];
 		grid[originPosition.getRow()][originPosition.getColumn()] = null;
-		
 		Piece capturedEnPassantPawn = null;
 		if (capturedPawnEnPassant != null) {
 			capturedEnPassantPawn = grid[capturedPawnEnPassant.getRow()][capturedPawnEnPassant.getColumn()];
