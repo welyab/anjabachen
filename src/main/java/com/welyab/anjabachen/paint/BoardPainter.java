@@ -33,7 +33,6 @@ import javax.imageio.ImageIO;
 
 import com.welyab.anjabachen.Board;
 import com.welyab.anjabachen.GameConstants;
-import com.welyab.anjabachen.Movement;
 import com.welyab.anjabachen.Piece;
 import com.welyab.anjabachen.Position;
 
@@ -103,23 +102,6 @@ public class BoardPainter {
 						column * (int) getSquareSize(),
 						row * (int) getSquareSize(),
 						null
-					);
-				}
-				if (board.getMovementCount() - 1 >= 0) {
-					Movement movement = board.getMovement(board.getMovementCount() - 1);
-					g.setColor(Color.RED);
-					g.setStroke(
-						new BasicStroke(
-							3,
-							BasicStroke.CAP_ROUND,
-							BasicStroke.JOIN_ROUND
-						)
-					);
-					g.drawLine(
-						(int) (movement.getOrigin().getPosition().getColumn() * getSquareSize() + getSquareSize() / 2),
-						(int) (movement.getOrigin().getPosition().getRow() * getSquareSize() + getSquareSize() / 2),
-						(int) (movement.getTarget().getPosition().getColumn() * getSquareSize() + getSquareSize() / 2),
-						(int) (movement.getTarget().getPosition().getRow() * getSquareSize() + getSquareSize() / 2)
 					);
 				}
 				
