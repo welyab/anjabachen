@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import com.welyab.anjabachen.A;
 import com.welyab.anjabachen.Board;
 import com.welyab.anjabachen.GameConstants;
 import com.welyab.anjabachen.Piece;
@@ -108,7 +109,7 @@ public class BoardPainter {
 				Position kingPosition = board.getKingPosition(board.getActiveColor());
 				List<Position> attackers = board.getAttackers(kingPosition, board.getWaitingColor());
 				for (Position position : attackers) {
-					g.setColor(Color.green);
+					g.setColor(Color.GREEN);
 					g.setStroke(
 						new BasicStroke(
 							3,
@@ -121,6 +122,24 @@ public class BoardPainter {
 						(int) (kingPosition.getRow() * getSquareSize() + getSquareSize() / 2),
 						(int) (position.getColumn() * getSquareSize() + getSquareSize() / 2),
 						(int) (position.getRow() * getSquareSize() + getSquareSize() / 2)
+					);
+				}
+				
+				if (board.hasPreviousMovement()) {
+					g.setColor(Color.BLUE);
+					g.setStroke(
+						new BasicStroke(
+							3,
+							BasicStroke.CAP_ROUND,
+							BasicStroke.JOIN_ROUND
+						)
+					);
+					A a = board.get();
+					g.drawLine(
+						(int) (a.getOrigin().getColumn() * getSquareSize() + getSquareSize() / 2),
+						(int) (a.getOrigin().getRow() * getSquareSize() + getSquareSize() / 2),
+						(int) (a.getTarget().getColumn() * getSquareSize() + getSquareSize() / 2),
+						(int) (a.getTarget().getRow() * getSquareSize() + getSquareSize() / 2)
 					);
 				}
 			}

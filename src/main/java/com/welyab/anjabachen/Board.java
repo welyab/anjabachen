@@ -23,12 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import com.welyab.anjabachen.PieceMovementMeta.Builder;
 import com.welyab.anjabachen.fen.BoardConfig;
 import com.welyab.anjabachen.fen.FenParser;
 import com.welyab.anjabachen.util.Copiable;
@@ -118,96 +114,96 @@ public class Board implements Copiable<Board> {
 	/**
 	 * The movement template for the king piece.
 	 */
-	private static List<DirectionAdjuster> kingMoveTemplate = Collections.unmodifiableList(
+	private static List<Direction> kingMoveTemplate = Collections.unmodifiableList(
 		Arrays.asList(
-			new DirectionAdjuster(-1, -1),
-			new DirectionAdjuster(-1, +0),
-			new DirectionAdjuster(-1, +1),
-			new DirectionAdjuster(+0, -1),
-			new DirectionAdjuster(+0, +1),
-			new DirectionAdjuster(+1, -1),
-			new DirectionAdjuster(+1, +0),
-			new DirectionAdjuster(+1, +1)
+			new Direction(-1, -1),
+			new Direction(-1, +0),
+			new Direction(-1, +1),
+			new Direction(+0, -1),
+			new Direction(+0, +1),
+			new Direction(+1, -1),
+			new Direction(+1, +0),
+			new Direction(+1, +1)
 		)
 	);
 	
 	/**
 	 * The movement template for the queen piece.
 	 */
-	private static List<DirectionAdjuster> queenMoveTemplate = Collections.unmodifiableList(
+	private static List<Direction> queenMoveTemplate = Collections.unmodifiableList(
 		Arrays.asList(
-			new DirectionAdjuster(-1, -1),
-			new DirectionAdjuster(-1, +0),
-			new DirectionAdjuster(-1, +1),
-			new DirectionAdjuster(+0, -1),
-			new DirectionAdjuster(+0, +1),
-			new DirectionAdjuster(+1, -1),
-			new DirectionAdjuster(+1, +0),
-			new DirectionAdjuster(+1, +1)
+			new Direction(-1, -1),
+			new Direction(-1, +0),
+			new Direction(-1, +1),
+			new Direction(+0, -1),
+			new Direction(+0, +1),
+			new Direction(+1, -1),
+			new Direction(+1, +0),
+			new Direction(+1, +1)
 		)
 	);
 	
 	/**
 	 * The movement template for the rook piece.
 	 */
-	private static List<DirectionAdjuster> rookMoveTemplate = Collections.unmodifiableList(
+	private static List<Direction> rookMoveTemplate = Collections.unmodifiableList(
 		Arrays.asList(
-			new DirectionAdjuster(-1, +0),
-			new DirectionAdjuster(+0, -1),
-			new DirectionAdjuster(+0, +1),
-			new DirectionAdjuster(+1, +0)
+			new Direction(-1, +0),
+			new Direction(+0, -1),
+			new Direction(+0, +1),
+			new Direction(+1, +0)
 		)
 	);
 	
 	/**
 	 * The movement template for the bishop piece.
 	 */
-	private static List<DirectionAdjuster> bishopMoveTemplate = Collections.unmodifiableList(
+	private static List<Direction> bishopMoveTemplate = Collections.unmodifiableList(
 		Arrays.asList(
-			new DirectionAdjuster(-1, -1),
-			new DirectionAdjuster(-1, +1),
-			new DirectionAdjuster(+1, -1),
-			new DirectionAdjuster(+1, +1)
+			new Direction(-1, -1),
+			new Direction(-1, +1),
+			new Direction(+1, -1),
+			new Direction(+1, +1)
 		)
 	);
 	
 	/**
 	 * The movement template for the knight piece.
 	 */
-	private static List<DirectionAdjuster> knightMoveTemplate = Collections.unmodifiableList(
+	private static List<Direction> knightMoveTemplate = Collections.unmodifiableList(
 		Arrays.asList(
-			new DirectionAdjuster(-2, +1),
-			new DirectionAdjuster(-2, -1),
-			new DirectionAdjuster(+2, +1),
-			new DirectionAdjuster(+2, -1),
-			new DirectionAdjuster(+1, +2),
-			new DirectionAdjuster(-1, +2),
-			new DirectionAdjuster(+1, -2),
-			new DirectionAdjuster(-1, -2)
+			new Direction(-2, +1),
+			new Direction(-2, -1),
+			new Direction(+2, +1),
+			new Direction(+2, -1),
+			new Direction(+1, +2),
+			new Direction(-1, +2),
+			new Direction(+1, -2),
+			new Direction(-1, -2)
 		)
 	);
 	
 	/**
 	 * The movement template for the black pawn.
 	 */
-	private static List<DirectionAdjuster> blackPawnMoveTemplate = Collections.unmodifiableList(
+	private static List<Direction> blackPawnMoveTemplate = Collections.unmodifiableList(
 		Arrays.asList(
-			new DirectionAdjuster(+1, +0),
-			new DirectionAdjuster(+2, +0),
-			new DirectionAdjuster(+1, +1),
-			new DirectionAdjuster(+1, -1)
+			new Direction(+1, +0),
+			new Direction(+2, +0),
+			new Direction(+1, +1),
+			new Direction(+1, -1)
 		)
 	);
 	
 	/**
 	 * The movement template for the white pawn.
 	 */
-	private static List<DirectionAdjuster> whitePawnMoveTemplate = Collections.unmodifiableList(
+	private static List<Direction> whitePawnMoveTemplate = Collections.unmodifiableList(
 		Arrays.asList(
-			new DirectionAdjuster(-1, +0),
-			new DirectionAdjuster(-2, +0),
-			new DirectionAdjuster(-1, +1),
-			new DirectionAdjuster(-1, -1)
+			new Direction(-1, +0),
+			new Direction(-2, +0),
+			new Direction(-1, +1),
+			new Direction(-1, -1)
 		)
 	);
 	
@@ -294,10 +290,16 @@ public class Board implements Copiable<Board> {
 		this.grid = grid;
 		this.gameInfo = gameInfo;
 		this.movementHistory = movementHistory;
-		privateStream()
-			.filter(LocalizedPiece::isNotEmpty)
-			.filter(p -> p.getPiece().isKing())
-			.forEach(p -> gameInfo.setKingPosition(p.getPiece().getColor(), p.getPosition()));
+		for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
+			for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
+				if (grid[row][column] != null && grid[row][column].isKing()) {
+					gameInfo.setKingPosition(
+						grid[row][column].getColor(),
+						Position.of(row, column)
+					);
+				}
+			}
+		}
 	}
 	
 	private static Piece[][] localizedPieceListToGrid(List<LocalizedPiece> pieces) {
@@ -535,6 +537,13 @@ public class Board implements Copiable<Board> {
 		return !movementHistory.isEmpty();
 	}
 	
+	public A get() {
+		return new A(
+			movementHistory.get(movementHistory.size() - 1).movementOrigin.getPosition(),
+			movementHistory.get(movementHistory.size() - 1).movementTarget.getPosition()
+		);
+	}
+	
 	/**
 	 * Undo all movements made with this board. If the board state is in a branch variant, the
 	 * undoing continues going to the parent branch until reach the last initial board state.
@@ -747,7 +756,7 @@ public class Board implements Copiable<Board> {
 		for (int t = 0; t < queenMoveTemplate.size(); t++) {
 			for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
 				if (!invalidDirections[t]) {
-					DirectionAdjuster directionAdjuster = queenMoveTemplate.get(t);
+					Direction directionAdjuster = queenMoveTemplate.get(t);
 					int targetRow = squarePosition.getRow() + mLength * directionAdjuster.rowAdjuster;
 					int targetColumn = squarePosition.getColumn() + mLength * directionAdjuster.columnAdjuster;
 					if (isInsideBoard(targetRow, targetColumn) && grid[targetRow][targetColumn] != null) {
@@ -764,6 +773,45 @@ public class Board implements Copiable<Board> {
 						} else {
 							invalidDirections[t] = true;
 						}
+					}
+				}
+			}
+		}
+		return attackers;
+	}
+	
+	private int getMoveValue(Position originPosition, Position targetPosition) {
+		Piece originPiece = grid[originPosition.getRow()][originPosition.getColumn()];
+		Piece targetPiece = grid[targetPosition.getRow()][targetPosition.getColumn()];
+		
+		int originValue = originPiece == null ? 0 : originPiece.getValue();
+		int targetValue = targetPiece == null ? 0 : targetPiece.getValue();
+		
+		return originValue * targetValue;
+	}
+	
+	private List<Position> getAttackersFromQueen(Position squarePosition, Color attackerColor) {
+		int maxMoveLength = getMaxPieceMovementLength(PieceType.QUEEN);
+		boolean[] invalidDirections = new boolean[queenMoveTemplate.size()];
+		List<Position> attackers = new ArrayList<>();
+		for (int t = 0; t < queenMoveTemplate.size(); t++) {
+			for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
+				if (!invalidDirections[t]) {
+					Direction directionAdjuster = queenMoveTemplate.get(t);
+					int targetRow = squarePosition.getRow() + mLength * directionAdjuster.rowAdjuster;
+					int targetColumn = squarePosition.getColumn() + mLength * directionAdjuster.columnAdjuster;
+					if (isInsideBoard(targetRow, targetColumn)) {
+						if (grid[targetRow][targetColumn] != null) {
+							Piece targetPiece = grid[targetRow][targetColumn];
+							if (targetPiece.getColor().equals(attackerColor) && targetPiece.isQueen()) {
+								attackers.add(Position.of(targetRow, targetColumn));
+								invalidDirections[t] = true;
+							} else {
+								invalidDirections[t] = true;
+							}
+						}
+					} else {
+						invalidDirections[t] = true;
 					}
 				}
 			}
@@ -1085,19 +1133,6 @@ public class Board implements Copiable<Board> {
 	}
 	
 	/**
-	 * Creates a stream of squares. Its expected that the board stated do not change during
-	 * streaming, otherwise a exception will be thrown.
-	 *
-	 * @return The stream of squares.
-	 */
-	private Stream<LocalizedPiece> privateStream() {
-		return StreamSupport.stream(
-			Spliterators.spliterator(privateIterator(), GameConstants.SQUARES_COUNT, 0),
-			false
-		);
-	}
-	
-	/**
 	 * Creates a iterator for iterate over all squares of this board. It is expected that the board
 	 * state do not change during interaction, otherwise a exception will be thrown.
 	 *
@@ -1151,7 +1186,7 @@ public class Board implements Copiable<Board> {
 	 * Generate movements for the piece located in the given position. This method expect that the
 	 * piece square is not empty, and piece should any of king, queen, rook bishop or knight.
 	 *
-	 * @param position The location
+	 * @param originPosition The location
 	 *
 	 * @param extractExtraMovementFlags A flag to indicate if this method must extract extra
 	 *        movement flags.
@@ -1159,93 +1194,83 @@ public class Board implements Copiable<Board> {
 	 * @return The generated movements.
 	 */
 	private PieceMovement getKingQueenRookBishopKnightMovements(
-			Position position,
+			Position originPosition,
 			boolean extractExtraMovementFlags
 	) {
-		int maxMoveLength = getMaxPieceMovementLength(
-			grid[position.getRow()][position.getColumn()].getType()
-		);
-		List<DirectionAdjuster> directionAdjusters = getMovementTemplate(
-			grid[position.getRow()][position.getColumn()]
-		);
-		boolean[] invalidDirection = new boolean[directionAdjusters.size()];
-		MovementOrigin movementOrigin = new MovementOrigin(
-			grid[position.getRow()][position.getColumn()],
-			position
-		);
+		Piece originPiece = getPiece(originPosition);
+		int maxMoveLength = getMaxPieceMovementLength(originPiece.getType());
+		List<Direction> directionAdjusters = getMovementTemplate(originPiece);
 		List<MovementTarget> targets = new ArrayList<>();
-		Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
-		for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
-			for (int t = 0; t < directionAdjusters.size(); t++) {
-				if (!invalidDirection[t]) {
-					DirectionAdjuster directionAdjuster = directionAdjusters.get(t);
-					int targetRow = position.getRow() + mLength * directionAdjuster.rowAdjuster;
-					int targetColumn = position.getColumn()
-							+ mLength * directionAdjuster.columnAdjuster;
-					if (isInsideBoard(targetRow, targetColumn)) {
-						Piece targetPiece = grid[targetRow][targetColumn];
-						int moveValue = grid[position.getRow()][position.getColumn()].getValue()
-								* (targetPiece == null ? 0 : targetPiece.getValue());
-						if (moveValue <= 0) {
-							if (moveValue < 0) {
-								invalidDirection[t] = true;
-							}
-							if (!isKingInCheckWithMove(
-								position, Position.of(targetRow, targetColumn), null
-							)) {
-								int movementFlags = 0;
-								if (moveValue < 0) {
-									pieceMovementMetaBuilder.incrementCaptureCount();
-									movementFlags |= GameConstants.CAPTURE;
-								}
-								if (extractExtraMovementFlags) {
-									movementFlags |= extractExtraMovementFlags(
-										movementOrigin.getPiece(),
-										movementOrigin.getPosition(),
-										movementOrigin.getPiece(),
-										Position.of(targetRow, targetColumn),
-										movementFlags
-									);
-									
-									updatePieceMovementMetaWithExtraFlags(
-										pieceMovementMetaBuilder,
-										movementFlags
-									);
-								}
-								pieceMovementMetaBuilder.incrementTotalMovements();
-								targets.add(
-									new MovementTarget(
-										grid[position.getRow()][position.getColumn()],
-										Position.of(targetRow, targetColumn),
-										movementFlags
-									)
-								);
-							}
-						} else {
-							invalidDirection[t] = true;
-						}
-					} else {
-						invalidDirection[t] = true;
+		for (int t = 0; t < directionAdjusters.size(); t++) {
+			for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
+				Direction directionAdjuster = directionAdjusters.get(t);
+				int targetRow = originPosition.getRow() + mLength * directionAdjuster.rowAdjuster;
+				int targetColumn = originPosition.getColumn() + mLength * directionAdjuster.columnAdjuster;
+				if (!isInsideBoard(targetRow, targetColumn)) {
+					break;
+				}
+				Position targetPosition = Position.of(targetRow, targetColumn);
+				int moveValue = getMoveValue(originPosition, targetPosition);
+				if (moveValue > 0) {
+					break;
+				}
+				if (!isKingInCheckWithMove(
+					originPosition,
+					targetPosition,
+					null
+				)) {
+					int movementFlags = 0;
+					if (moveValue < 0) {
+						movementFlags |= GameConstants.CAPTURE;
 					}
+					if (extractExtraMovementFlags) {
+						movementFlags |= extractExtraMovementFlags(
+							originPiece,
+							originPosition,
+							originPiece,
+							targetPosition,
+							movementFlags
+						);
+					}
+					targets.add(
+						new MovementTarget(
+							grid[originPosition.getRow()][originPosition.getColumn()],
+							Position.of(targetRow, targetColumn),
+							movementFlags
+						)
+					);
+				}
+				
+				if (moveValue < 0) {
+					break;
 				}
 			}
 		}
-		if (grid[position.getRow()][position.getColumn()].isKing()) {
-			List<MovementTarget> castlingTargets = getCastlingTargets(position, extractExtraMovementFlags);
-			castlingTargets.forEach(
-				t -> updatePieceMovementMetaWithExtraFlags(
-					pieceMovementMetaBuilder, t.getMovementFlags()
-				)
-			);
-			pieceMovementMetaBuilder.incrementTotalMovements(castlingTargets.size());
-			pieceMovementMetaBuilder.incrementCastlings(castlingTargets.size());
+		if (originPiece.isKing()) {
+			List<MovementTarget> castlingTargets = getCastlingTargets(originPosition, extractExtraMovementFlags);
 			targets.addAll(castlingTargets);
 		}
+		PieceMovementMeta.Builder builder = PieceMovementMeta.builder();
+		targets.forEach(t -> builder.addMovement(t.getMovementFlags()));
 		return new PieceMovement(
-			movementOrigin,
+			new MovementOrigin(
+				originPiece,
+				originPosition
+			),
 			targets,
-			pieceMovementMetaBuilder.build()
+			builder.build()
 		);
+	}
+	
+	public static void main(String[] args) {
+		Board board = new Board("8/2p5/3p4/Kr6/5p1k/8/1R2P1P1/8 w - - 0 2");
+		System.out.println(board.toString(true));
+		// MovementBag movements = board.getMovements();
+		// movements.stream()
+		// .filter(p -> p.getOrigin().getPiece().isRook())
+		// .forEach(System.out::println);
+		PieceMovement pieceMovement = board.getMovement(Position.of(6, 1));
+		pieceMovement.getTargets().forEach(System.out::println);
 	}
 	
 	/**
@@ -1383,7 +1408,7 @@ public class Board implements Copiable<Board> {
 			boolean discovery = false;
 			for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
 				if (!invalidDirections[t]) {
-					DirectionAdjuster directionAdjuster = queenMoveTemplate.get(t);
+					Direction directionAdjuster = queenMoveTemplate.get(t);
 					int targetRow = kingPosition.getRow() + mLength * directionAdjuster.rowAdjuster;
 					int targetColumn = kingPosition.getColumn() + mLength * directionAdjuster.columnAdjuster;
 					if (isInsideBoard(targetRow, targetColumn)) {
@@ -1517,10 +1542,10 @@ public class Board implements Copiable<Board> {
 			Position targetPosition,
 			Position capturedPawnEnPassant
 	) {
-		if (!gameInfo.isKingPresent(grid[originPosition.getRow()][originPosition.getColumn()].getColor())) {
+		Piece originPiece = grid[originPosition.getRow()][originPosition.getColumn()];
+		if (!gameInfo.isKingPresent(originPiece.getColor())) {
 			return false;
 		}
-		Color color = grid[originPosition.getRow()][originPosition.getColumn()].getColor();
 		Piece temp = grid[targetPosition.getRow()][targetPosition.getColumn()];
 		grid[targetPosition.getRow()][targetPosition.getColumn()] = grid[originPosition.getRow()][originPosition
 			.getColumn()];
@@ -1532,10 +1557,10 @@ public class Board implements Copiable<Board> {
 		}
 		Position kingPosition = grid[targetPosition.getRow()][targetPosition.getColumn()].isKing()
 				? targetPosition
-				: gameInfo.getKingPosition(color);
+				: gameInfo.getKingPosition(originPiece.getColor());
 		boolean underAttack = !getAttackers(
 			kingPosition,
-			grid[kingPosition.getRow()][kingPosition.getColumn()].getColor().getOpposite()
+			originPiece.getColor().getOpposite()
 		).isEmpty();
 		grid[originPosition.getRow()][originPosition.getColumn()] = grid[targetPosition.getRow()][targetPosition
 			.getColumn()];
@@ -1661,7 +1686,7 @@ public class Board implements Copiable<Board> {
 	 *
 	 * @return The list of direction adjusters of the given piece.
 	 */
-	private List<DirectionAdjuster> getMovementTemplate(Piece piece) {
+	private List<Direction> getMovementTemplate(Piece piece) {
 		if (piece.isKing()) {
 			return kingMoveTemplate;
 		}
@@ -1715,37 +1740,37 @@ public class Board implements Copiable<Board> {
 	/**
 	 * Generates the available movements for the pawn piece located in the given position.
 	 *
-	 * @param originPosition
+	 * @param pawnPosition The position of the pawn.
 	 * @param extractExtraMovementFlags A flag to indicate the extra movement flags should be
 	 *        calculated for the generated pawn movements.
 	 *
 	 * @return The movement object.
 	 */
-	private PieceMovement getPawnMovements(Position originPosition, boolean extractExtraMovementFlags) {
+	private PieceMovement getPawnMovements(Position pawnPosition, boolean extractExtraMovementFlags) {
 		List<MovementTarget> targets = new ArrayList<>();
 		PieceMovementMeta.Builder pieceMovementMetaBuilder = PieceMovementMeta.builder();
 		MovementOrigin movementOrigin = new MovementOrigin(
-			grid[originPosition.getRow()][originPosition.getColumn()],
-			originPosition
+			grid[pawnPosition.getRow()][pawnPosition.getColumn()],
+			pawnPosition
 		);
-		for (DirectionAdjuster directionAjduster : getMovementTemplate(
-			grid[originPosition.getRow()][originPosition.getColumn()]
+		for (Direction directionAjduster : getMovementTemplate(
+			grid[pawnPosition.getRow()][pawnPosition.getColumn()]
 		)) {
-			int targetRow = originPosition.getRow() + directionAjduster.rowAdjuster;
-			int targetColumn = originPosition.getColumn() + directionAjduster.columnAdjuster;
+			int targetRow = pawnPosition.getRow() + directionAjduster.rowAdjuster;
+			int targetColumn = pawnPosition.getColumn() + directionAjduster.columnAdjuster;
 			if (isInsideBoard(targetRow, targetColumn)) {
 				Position targetPosition = Position.of(targetRow, targetColumn);
-				boolean isMovementForward = isValidPawnMovementForward(originPosition, targetPosition);
-				boolean isCapture = isValidPawnCaptureMovement(originPosition, targetPosition);
+				boolean isMovementForward = isValidPawnMovementForward(pawnPosition, targetPosition);
+				boolean isCapture = isValidPawnCaptureMovement(pawnPosition, targetPosition);
 				boolean isEnPassant = isCapture && grid[targetRow][targetColumn] == null;
 				if ((isMovementForward || isCapture)
 						&& !isKingInCheckWithMove(
-							originPosition,
+							pawnPosition,
 							targetPosition,
-							isEnPassant ? Position.of(originPosition.getRow(), targetColumn) : null
+							isEnPassant ? Position.of(pawnPosition.getRow(), targetColumn) : null
 						)) {
 					boolean isPawnPromotion = targetRow == getPawnPromotionRow(
-						grid[originPosition.getRow()][originPosition.getColumn()].getColor()
+						grid[pawnPosition.getRow()][pawnPosition.getColumn()].getColor()
 					);
 					List<PieceType> targetPieces = isPawnPromotion
 							? pawnPromotionReplacements
@@ -1767,7 +1792,7 @@ public class Board implements Copiable<Board> {
 						}
 						Piece targetPiece = Piece.get(
 							pieceType,
-							grid[originPosition.getRow()][originPosition.getColumn()].getColor()
+							grid[pawnPosition.getRow()][pawnPosition.getColumn()].getColor()
 						);
 						if (extractExtraMovementFlags) {
 							movementFlags |= extractExtraMovementFlags(
@@ -2060,7 +2085,7 @@ public class Board implements Copiable<Board> {
 	 *
 	 * @author Welyab Paula
 	 */
-	private static class DirectionAdjuster {
+	private static class Direction {
 		
 		/**
 		 * The row adjuster value.
@@ -2078,7 +2103,7 @@ public class Board implements Copiable<Board> {
 		 * @param rowAdjuster The row adjuster value.
 		 * @param columnAdjsuter The column adjuster value.
 		 */
-		DirectionAdjuster(int rowAdjuster, int columnAdjsuter) {
+		Direction(int rowAdjuster, int columnAdjsuter) {
 			this.rowAdjuster = rowAdjuster;
 			columnAdjuster = columnAdjsuter;
 		}
