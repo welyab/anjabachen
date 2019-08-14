@@ -9,6 +9,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import com.welyab.anjabachen.grammar.PGNBaseListener;
 import com.welyab.anjabachen.grammar.PGNLexer;
 import com.welyab.anjabachen.grammar.PGNParser.PgnContext;
+import com.welyab.anjabachen.grammar.PGNParser.TagNameContext;
+import com.welyab.anjabachen.grammar.PGNParser.TagValueContext;
 
 public class PgnParser {
 
@@ -27,5 +29,15 @@ public class PgnParser {
 	}
 
 	private static class PgnWalker extends PGNBaseListener {
+		
+		@Override
+		public void enterTagName(TagNameContext ctx) {
+			System.out.println("Tag name: " + ctx.getText());
+		}
+		
+		@Override
+		public void enterTagValue(TagValueContext ctx) {
+			System.out.println("Tag value: " + ctx.getText());
+		}
 	}
 }

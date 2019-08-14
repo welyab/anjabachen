@@ -15,7 +15,9 @@
  */
 package com.welyab.anjabachen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.welyab.anjabachen.fen.FenParser;
@@ -64,7 +66,8 @@ public class Perft {
 			boardCopy,
 			1,
 			metas,
-			extractExtraFlags
+			extractExtraFlags,
+			new ArrayList<String>()
 		);
 		return metas;
 	}
@@ -73,18 +76,33 @@ public class Perft {
 			Board board,
 			int currentDepth,
 			Map<Integer, PieceMovementMeta> metas,
-			boolean extractExtraFlags
+			boolean extractExtraFlags,
+			List<String> path
 	) {
 		if (currentDepth <= depth) {
 			MovementBag movementBag = board.getMovements();
 			mergeMetas(currentDepth, movementBag.getMeta(), metas);
 			for (PieceMovement pieceMovement : movementBag) {
 				for (MovementTarget movementTarget : pieceMovement) {
+					// path.add(
+					// String.format(
+					// "%s%s",
+					// pieceMovement.getOrigin().getPosition().getPgnPosition(),
+					// movementTarget.getPosition().getPgnPosition()
+					// )
+					// );
 					board.move(pieceMovement.getOrigin(), movementTarget);
-					walk(board, currentDepth + 1, metas, extractExtraFlags);
+					walk(board, currentDepth + 1, metas, extractExtraFlags, path);
+					// path.remove(path.size() - 1);
 					board.undo();
 				}
 			}
+		} else {
+			// System.out.println(
+			// path.stream()
+			// .reduce((p1, p2) -> p1 + " " + p2)
+			// .get()
+			// );
 		}
 	}
 	
@@ -113,6 +131,8 @@ public class Perft {
 	/**
 	 * If there is some movement tree walking running, this method notifies the
 	 * process to stop.
+	 * 
+	 * <p>
 	 * This method just returns when the underlying process stops.
 	 */
 	public void stop() {
@@ -120,10 +140,8 @@ public class Perft {
 	
 	/**
 	 * Retrieves the underlying board of this perft generator. The returned
-	 * board is a copy of the
-	 * internal board; you may change the state of the board and that
-	 * modifications will not reflect
-	 * in the results of this perft generator.
+	 * board is a copy of the internal board; you may change the state of the board and that
+	 * modifications will not reflect in the results of this perft generator.
 	 *
 	 * @return A copy of the chess board.
 	 */

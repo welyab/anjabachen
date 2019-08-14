@@ -19,274 +19,37 @@
 
 grammar PGN;
 
-pgn: game+;
-
-game
-	: tagsArea NEWLINE
-	  NEWLINE
-	  movementsLis
+pgn : game (NEWLINE
+	  game)*
 	;
 
-tagsArea
-	: requiredTags (NEWLINE 
-	  optionalTags)?
+game : tags NEWLINE
+       NEWLINE
+       movements
+	 ;
+
+tags : tag (NEWLINE 
+	   tag)*
+	 ;
+
+tag : LeftBracket tagName Space tagValue RightBracket
 	;
 
-requiredTags
-	: eventTag  NEWLINE
-	  siteTag   NEWLINE
-	  dateTag   NEWLINE
-	  roudTag   NEWLINE
-	  whiteTag  NEWLINE
-	  blackTag  NEWLINE
-	  resultTag
+tagName
+	: StringAaZz
 	;
 
-// =================================================================================
-// Event tag
-// =================================================================================
-eventTag
-	: LeftBracket EventTagName Space Quote eventTagValue Quote RightBracket
-	;
-	
-eventTagValue
-	: eventName
-	| unknowEventName
-	;
-	
-eventName
-	: simpleString
-	;
-	
-unknowEventName
-	: QuestionMark
+tagValue
+	: String
 	;
 
-// =================================================================================
-// Site tag
-// =================================================================================
-siteTag
-	: LeftBracket SiteTagName Space Quote siteTagValue Quote RightBracket
-	;
+movements: '0';
 
-siteTagValue
-	: siteName
-	| unknowSiteName
-	;
+StringAaZz: ('a'..'z'|'A'..'Z')+;
 
-siteName
-	: simpleString
-	;
-
-unknowSiteName
-	: QuestionMark
-	;
-
-// =================================================================================
-// Date tag
-// =================================================================================
-dateTag
-	: LeftBracket DateTagName Space Quote gameDateValue Quote RightBracket
-	;
-
-gameDateValue
-	: gameDateYearValue Dot gameDateMonthValue Dot gameDateDayValue
-	;
-
-gameDateYearValue
-	: gameDateYear
-	| unknowGameDateYear
-	;
-
-gameDateYear
-	: Year
-	;
-	
-unknowGameDateYear
-	: '????'
-	;
-	
-gameDateMonthValue
-	: gameDateMonth
-	| unknowGameDateMonth
-	;
-
-gameDateMonth
-	: unknowGameDateMonth
-	| gameDateDayValue
-	;
-	
-unknowGameDateMonth
-	: '??'
-	;
-	
-gameDateDayValue
-	: gameDateDay
-	| unknowGameDateDay
-	;
-
-gameDateDay
-	: DayOfMonth
-	;
-	
-unknowGameDateDay
-	: '??'
-	;
-
-// =================================================================================
-// Round tag
-// =================================================================================
-roudTag
-	: LeftBracket RoundTagName Space Quote roundTagValue Quote RightBracket
-	;
-
-roundTagValue
-	: roundInfo
-	| roundInfoNotApplicable
-	| roundInfoUnknow
-	;
-
-roundInfo
-	: simpleString
-	;
-
-roundInfoNotApplicable
-	: Hyphen
-	;
-
-roundInfoUnknow
-	: QuestionMark
-	;
-
-// =================================================================================
-// White tag
-// =================================================================================
-whiteTag
-	: LeftBracket WhiteTagName Space Quote whiteTagValue Quote RightBracket
-	;
-
-whiteTagValue
-	: whitePlayerName
-	| unknowWhitePlayerName
-	;
-
-whitePlayerName
-	: simpleString
-	;
-	
-unknowWhitePlayerName
-	: QuestionMark
-	;
-
-// =================================================================================
-// Black tag
-// =================================================================================
-blackTag
-	: LeftBracket BlackTagName Space Quote blackTagValue Quote RightBracket
-	;
-
-blackTagValue
-	: blackPlayerName
-	| unknowBlackPlayerName
-	;
-
-blackPlayerName
-	: simpleString
-	;
-	
-unknowBlackPlayerName
-	: QuestionMark
-	;
-
-// =================================================================================
-// Black tag
-// =================================================================================
-resultTag
-	: LeftBracket ResultTagName Space Quote resultTagValue Quote RightBracket
-	;
-
-resultTagValue
-	: resultTagWhiteWin
-	| resultTagBlackWin
-	| resultTagDraw
-	| resultTagUnknow
-	;
-
-resultTagWhiteWin: WhiteWinGameResult;
-resultTagBlackWin: BlackWinGameResult;
-resultTagDraw:     DrawGameResult;
-resultTagUnknow:   UnknowGameResult;
-	
-optionalTags
-	: optionalTag 
-	  (NEWLINE optionalTag)*
-	;
-	
-optionalTag
-	: LeftBracket optionalTagName Quote optionalTagValue Quote RightBracket
-	;
-
-optionalTagName
-	: simpleString
-	;
-
-optionalTagValue
-	: simpleString?
-	;
-
-movementsLis
-	: 'a'
-	;
-
-WhiteWinGameResult: '1-0';
-BlackWinGameResult: '0-1';
-DrawGameResult:     '1/2-1/2';
-UnknowGameResult:   '*';
-
-Year
-	: Digit Digit Digit Digit
-	;
-
-Month
-	: Digit Digit
-	;
-	
-DayOfMonth
-	: Digit Digit
-	;
-	
-Digit
-	: '0'
-	| '1'
-	| '2'
-	| '3'
-	| '4'
-	| '5'
-	| '6'
-	| '7'
-	| '8'
-	| '9'
-	;
-
-EventTagName:  'Event';
-SiteTagName:   'Site';
-DateTagName:   'Date';
-RoundTagName:  'Round';
-WhiteTagName:  'White';
-BlackTagName:  'Black';
-ResultTagName: 'Result';
-
-simpleString: .*;
-
-Quote: '"';
+String: '"' ~('\r'|'\n'|'"')* '"';
 
 Space: ' ';
-
-Dot: '.';
-
-Hyphen: '-';
-
-QuestionMark: '?';
 
 LeftBracket:  '[';
 RightBracket: ']';

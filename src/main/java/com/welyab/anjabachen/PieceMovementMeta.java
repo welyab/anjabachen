@@ -121,6 +121,38 @@ public class PieceMovementMeta {
 			return this;
 		}
 		
+		public Builder addMovement(int movementFlags) {
+			incrementTotalMovements();
+			if (GameConstants.isCapture(movementFlags)) {
+				incrementCaptureCount();
+			}
+			if (GameConstants.isEnPassant(movementFlags)) {
+				incrementEnPassantCount();
+			}
+			if (GameConstants.isCastling(movementFlags)) {
+				incrementCastlings();
+			}
+			if (GameConstants.isPromotion(movementFlags)) {
+				incrementPromotionCount();
+			}
+			if (GameConstants.isCheck(movementFlags)) {
+				incrementCheckCount();
+			}
+			if (GameConstants.isDiscoveryCheck(movementFlags)) {
+				incrementDiscoveryCheckCount();
+			}
+			if (GameConstants.isDoubleCheck(movementFlags)) {
+				incrementDoubleCheckCount();
+			}
+			if (GameConstants.isCheckmate(movementFlags)) {
+				incrementCheckmateCount();
+			}
+			if (GameConstants.isStalemate(movementFlags)) {
+				incrementStalemateCount();
+			}
+			return this;
+		}
+		
 		public Builder incrementCaptureCount() {
 			return incrementCaptureCount(1);
 		}
