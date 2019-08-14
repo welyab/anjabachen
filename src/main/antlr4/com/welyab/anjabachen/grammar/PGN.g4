@@ -54,16 +54,12 @@ eventTagValue
 	| unknowEventName
 	;
 	
-unknowEventName
-	: QuestionMark
+eventName
+	: simpleString
 	;
 	
-eventName
-	: SimpleString
-	;
-
-eventNameUnknow
-	:
+unknowEventName
+	: QuestionMark
 	;
 
 // =================================================================================
@@ -79,7 +75,7 @@ siteTagValue
 	;
 
 siteName
-	: SimpleString
+	: simpleString
 	;
 
 unknowSiteName
@@ -151,7 +147,7 @@ roundTagValue
 	;
 
 roundInfo
-	: SimpleString
+	: simpleString
 	;
 
 roundInfoNotApplicable
@@ -175,7 +171,7 @@ whiteTagValue
 	;
 
 whitePlayerName
-	: SimpleString
+	: simpleString
 	;
 	
 unknowWhitePlayerName
@@ -195,7 +191,7 @@ blackTagValue
 	;
 
 blackPlayerName
-	: SimpleString
+	: simpleString
 	;
 	
 unknowBlackPlayerName
@@ -231,11 +227,11 @@ optionalTag
 	;
 
 optionalTagName
-	: SimpleString
+	: simpleString
 	;
 
 optionalTagValue
-	: SimpleString?
+	: simpleString?
 	;
 
 movementsLis
@@ -280,7 +276,7 @@ WhiteTagName:  'White';
 BlackTagName:  'Black';
 ResultTagName: 'Result';
 
-SimpleString: ~[\r\n"]+;
+simpleString: .*;
 
 Quote: '"';
 
