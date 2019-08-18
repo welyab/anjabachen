@@ -15,12 +15,13 @@
  */
 package com.welyab.anjabachen.perft;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
-import com.welyab.anjabachen.Perft;
 
 /**
  * A <i>Perft Result</i> is a set of values about movement generation. For example, the amout of
@@ -28,7 +29,7 @@ import com.welyab.anjabachen.Perft;
  * 
  * @author Welyab Paula
  * 
- * @see Perft
+ * @see PerftCalculator
  * @see PerftResultField
  */
 public class PerftResult {
@@ -39,6 +40,30 @@ public class PerftResult {
 	@SuppressWarnings("javadoc")
 	private PerftResult() {
 		values = new EnumMap<>(PerftResultField.class);
+	}
+	
+	private static class MagicNumberRetrofitInputStream extends InputStream {
+		
+		private byte[] buff;
+		
+		private InputStream original;
+		
+		private int bytesReadCounter;
+		
+		MagicNumberRetrofitInputStream(byte[] buff, InputStream original) {
+			this.buff = buff;
+			this.original = original;
+			this.bytesReadCounter = 0;
+		}
+		
+		@Override
+		public int read() throws IOException {
+			if (bytesReadCounter < buff.length) {
+				return buff[bytesReadCounter++];
+			} else {
+				return original.read();
+			}
+		}
 	}
 	
 	/**

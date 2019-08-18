@@ -15,14 +15,12 @@
  */
 package com.welyab.anjabachen.perft;
 
-import com.welyab.anjabachen.Perft;
-
 /**
  * Enumerates the fields available in ANJABACHEN for perft calculations.
  * 
  * @author Welyab Paula
  * 
- * @see Perft
+ * @see PerftCalculator
  */
 public enum PerftResultField {
 	

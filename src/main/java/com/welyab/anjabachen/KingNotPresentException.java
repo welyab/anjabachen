@@ -12,7 +12,8 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- */package com.welyab.anjabachen;
+ */
+package com.welyab.anjabachen;
 
 /**
  * Indicates the king piece is not present in the board during execution of routine that was
@@ -21,15 +22,15 @@
  * @author Welyab Paula
  */
 public class KingNotPresentException extends ChessException {
-
+	
 	@SuppressWarnings("javadoc")
 	private static final long serialVersionUID = 1L;
-
+	
 	/**
 	 * The color side of the required king piece.
 	 */
 	private final Color color;
-
+	
 	/**
 	 * Creates a new instance by informing the color side of the required king piece.
 	 *
@@ -39,7 +40,7 @@ public class KingNotPresentException extends ChessException {
 		super(String.format("The king of color %s is not present in the board", color.getName()));
 		this.color = color;
 	}
-
+	
 	/**
 	 * Retrieves the color of the required king.
 	 *

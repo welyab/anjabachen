@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import org.junit.Test;
 import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
 
+import com.welyab.anjabachen.perft.PerftCalculator;
 import com.welyab.anjabachen.util.TablePrinter;
 import com.welyab.anjabachen.util.TablePrinterColumnModel;
 import com.welyab.anjabachen.util.TablePrinterConfig;
@@ -237,13 +237,13 @@ public class BoardPerftTest {
 		Logger.info("Executing perft test");
 		Logger.info("FEN: {}", fen);
 		Logger.info("Depth: {}", expectedPerftResults.size());
-		Perft perft = new Perft(fen, expectedPerftResults.size());
+		PerftCalculator perft = new PerftCalculator(fen, expectedPerftResults.size());
 		Board board = perft.getBoard();
 		printBoard(board);
 		long t1 = System.currentTimeMillis();
 		Map<Integer, PieceMovementMeta> calculatedMetadatas = null;
 		try {
-			calculatedMetadatas = perft.perft();
+			calculatedMetadatas = perft.execute();
 		} catch (RuntimeException e) {
 			Logger.error(e);
 			throw e;
@@ -306,10 +306,6 @@ public class BoardPerftTest {
 			actual,
 			expected - actual
 		);
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(URLDecoder.decode("magnet%3A%3Fxt%3Durn%3Abtih%3A0EECF482B747EB67BE6791003A5D497532F23775"));
 	}
 	
 	@Test
@@ -395,20 +391,20 @@ public class BoardPerftTest {
 					.incrementDiscoveryCheckCount(26067)
 					.incrementDoubleCheckCount(0)
 					.incrementCheckmateCount(2733)
-					.build(),
-				7,
-				PieceMovementMeta
-					.builder()
-					.incrementTotalMovements(178633661)
-					.incrementCaptureCount(14519036)
-					.incrementEnPassantCount(294874)
-					.incrementCastlings(0)
-					.incrementPromotionCount(140024)
-					.incrementCheckCount(12797406)
-					.incrementDiscoveryCheckCount(370630)
-					.incrementDoubleCheckCount(3612)
-					.incrementCheckmateCount(87)
 					.build()
+				// 7,
+				// PieceMovementMeta
+				// .builder()
+				// .incrementTotalMovements(178633661)
+				// .incrementCaptureCount(14519036)
+				// .incrementEnPassantCount(294874)
+				// .incrementCastlings(0)
+				// .incrementPromotionCount(140024)
+				// .incrementCheckCount(12797406)
+				// .incrementDiscoveryCheckCount(370630)
+				// .incrementDoubleCheckCount(3612)
+				// .incrementCheckmateCount(87)
+				// .build()
 			)
 		);
 	}

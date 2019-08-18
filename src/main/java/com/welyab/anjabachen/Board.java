@@ -366,6 +366,10 @@ public class Board implements Copiable<Board> {
 		move(originPosition, targetPosition, PieceType.QUEEN);
 	}
 	
+	public void move(Movement movement) {
+		move(movement.getOrigin(), movement.getTarget());
+	}
+	
 	/**
 	 * Moves the piece located in position informed by <code>originPosition</code> parameter to the
 	 * location indicated by <code>targetPosition</code> parameter.
@@ -535,13 +539,6 @@ public class Board implements Copiable<Board> {
 	 */
 	public boolean hasPreviousMovement() {
 		return !movementHistory.isEmpty();
-	}
-	
-	public A get() {
-		return new A(
-			movementHistory.get(movementHistory.size() - 1).movementOrigin.getPosition(),
-			movementHistory.get(movementHistory.size() - 1).movementTarget.getPosition()
-		);
 	}
 	
 	/**
@@ -788,35 +785,6 @@ public class Board implements Copiable<Board> {
 		int targetValue = targetPiece == null ? 0 : targetPiece.getValue();
 		
 		return originValue * targetValue;
-	}
-	
-	private List<Position> getAttackersFromQueen(Position squarePosition, Color attackerColor) {
-		int maxMoveLength = getMaxPieceMovementLength(PieceType.QUEEN);
-		boolean[] invalidDirections = new boolean[queenMoveTemplate.size()];
-		List<Position> attackers = new ArrayList<>();
-		for (int t = 0; t < queenMoveTemplate.size(); t++) {
-			for (int mLength = 1; mLength <= maxMoveLength; mLength++) {
-				if (!invalidDirections[t]) {
-					Direction directionAdjuster = queenMoveTemplate.get(t);
-					int targetRow = squarePosition.getRow() + mLength * directionAdjuster.rowAdjuster;
-					int targetColumn = squarePosition.getColumn() + mLength * directionAdjuster.columnAdjuster;
-					if (isInsideBoard(targetRow, targetColumn)) {
-						if (grid[targetRow][targetColumn] != null) {
-							Piece targetPiece = grid[targetRow][targetColumn];
-							if (targetPiece.getColor().equals(attackerColor) && targetPiece.isQueen()) {
-								attackers.add(Position.of(targetRow, targetColumn));
-								invalidDirections[t] = true;
-							} else {
-								invalidDirections[t] = true;
-							}
-						}
-					} else {
-						invalidDirections[t] = true;
-					}
-				}
-			}
-		}
-		return attackers;
 	}
 	
 	/**
