@@ -28,11 +28,11 @@ import com.welyab.anjabachen.grammar.PGNParser.TagNameContext;
 import com.welyab.anjabachen.grammar.PGNParser.TagValueContext;
 
 public class PgnParser {
-	
+
 	public static void main(String[] args) throws IOException {
 		PGNLexer lexer = new PGNLexer(
 			CharStreams.fromFileName(
-				"c:/users/welyab/desktop/test.pgn"
+				"/home/welyab/Downloads/Telegram Desktop/test.pgn"
 			)
 		);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -42,7 +42,7 @@ public class PgnParser {
 		PgnWalker boardFenConfig = new PgnWalker();
 		walker.walk(boardFenConfig, pgnContext);
 	}
-	
+
 	private static class PgnWalker extends PGNBaseListener {
 		
 		@Override
