@@ -13,12 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.util.textprinter;
 
-/**
- * Tests the movement generation logic inside <cod</code>
- *
- * @author Welyab Paula
- */
-public class BoardPerftTest {
+public enum HorizontalAlign {
+	LEFT, CENTER, RIGHT;
 }

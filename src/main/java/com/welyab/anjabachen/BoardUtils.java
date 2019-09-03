@@ -15,75 +15,96 @@
  */
 package com.welyab.anjabachen;
 
-public class GameConstants {
+public class BoardUtils {
 	
 	/**
-	 * This mark is used by movement generation t indicate that a specific movement is also
-	 * <i>capture</i>.
+	 * Bit mask for extract the <i>capture</i> bit flag from movement flags.
+	 * 
+	 * <p>
+	 * The capture bit flag is the 1º least significant bit.
+	 * 
+	 * @see #isCapture(int)
 	 */
 	public static final int CAPTURE = 0b0000_0000_0000_0001;
 	
 	/**
-	 * This mark is used by movement generation to indicate that a specific movement is a <i>en
-	 * passant</i>.
+	 * Bit mask for extract the <i>en passant</i> bit flag from movement flags.
+	 * 
+	 * <p>
+	 * The capture bit flag is the 2º least significant bit.
+	 * 
+	 * @see #isEnPassant(int)
 	 */
 	public static final int EN_PASSANT = 0b0000_0000_0000_0010;
 	
 	/**
-	 * This mark is used by movement generation to indicate that a specific movement is a castling.
+	 * Bit mask for extract the <i>castling</i> bit flag from movement flags.
+	 * 
+	 * <p>
+	 * The capture bit flag is the 3º least significant bit.
+	 * 
+	 * @see #isCastling(int)
 	 */
 	public static final int CASTLING = 0b0000_0000_0000_0100;
 	
 	/**
-	 * This mark is used by movement generation to indicate that a specific movement is a pawn
-	 * promotion.
+	 * Bit mask for extract the <i>promotion</i> bit flag from movement flags.
+	 * 
+	 * <p>
+	 * The capture bit flag is the 4º least significant bit.
+	 * 
+	 * @see #isPromotion(int)
 	 */
 	public static final int PROMOTION = 0b0000_0000_0000_1000;
 	
 	/**
-	 * This mark is used by movement generation to indicate that a specific movement puts the
-	 * opposite king in check.
-	 *
+	 * Bit mask for extract the <i>check</i> bit flag from movement flags.
+	 * 
 	 * <p>
-	 * When a movement is marked as <i>check</i>, it will note be marked with another kind of
-	 * checks, like <i>discovery check</i>, <i>double check</i>, neither <i>checkmate</i> as well.
+	 * The capture bit flag is the 5º least significant bit.
+	 * 
+	 * @see #isCheck(int)
 	 */
 	public static final int CHECK = 0b0000_0000_0001_0000;
 	
 	/**
-	 * This mark is used by movement generation to indicate that a specific movement puts the
-	 * opposite king in check, not by movement of the piece itself, but by uncovering a same side
-	 * piece that attacks the opposite king.
-	 *
+	 * Bit mask for extract the <i>DISCOVERY CHECK</i> bit flag from movement flags.
+	 * 
 	 * <p>
-	 * When a movement is marked as <code>discovery check</code>, it will not be marked with another
-	 * kind of checks, like <i>double check</i> or <i>check</i>, neither <i>checkmate</i>.
-	 * as well.
+	 * The capture bit flag is the 6º least significant bit.
+	 * 
+	 * @see #isDiscoveryCheck(int)
 	 */
 	public static final int DISCOVERY_CHECK = 0b0000_0000_0010_0000;
 	
 	/**
-	 * This mark is used by movement generation to indicate that a specific movement puts the
-	 * opposite king in check, and also have uncovered another piece that also attacks the opposite
-	 * king.
-	 *
+	 * Bit mask for extract the <i>DOUBLE CHECK</i> bit flag from movement flags.
+	 * 
 	 * <p>
-	 * When a movement is marked as <code>double check</code>, it will not be marked with another
-	 * kind of checks, like <i>check</i> or <i>discovery check</i>, neither <i>checkmate</i>.
-	 * as well.
+	 * The capture bit flag is the 7º least significant bit.
+	 * 
+	 * @see #isDoubleCheck(int)
 	 */
 	public static final int DOUBLE_CHECK = 0b0000_0000_0100_0000;
 	
 	/**
-	 * This mark is used by movement generation to indicate that a specific movement puts the
-	 * opposite king in checkmate, finishing the game.
-	 *
+	 * Bit mask for extract the <i>CHECKMATE</i> bit flag from movement flags.
+	 * 
 	 * <p>
-	 * When a movement is market <i>checkmate</i>, it will not be marked with another kind of
-	 * checks, like <i>discovery check</i>.
+	 * The capture bit flag is the 8º least significant bit.
+	 * 
+	 * @see #isCheckmate(int)
 	 */
 	public static final int CHECKMATE = 0b0000_0000_1000_0000;
 	
+	/**
+	 * Bit mask for extract the <i>STALEMATE</i> bit flag from movement flags.
+	 * 
+	 * <p>
+	 * The capture bit flag is the 9º least significant bit.
+	 * 
+	 * @see #isStalemate(int)
+	 */
 	public static final int STALEMATE = 0b0000_0001_0000_0000;
 	
 	/**
@@ -106,53 +127,148 @@ public class GameConstants {
 	 */
 	public static final int WHITE_QUEEN_SIDE_CASTLING = 0b1000;
 	
+	/** The chess board size (a chess board is a 8x8 matrix like table). */
 	public static final int BOARD_SIZE = 8;
 	
 	/**
 	 * The total amount of squares in the chess board.
 	 */
-	public static final int SQUARES_COUNT = GameConstants.BOARD_SIZE * GameConstants.BOARD_SIZE;
+	public static final int SQUARES_COUNT = BoardUtils.BOARD_SIZE * BoardUtils.BOARD_SIZE;
 	
+	/** The board's minimum row number. */
 	public static final int MIN_ROW_NUMBER = 0;
 	
-	public static final int MAX_ROW_NUMBER = BOARD_SIZE - 1;
+	/** The board's maximum row number. */
+	public static final int MAX_ROW_NUMBER = 7;
 	
+	/** The board's minimum column number. */
 	public static final int MIN_COLUMN_NUMBER = 0;
 	
-	public static final int MAX_COLUMN_NUMBER = BOARD_SIZE - 1;
+	/** The board's maximum column number. */
+	public static final int MAX_COLUMN_NUMBER = 7;
 	
+	/**
+	 * Evaluate if the bit corresponding to capture flag is market, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #CAPTURE
+	 */
 	public static boolean isCapture(int movementFlags) {
 		return (movementFlags & CAPTURE) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to <i>en passant</i> flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isEnPassant(int movementFlags) {
 		return (movementFlags & EN_PASSANT) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to castling flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isCastling(int movementFlags) {
 		return (movementFlags & CASTLING) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to promotion flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isPromotion(int movementFlags) {
 		return (movementFlags & PROMOTION) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to check flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isCheck(int movementFlags) {
 		return (CHECK & movementFlags) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to discovery check flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isDiscoveryCheck(int movementFlags) {
 		return (movementFlags & DISCOVERY_CHECK) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to double check flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isDoubleCheck(int movementFlags) {
 		return (movementFlags & DOUBLE_CHECK) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to checkmate flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isCheckmate(int movementFlags) {
 		return (movementFlags & CHECKMATE) != 0;
 	}
 	
+	/**
+	 * Evaluate if the bit corresponding to stalemate flag is marked, or not.
+	 * 
+	 * @param movementFlags The movement flags.
+	 * 
+	 * @return A value <code>true</code> if the corresponding bit is marked, or <code>false</code>
+	 *         otherwise.
+	 * 
+	 * @see #EN_PASSANT
+	 */
 	public static boolean isStalemate(int movementFlags) {
 		return (movementFlags & STALEMATE) != 0;
 	}

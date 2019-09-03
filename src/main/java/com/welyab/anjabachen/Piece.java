@@ -25,95 +25,102 @@ package com.welyab.anjabachen;
  * @see Color
  */
 public enum Piece {
-
+	
 	/**
 	 * Represents the black king piece.
 	 */
-	BLACK_KING(PieceType.KING, 'k', Color.BLACK, SquareContent.BLACK_KING),
-
+	BLACK_KING(-6, PieceType.KING, 'k', Color.BLACK),
+	
 	/**
 	 * Represents the black queen piece.
 	 */
-	BLACK_QUEEN(PieceType.QUEEN, 'q', Color.BLACK, SquareContent.BLACK_QUEEN),
-
+	BLACK_QUEEN(-5, PieceType.QUEEN, 'q', Color.BLACK),
+	
 	/**
 	 * Represents the black rook piece.
 	 */
-	BLACK_ROOK(PieceType.ROOK, 'r', Color.BLACK, SquareContent.BLACK_ROOK),
-
+	BLACK_ROOK(-4, PieceType.ROOK, 'r', Color.BLACK),
+	
 	/**
 	 * Represents the black bishop piece.
 	 */
-	BLACK_BISHOP(PieceType.BISHOP, 'b', Color.BLACK, SquareContent.BLACK_BISHOP),
-
+	BLACK_BISHOP(-3, PieceType.BISHOP, 'b', Color.BLACK),
+	
 	/**
 	 * Represents the black knight piece.
 	 */
-	BLACK_KNIGHT(PieceType.KNIGHT, 'n', Color.BLACK, SquareContent.BLACK_KNIGHT),
-
+	BLACK_KNIGHT(-2, PieceType.KNIGHT, 'n', Color.BLACK),
+	
 	/**
 	 * Represents the black pawn piece.
 	 */
-	BLACK_PAWN(PieceType.PAWN, 'p', Color.BLACK, SquareContent.BLACK_PAWN),
-
+	BLACK_PAWN(-1, PieceType.PAWN, 'p', Color.BLACK),
+	
 	/**
 	 * Represents the white king piece.
 	 */
-	WHITE_KING(PieceType.KING, 'K', Color.WHITE, SquareContent.WHITE_KING),
-
+	WHITE_KING(6, PieceType.KING, 'K', Color.WHITE),
+	
 	/**
 	 * Represents the white queen piece.
 	 */
-	WHITE_QUEEN(PieceType.QUEEN, 'Q', Color.WHITE, SquareContent.WHITE_QUEEN),
-
+	WHITE_QUEEN(5, PieceType.QUEEN, 'Q', Color.WHITE),
+	
 	/**
 	 * Represents the white rook piece.
 	 */
-	WHITE_ROOK(PieceType.ROOK, 'R', Color.WHITE, SquareContent.WHITE_ROOK),
-
+	WHITE_ROOK(4, PieceType.ROOK, 'R', Color.WHITE),
+	
 	/**
 	 * Represents the white bishop piece.
 	 */
-	WHITE_BISHOP(PieceType.BISHOP, 'B', Color.WHITE, SquareContent.WHITE_BISHOP),
-
+	WHITE_BISHOP(3, PieceType.BISHOP, 'B', Color.WHITE),
+	
 	/**
 	 * Represents the white knight piece.
 	 */
-	WHITE_KNIGHT(PieceType.KNIGHT, 'N', Color.WHITE, SquareContent.WHITE_KNIGHT),
-
+	WHITE_KNIGHT(2, PieceType.KNIGHT, 'N', Color.WHITE),
+	
 	/**
 	 * Represents the white king piece.
 	 */
-	WHITE_PAWN(PieceType.PAWN, 'P', Color.WHITE, SquareContent.WHITE_PAWN);
-
+	WHITE_PAWN(1, PieceType.PAWN, 'P', Color.WHITE);
+	
+	/** The id of this piece. */
+	private final int id;
+	
 	/**
 	 * The piece type (king, queen, rook...).
 	 */
 	private final PieceType type;
-
+	
 	/**
 	 * The piece color, if white, or black.
 	 */
 	private final Color color;
-
+	
 	/**
 	 * The letter symbol for this piece.
 	 */
 	private final char letterSymbol;
-
-	/**
-	 * The representative value of this piece when occupying a board square.
-	 */
-	private final int value;
-
+	
 	@SuppressWarnings("javadoc")
-	private Piece(PieceType type, char letterSymbol, Color color, int value) {
+	private Piece(int id, PieceType type, char letterSymbol, Color color) {
 		this.type = type;
 		this.letterSymbol = letterSymbol;
 		this.color = color;
-		this.value = value;
+		this.id = id;
 	}
-
+	
+	/**
+	 * Retrieves the id of this piece.
+	 * 
+	 * @return The id.
+	 */
+	public int getId() {
+		return id;
+	}
+	
 	/**
 	 * Retrieves the type of this piece (king, queen, rook...).
 	 *
@@ -122,7 +129,7 @@ public enum Piece {
 	public PieceType getType() {
 		return type;
 	}
-
+	
 	/**
 	 * Retrieves the color of this piece (white or black).
 	 *
@@ -131,18 +138,7 @@ public enum Piece {
 	public Color getColor() {
 		return color;
 	}
-
-	/**
-	 * Retrieves the representative value for this piece when it is occupying a square.
-	 *
-	 * @return The square content for this piece.
-	 *
-	 * @see SquareContent
-	 */
-	public int getValue() {
-		return value;
-	}
-
+	
 	/**
 	 * Evaluates if this piece belongs to the black side.
 	 *
@@ -152,7 +148,7 @@ public enum Piece {
 	public boolean isBlack() {
 		return color.isBlack();
 	}
-
+	
 	/**
 	 * Evaluates if this piece belongs to the white side.
 	 *
@@ -162,7 +158,7 @@ public enum Piece {
 	public boolean isWhite() {
 		return color.isWhite();
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a king, regardless to its color.
 	 *
@@ -171,7 +167,7 @@ public enum Piece {
 	public boolean isKing() {
 		return type.isKing();
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a queen, regardless to its color.
 	 *
@@ -180,7 +176,7 @@ public enum Piece {
 	public boolean isQueen() {
 		return type.isQueen();
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a rook, regardless to its color.
 	 *
@@ -189,7 +185,7 @@ public enum Piece {
 	public boolean isRook() {
 		return type.isRook();
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a bishop, regardless to its color.
 	 *
@@ -198,7 +194,7 @@ public enum Piece {
 	public boolean isBishop() {
 		return type.isBishop();
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a knight, regardless to its color.
 	 *
@@ -207,7 +203,7 @@ public enum Piece {
 	public boolean isKnight() {
 		return type.isKnight();
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a pawn, regardless to its color.
 	 *
@@ -216,7 +212,7 @@ public enum Piece {
 	public boolean isPawn() {
 		return type.isPawn();
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a black king.
 	 *
@@ -226,7 +222,7 @@ public enum Piece {
 	public boolean isBlackKing() {
 		return this == BLACK_KING;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a black queen.
 	 *
@@ -236,7 +232,7 @@ public enum Piece {
 	public boolean isBlackQueen() {
 		return this == BLACK_QUEEN;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a black rook.
 	 *
@@ -246,7 +242,7 @@ public enum Piece {
 	public boolean isBlackRook() {
 		return this == BLACK_ROOK;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a black bishop.
 	 *
@@ -256,7 +252,7 @@ public enum Piece {
 	public boolean isBlackBishop() {
 		return this == BLACK_BISHOP;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a black knight.
 	 *
@@ -266,7 +262,7 @@ public enum Piece {
 	public boolean isBlackKnight() {
 		return this == BLACK_KNIGHT;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a black pawn.
 	 *
@@ -276,7 +272,7 @@ public enum Piece {
 	public boolean isBlackPawn() {
 		return this == BLACK_PAWN;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a white king.
 	 *
@@ -286,7 +282,7 @@ public enum Piece {
 	public boolean isWhiteKing() {
 		return this == WHITE_KING;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a white queen.
 	 *
@@ -296,7 +292,7 @@ public enum Piece {
 	public boolean isWhiteQueen() {
 		return this == WHITE_QUEEN;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a white rook.
 	 *
@@ -306,7 +302,7 @@ public enum Piece {
 	public boolean isWhiteRook() {
 		return this == WHITE_ROOK;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a white bishop.
 	 *
@@ -316,7 +312,7 @@ public enum Piece {
 	public boolean isWhiteBishop() {
 		return this == WHITE_BISHOP;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a white knight.
 	 *
@@ -326,7 +322,7 @@ public enum Piece {
 	public boolean isWhiteKnight() {
 		return this == Piece.WHITE_KING;
 	}
-
+	
 	/**
 	 * Evaluates if this piece is a white pawn.
 	 *
@@ -336,7 +332,7 @@ public enum Piece {
 	public boolean isWhitePawn() {
 		return this == WHITE_PAWN;
 	}
-
+	
 	/**
 	 * Retrieves the letter symbols for this piece.
 	 *
@@ -345,7 +341,7 @@ public enum Piece {
 	public char getLetterSymbol() {
 		return letterSymbol;
 	}
-
+	
 	/**
 	 * Retrieves the piece instance associated with given letter symbol.
 	 *
@@ -369,7 +365,7 @@ public enum Piece {
 			)
 		);
 	}
-
+	
 	/**
 	 * Given a type and a color, this method returns the associated piece.
 	 *
@@ -379,45 +375,23 @@ public enum Piece {
 	 * @return The instance of piece.
 	 */
 	public static Piece get(PieceType type, Color color) {
-		if (color.isWhite()) {
-			if (type.isKing()) {
-				return Piece.WHITE_KING;
-			}
-			if (type.isQueen()) {
-				return Piece.WHITE_QUEEN;
-			}
-			if (type.isRook()) {
-				return Piece.WHITE_ROOK;
-			}
-			if (type.isBishop()) {
-				return Piece.WHITE_BISHOP;
-			}
-			if (type.isKnight()) {
-				return Piece.WHITE_KNIGHT;
-			}
-			if (type.isPawn()) {
-				return Piece.WHITE_PAWN;
-			}
-		} else if (color.isBlack()) {
-			if (type.isKing()) {
-				return Piece.BLACK_KING;
-			}
-			if (type.isQueen()) {
-				return Piece.BLACK_QUEEN;
-			}
-			if (type.isRook()) {
-				return Piece.BLACK_ROOK;
-			}
-			if (type.isBishop()) {
-				return Piece.BLACK_BISHOP;
-			}
-			if (type.isKnight()) {
-				return Piece.BLACK_KNIGHT;
-			}
-			if (type.isPawn()) {
-				return Piece.BLACK_PAWN;
-			}
-		}
-		throw new ChessError(String.format("Invalid combination of piece type and color: %s, %s", type, color));
+		return switch (color) {
+			case WHITE -> switch (type) {
+					case KING -> Piece.WHITE_KING;
+					case QUEEN -> Piece.WHITE_QUEEN;
+					case ROOK -> Piece.WHITE_ROOK;
+					case BISHOP -> Piece.WHITE_BISHOP;
+					case KNIGHT -> Piece.WHITE_KNIGHT;
+					case PAWN -> Piece.WHITE_PAWN;
+				};
+			case BLACK -> switch (type) {
+					case KING -> Piece.BLACK_KING;
+					case QUEEN -> Piece.BLACK_QUEEN;
+					case ROOK -> Piece.BLACK_ROOK;
+					case BISHOP -> Piece.BLACK_BISHOP;
+					case KNIGHT -> Piece.BLACK_KNIGHT;
+					case PAWN -> Piece.BLACK_PAWN;
+				};
+		};
 	}
 }

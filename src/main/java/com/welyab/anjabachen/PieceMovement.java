@@ -47,7 +47,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	/**
 	 * The metadata associated with this movement set.
 	 */
-	private final PieceMovementMeta meta;
+	private final MovementMetadata meta;
 	
 	/**
 	 * Creates a new <code>Movements</code> set for piece.
@@ -59,7 +59,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	public PieceMovement(
 			MovementOrigin movementOrigin,
 			List<MovementTarget> targets,
-			PieceMovementMeta meta
+			MovementMetadata meta
 	) {
 		origin = movementOrigin;
 		this.targets = targets;
@@ -132,7 +132,7 @@ public class PieceMovement implements Iterable<MovementTarget> {
 	 *
 	 * @return The metadata.
 	 */
-	public PieceMovementMeta getMeta() {
+	public MovementMetadata getMeta() {
 		return meta;
 	}
 	

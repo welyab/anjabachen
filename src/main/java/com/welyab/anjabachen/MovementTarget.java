@@ -93,7 +93,7 @@ public class MovementTarget {
 		return String.format(
 			"Target %s %s[%d, %d]",
 			piece,
-			GameConstants.isCapture(getMovementFlags()) ? "x" : "",
+			BoardUtils.isCapture(getMovementFlags()) ? "x" : "",
 			position.getRow(),
 			position.getColumn()
 		);

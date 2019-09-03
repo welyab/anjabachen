@@ -17,6 +17,7 @@ package com.welyab.anjabachen;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -36,13 +37,13 @@ import java.util.stream.StreamSupport;
  * @see MovementTarget
  */
 public class MovementBag implements Iterable<PieceMovement> {
-
+	
 	/** The list of piece movements. */
 	private List<PieceMovement> movements;
-
+	
 	/** The consolidated information about movements. */
-	private PieceMovementMeta meta;
-
+	private MovementMetadata meta;
+	
 	/**
 	 * Creates a new <code>MovementBag</code>.
 	 *
@@ -56,12 +57,12 @@ public class MovementBag implements Iterable<PieceMovement> {
 	 */
 	public MovementBag(
 			List<PieceMovement> movements,
-			PieceMovementMeta meta
+			MovementMetadata meta
 	) {
 		this.movements = movements;
 		this.meta = meta;
 	}
-
+	
 	/**
 	 * Evaluates if this bag is empty.
 	 *
@@ -71,7 +72,7 @@ public class MovementBag implements Iterable<PieceMovement> {
 	public boolean isEmpty() {
 		return movements.isEmpty();
 	}
-
+	
 	/**
 	 * Retrieves the movement origin at the specific zero based index.
 	 *
@@ -82,7 +83,7 @@ public class MovementBag implements Iterable<PieceMovement> {
 	public PieceMovement get(int index) {
 		return movements.get(index);
 	}
-
+	
 	/**
 	 * Retrieves how many piece movements there are in this bag. Note that this method returns only
 	 * the number of origins (a {@link PieceMovement} object).
@@ -92,16 +93,53 @@ public class MovementBag implements Iterable<PieceMovement> {
 	public int size() {
 		return movements.size();
 	}
-
+	
 	/**
 	 * Retrieves the metadata associated with this movement bag.
 	 *
 	 * @return The metadata object.
 	 */
-	public PieceMovementMeta getMeta() {
+	public MovementMetadata getMetadata() {
 		return meta;
 	}
-
+	
+	@SuppressWarnings("javadoc")
+	private class MovementIterator implements Iterator<Movement> {
+		
+		int deliveredMovements = 0;
+		
+		int pieceMovementIndex = 0;
+		
+		int movementTargetIndex = 0;
+		
+		@Override
+		public boolean hasNext() {
+			return deliveredMovements < getMetadata().getTotalMovements();
+		}
+		
+		@Override
+		public Movement next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException("No more elements");
+			}
+			if (movementTargetIndex >= get(pieceMovementIndex).size()) {
+				pieceMovementIndex++;
+				movementTargetIndex = 0;
+			}
+			MovementTarget movementTarget = get(pieceMovementIndex).getTarget(movementTargetIndex);
+			movementTargetIndex++;
+			deliveredMovements++;
+			return new Movement(
+				get(pieceMovementIndex).getOrigin(),
+				movementTarget
+			);
+		}
+	}
+	
+	public Iterator<Movement> movementIterator() {
+		return new MovementIterator();
+	}
+	
 	@Override
 	public Iterator<PieceMovement> iterator() {
 		return movements.iterator();
@@ -109,5 +147,17 @@ public class MovementBag implements Iterable<PieceMovement> {
 	
 	public Stream<PieceMovement> stream() {
 		return StreamSupport.stream(spliterator(), false);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (PieceMovement pieceMovement : this) {
+			if (builder.length() != 0) {
+				builder.append(String.format("%n"));
+			}
+			builder.append(pieceMovement);
+		}
+		return builder.toString();
 	}
 }

@@ -18,9 +18,9 @@ package com.welyab.anjabachen;
 /**
  * @author Welyab Paula
  */
-public class PieceMovementMeta {
+public class MovementMetadata {
 	
-	private static final PieceMovementMeta EMPTY = builder().build();
+	private static final MovementMetadata EMPTY = builder().build();
 	
 	private int totalMovements;
 	
@@ -46,7 +46,7 @@ public class PieceMovementMeta {
 		return new Builder();
 	}
 	
-	public static PieceMovementMeta empty() {
+	public static MovementMetadata empty() {
 		return EMPTY;
 	}
 	
@@ -101,13 +101,13 @@ public class PieceMovementMeta {
 	
 	public static final class Builder {
 		
-		private final PieceMovementMeta meta;
+		private final MovementMetadata meta;
 		
 		private Builder() {
-			meta = new PieceMovementMeta();
+			meta = new MovementMetadata();
 		}
 		
-		public Builder add(PieceMovementMeta meta) {
+		public Builder add(MovementMetadata meta) {
 			incrementTotalMovements(meta.totalMovements);
 			incrementCaptureCount(meta.captureCount);
 			incrementEnPassantCount(meta.enPassantCount);
@@ -123,31 +123,31 @@ public class PieceMovementMeta {
 		
 		public Builder addMovement(int movementFlags) {
 			incrementTotalMovements();
-			if (GameConstants.isCapture(movementFlags)) {
+			if (BoardUtils.isCapture(movementFlags)) {
 				incrementCaptureCount();
 			}
-			if (GameConstants.isEnPassant(movementFlags)) {
+			if (BoardUtils.isEnPassant(movementFlags)) {
 				incrementEnPassantCount();
 			}
-			if (GameConstants.isCastling(movementFlags)) {
+			if (BoardUtils.isCastling(movementFlags)) {
 				incrementCastlings();
 			}
-			if (GameConstants.isPromotion(movementFlags)) {
+			if (BoardUtils.isPromotion(movementFlags)) {
 				incrementPromotionCount();
 			}
-			if (GameConstants.isCheck(movementFlags)) {
+			if (BoardUtils.isCheck(movementFlags)) {
 				incrementCheckCount();
 			}
-			if (GameConstants.isDiscoveryCheck(movementFlags)) {
+			if (BoardUtils.isDiscoveryCheck(movementFlags)) {
 				incrementDiscoveryCheckCount();
 			}
-			if (GameConstants.isDoubleCheck(movementFlags)) {
+			if (BoardUtils.isDoubleCheck(movementFlags)) {
 				incrementDoubleCheckCount();
 			}
-			if (GameConstants.isCheckmate(movementFlags)) {
+			if (BoardUtils.isCheckmate(movementFlags)) {
 				incrementCheckmateCount();
 			}
-			if (GameConstants.isStalemate(movementFlags)) {
+			if (BoardUtils.isStalemate(movementFlags)) {
 				incrementStalemateCount();
 			}
 			return this;
@@ -243,7 +243,7 @@ public class PieceMovementMeta {
 			return this;
 		}
 		
-		public PieceMovementMeta build() {
+		public MovementMetadata build() {
 			return meta;
 		}
 	}

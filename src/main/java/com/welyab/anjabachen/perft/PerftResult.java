@@ -15,13 +15,15 @@
  */
 package com.welyab.anjabachen.perft;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.welyab.anjabachen.MovementMetadata;
 
 /**
  * A <i>Perft Result</i> is a set of values about movement generation. For example, the amout of
@@ -42,28 +44,20 @@ public class PerftResult {
 		values = new EnumMap<>(PerftResultField.class);
 	}
 	
-	private static class MagicNumberRetrofitInputStream extends InputStream {
-		
-		private byte[] buff;
-		
-		private InputStream original;
-		
-		private int bytesReadCounter;
-		
-		MagicNumberRetrofitInputStream(byte[] buff, InputStream original) {
-			this.buff = buff;
-			this.original = original;
-			this.bytesReadCounter = 0;
-		}
-		
-		@Override
-		public int read() throws IOException {
-			if (bytesReadCounter < buff.length) {
-				return buff[bytesReadCounter++];
-			} else {
-				return original.read();
-			}
-		}
+	/**
+	 * Retrieves fields available for the given depth.
+	 * 
+	 * @param depth The depth query.
+	 * 
+	 * @return The list fields.
+	 */
+	public Set<PerftResultField> getFields(long depth) {
+		return values
+			.entrySet()
+			.stream()
+			.filter(e -> e.getValue().containsKey(depth))
+			.map(Map.Entry::getKey)
+			.collect(Collectors.toSet());
 	}
 	
 	/**
@@ -124,10 +118,31 @@ public class PerftResult {
 		}
 		
 		/**
-		 * Assigns a value to the field in the specific depth.
+		 * Assigns all values available in the given <code>perftResult</code> paramter.
 		 * 
-		 * @param field The field.
+		 * @param depth The depth where the values will be added, and where they will be extract
+		 *        from the <code>perftResult</code> parameter.
+		 * @param perftResult The perft result to be added to this being created perft result.
+		 * 
+		 * @return This builder instance for further usage.
+		 * 
+		 * @throws IllegalStateException If the builder is finished. A builder is considered
+		 *         <i>finished</i> after the method {@linkplain #build() build} is returns.
+		 */
+		public Builder addValue(long depth, PerftResult perftResult) {
+			checkNotFinished();
+			for (PerftResultField field : perftResult.getFields(depth)) {
+				addValue(depth, field, perftResult.getValue(field, depth));
+			}
+			return this;
+		}
+		
+		/**
+		 * Assigns a value to the field in the specific depth. If the field in the specific depth
+		 * already have a value, the new value is added to present value.
+		 * 
 		 * @param depth The depth.
+		 * @param field The field.
 		 * @param value The value to be assigned.
 		 * 
 		 * @return This builder instance for further usage.
@@ -135,12 +150,83 @@ public class PerftResult {
 		 * @throws IllegalStateException If the builder is finished. A builder is considered
 		 *         <i>finished</i> after the method {@linkplain #build() build} is returns.
 		 */
-		public Builder addValue(PerftResultField field, long depth, long value) {
+		public Builder addValue(long depth, PerftResultField field, long value) {
 			checkNotFinished();
 			if (!result.values.containsKey(field)) {
 				result.values.put(field, new HashMap<>());
 			}
-			result.values.get(field).put(depth, value);
+			Map<Long, Long> map = result.values.get(field);
+			map.put(depth, map.getOrDefault(depth, 0L) + value);
+			return this;
+		}
+		
+		/**
+		 * Assigns all values from given movement metadata into this pert result. If the field in
+		 * the specific depth already have a value, the new value is added to present value.
+		 * 
+		 * <p>
+		 * The values are:
+		 * 
+		 * <ul>
+		 * <li>total nodes
+		 * <li>captures
+		 * <li><i>en passants</i>
+		 * <li>castling
+		 * <li>promotions
+		 * <li>checks
+		 * <li>discovery checks
+		 * <li>double checks
+		 * <li>checkmates
+		 * <li>stalemates
+		 * </ul>
+		 * 
+		 * @param depth The depth where values will be added.
+		 * @param metadata The movement metadata.
+		 * 
+		 * @return This builder instance for further usage.
+		 */
+		public Builder addValues(long depth, MovementMetadata metadata) {
+			checkNotFinished();
+			addValue(depth, PerftResultField.NODES, metadata.getTotalMovements());
+			addValue(depth, PerftResultField.CAPTURES, metadata.getCaptureCount());
+			addValue(depth, PerftResultField.EN_PASSANTS, metadata.getEnPassantCount());
+			addValue(depth, PerftResultField.CASTLINGS, metadata.getCastlingsCount());
+			addValue(depth, PerftResultField.PROMOTIONS, metadata.getPromotionCount());
+			addValue(depth, PerftResultField.CHECKS, metadata.getCheckCount());
+			addValue(depth, PerftResultField.DISCOVERY_CHECKS, metadata.getDiscoveryCheckCount());
+			addValue(depth, PerftResultField.DOUBLE_CHECKS, metadata.getDoubleCheckCount());
+			addValue(depth, PerftResultField.CHECKMATES, metadata.getCheckmateCount());
+			addValue(depth, PerftResultField.STALEMATES, metadata.getStalemateCount());
+			return this;
+		}
+		
+		/**
+		 * Assigns all values from given movement flags into this perft result. If the field in the
+		 * specific depth already have a value, the new value is added to present value.
+		 * 
+		 * <p>
+		 * The values are:
+		 * 
+		 * <ul>
+		 * <li>total nodes
+		 * <li>captures
+		 * <li><i>en passants</i>
+		 * <li>castling
+		 * <li>promotions
+		 * <li>checks
+		 * <li>discovery checks
+		 * <li>double checks
+		 * <li>checkmates
+		 * <li>stalemates
+		 * </ul>
+		 * 
+		 * @param depth The depth where values will be added.
+		 * @param movementFlags Movement information encoded in a <code>integer</code> value.
+		 * 
+		 * @return This builder instance for further usage.
+		 */
+		public Builder addValues(int depth, int movementFlags) {
+			addValues(depth, MovementMetadata.builder().addMovement(movementFlags).build());
 			return this;
 		}
 		
@@ -165,5 +251,40 @@ public class PerftResult {
 		private void checkNotFinished() {
 			Preconditions.checkState(!finished, "This builder is finished.");
 		}
+	}
+	
+	@Override
+	public String toString() {
+		List<Long> depths = values
+			.values()
+			.stream()
+			.flatMap(m -> m.keySet().stream())
+			.distinct()
+			.sorted()
+			.collect(Collectors.toList());
+		Map<Long, StringBuilder> builders = new HashMap<>();
+		for (long depth : depths) {
+			for (PerftResultField field : PerftResultField.values()) {
+				if (isValuePresent(field, depth)) {
+					builders
+						.computeIfAbsent(
+							depth,
+							xDepth -> new StringBuilder(Long.toString(depth))
+						)
+						.append(" - ")
+						.append(field.getFieldName())
+						.append(": ")
+						.append(getValue(field, depth));
+				}
+			}
+		}
+		return builders
+			.entrySet()
+			.stream()
+			.sorted((e1, e2) -> (int) (e1.getKey() + e2.getKey()))
+			.map(Map.Entry::getValue)
+			.reduce((v1, v2) -> v1.append(String.format("%n")).append(v2))
+			.map(StringBuilder::toString)
+			.orElse("");
 	}
 }

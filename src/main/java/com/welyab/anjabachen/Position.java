@@ -64,7 +64,7 @@ package com.welyab.anjabachen;
  * @see #of(char, int)
  */
 public class Position {
-
+	
 	/**
 	 * Cache for all 64 position available in a chess board.
 	 */
@@ -80,7 +80,7 @@ public class Position {
 		{new Position(7, 0),new Position(7, 1),new Position(7, 2),new Position(7, 3),new Position(7, 4),new Position(7, 5),new Position(7, 6),new Position(7, 7)},
 	};
 	//@formatter:on
-
+	
 	/**
 	 * Cache all board position based on files and ranks.
 	 */
@@ -96,17 +96,17 @@ public class Position {
 		{"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"}
 	};
 	//@formatter:on
-
+	
 	/**
 	 * The row number.
 	 */
 	private final int row;
-
+	
 	/**
 	 * The column number.
 	 */
 	private final int column;
-
+	
 	/**
 	 * Creates a new instance of <code>Position</code> by receive a <code>[row, column]</code> pair.
 	 *
@@ -118,7 +118,7 @@ public class Position {
 		this.row = row;
 		this.column = column;
 	}
-
+	
 	/**
 	 * Retrieves the row number of this position.
 	 *
@@ -127,7 +127,7 @@ public class Position {
 	public int getRow() {
 		return row;
 	}
-
+	
 	/**
 	 * Retrieves the column number of this position.
 	 *
@@ -136,7 +136,7 @@ public class Position {
 	public int getColumn() {
 		return column;
 	}
-
+	
 	/**
 	 * Evaluates if this position object has the same values for given <code>position</code>.
 	 *
@@ -153,12 +153,12 @@ public class Position {
 		Position p = (Position) position;
 		return row == p.row && column == p.column;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return row * 8 + column;
 	}
-
+	
 	/**
 	 * Evaluates if this position object has the same values for <code>row</code> and
 	 * <code>column</code>.
@@ -172,7 +172,7 @@ public class Position {
 	public boolean equals(int row, int column) {
 		return this.row == row && this.column == column;
 	}
-
+	
 	/**
 	 * Retrieves the file letter for the column of this position.
 	 *
@@ -181,7 +181,7 @@ public class Position {
 	public char getFile() {
 		return (char) ('a' + column);
 	}
-
+	
 	/**
 	 * Retrieves the rank number of the row of this position.
 	 *
@@ -190,7 +190,7 @@ public class Position {
 	public int getRank() {
 		return 8 - row;
 	}
-
+	
 	/**
 	 * Creates a new instance of <code>Position</code> by receive a <code>[row, column]</code> pair.
 	 *
@@ -204,13 +204,13 @@ public class Position {
 	 *         the board bounds.
 	 */
 	public static Position of(int row, int column) {
-		if (row < GameConstants.MIN_ROW_NUMBER || row > GameConstants.MAX_ROW_NUMBER
-				|| column < GameConstants.MIN_COLUMN_NUMBER || column > GameConstants.MAX_COLUMN_NUMBER) {
+		if (row < BoardUtils.MIN_ROW_NUMBER || row > BoardUtils.MAX_ROW_NUMBER
+				|| column < BoardUtils.MIN_COLUMN_NUMBER || column > BoardUtils.MAX_COLUMN_NUMBER) {
 			throw new InvalidPositionException(row, column);
 		}
 		return POSITIONS[row][column];
 	}
-
+	
 	/**
 	 * Takes a <code>[file, rank]</code> based position and returns the equivalent
 	 * <code>Position</code> object to it.
@@ -231,7 +231,7 @@ public class Position {
 		}
 		return of(toRow(rank), toColumn(file));
 	}
-
+	
 	/**
 	 * Converts a rank number into a row number based on the ANJABACHEN grid system.
 	 *
@@ -246,7 +246,7 @@ public class Position {
 	public static int toRow(int rank) {
 		return 8 - rank;
 	}
-
+	
 	/**
 	 * Converts a file number into a column number based on the ANJABACHEN grid system.
 	 *
@@ -261,7 +261,7 @@ public class Position {
 	public static int toColumn(char file) {
 		return file - 'a';
 	}
-
+	
 	/**
 	 * Converts a column number to the file number.
 	 *
@@ -276,7 +276,7 @@ public class Position {
 	public static char toFile(int column) {
 		return (char) ('a' + column);
 	}
-
+	
 	/**
 	 * Converts a row number to the rank number.
 	 *
@@ -291,7 +291,7 @@ public class Position {
 	public static int toRank(int row) {
 		return 8 - row;
 	}
-
+	
 	/**
 	 * Retrieves a representation of this position object as it appears in a PGN file. For the
 	 * position <code>[row = 0, column = 0]</code> will return the notation <code>"a8"</code>.
@@ -301,7 +301,50 @@ public class Position {
 	public String getPgnPosition() {
 		return POSITIONS_NOTATIONS[row][column];
 	}
-
+	
+	/**
+	 * Returns the adjacent position on the left of <i>this</i> position.
+	 * 
+	 * <p>
+	 * If the current position is defined by <code>[x, y]</code>, the returned position will be
+	 * <code>[x, y-1]</code>.
+	 * 
+	 * @return The adjacent position.
+	 * 
+	 * @throws InvalidPositionException If the right position is outside of board bounds.Fs
+	 */
+	public Position left() {
+		if (column - 1 < BoardUtils.MIN_COLUMN_NUMBER) {
+			throw new InvalidPositionException(row, column - 1);
+		}
+		return Position.of(row, column - 1);
+	}
+	
+	/**
+	 * Returns the adjacent position on the right of <i>this</i> position.
+	 * 
+	 * <p>
+	 * If the current position is defined by <code>[x, y]</code>, the returned position will be
+	 * <code>[x, y+1]</code>.
+	 * 
+	 * @return The adjacent position.
+	 * 
+	 * @throws InvalidPositionException If the right position is outside of board bounds.Fs
+	 */
+	public Position right() {
+		if (column + 1 > BoardUtils.MAX_COLUMN_NUMBER) {
+			throw new InvalidPositionException(row, column + 1);
+		}
+		return Position.of(row, column + 1);
+	}
+	
+	public static Position fromPgnNotation(String pgnNotation) {
+		return Position.of(
+			pgnNotation.charAt(0),
+			pgnNotation.charAt(1) - '0'
+		);
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("[%d, %d]", row, column);

@@ -33,4 +33,9 @@ public class Movement {
 	public MovementTarget getTarget() {
 		return target;
 	}
+	
+	@Override
+	public String toString() {
+		return origin + " - " + target;
+	}
 }

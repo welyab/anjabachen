@@ -42,7 +42,7 @@ public enum PerftResultField {
 	
 	CHECKMATES("Checkmates"),
 	
-	STALEMATE("Stalemate");
+	STALEMATES("Stalemate");
 	
 	private String fieldName;
 	
@@ -51,6 +51,11 @@ public enum PerftResultField {
 		this.fieldName = fieldName;
 	}
 	
+	/**
+	 * Retrieves the field name.
+	 * 
+	 * @return The field name.
+	 */
 	public String getFieldName() {
 		return fieldName;
 	}

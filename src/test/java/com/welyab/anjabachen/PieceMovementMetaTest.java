@@ -30,7 +30,7 @@ public class PieceMovementMetaTest {
 	public void captureCountShouldBeZeroWhenNotSet() {
 		Assert.assertEquals(
 			0,
-			PieceMovementMeta.builder().build().getCaptureCount()
+			MovementMetadata.builder().build().getCaptureCount()
 		);
 	}
 
@@ -39,7 +39,7 @@ public class PieceMovementMetaTest {
 	public void incrementCaptureCountShouldIncrementByOne() {
 		Assert.assertEquals(
 			1,
-			PieceMovementMeta.builder().incrementCaptureCount().build().getCaptureCount()
+			MovementMetadata.builder().incrementCaptureCount().build().getCaptureCount()
 		);
 	}
 
@@ -48,7 +48,7 @@ public class PieceMovementMetaTest {
 	public void incrementCaptureCountIntShouldIncrementByPassedValue() {
 		Assert.assertEquals(
 			752,
-			PieceMovementMeta.builder().incrementCaptureCount(752).build().getCaptureCount()
+			MovementMetadata.builder().incrementCaptureCount(752).build().getCaptureCount()
 		);
 	}
 }
