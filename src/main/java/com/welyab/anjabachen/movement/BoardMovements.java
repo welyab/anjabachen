@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.movement;
 
 import java.util.Iterator;
 import java.util.List;
@@ -22,13 +22,15 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * A <code>MovementBag</code> is a set of all movements available in the chess board at a specific
- * movement. A bag may contains the all movements for black pieces, or white pieces, but not both at
- * same time, according to side has the turn to peform the nexet movement in the board.
+ * A <code>BoardMovements</code> is a set of all movements available in the chess board at a
+ * specific turn. A bag may contains the all movements for black pieces, or all movements for white
+ * pieces, but not both at same time, according to side has the turn to perform the next movement in
+ * the board.
  *
  * <p>
- * <code>MovementBag</code> implements <code>Iterable</code> in order to deliver its
- * <code>PieceMovement</code> instances.
+ * <code>BoardMovements</code> implements <code>Iterable</code> in order to deliver its
+ * <code>PieceMovement</code> instances. Each <code>PieceMovement</code> describe the available
+ * movement for an specific piece.
  *
  * @author Welyab Paula
  *
@@ -36,7 +38,7 @@ import java.util.stream.StreamSupport;
  * @see MovementOrigin
  * @see MovementTarget
  */
-public class MovementBag implements Iterable<PieceMovement> {
+public class BoardMovements implements Iterable<PieceMovement> {
 	
 	/** The list of piece movements. */
 	private List<PieceMovement> movements;
@@ -55,7 +57,7 @@ public class MovementBag implements Iterable<PieceMovement> {
 	 *
 	 * @param meta The consolidated information about movements.
 	 */
-	public MovementBag(
+	public BoardMovements(
 			List<PieceMovement> movements,
 			MovementMetadata meta
 	) {
@@ -114,7 +116,7 @@ public class MovementBag implements Iterable<PieceMovement> {
 		
 		@Override
 		public boolean hasNext() {
-			return deliveredMovements < getMetadata().getTotalMovements();
+			return deliveredMovements < getMetadata().getValue(MovementMetadataField.NODES);
 		}
 		
 		@Override
@@ -136,6 +138,11 @@ public class MovementBag implements Iterable<PieceMovement> {
 		}
 	}
 	
+	/**
+	 * Creates a iterator that delivers all movements in form a <code>Movement</code> object.
+	 * 
+	 * @return Welyab Paula
+	 */
 	public Iterator<Movement> movementIterator() {
 		return new MovementIterator();
 	}
@@ -145,6 +152,11 @@ public class MovementBag implements Iterable<PieceMovement> {
 		return movements.iterator();
 	}
 	
+	/**
+	 * Creates a stream for all <code>PieceMovement</code> objects available.
+	 * 
+	 * @return The stream.
+	 */
 	public Stream<PieceMovement> stream() {
 		return StreamSupport.stream(spliterator(), false);
 	}

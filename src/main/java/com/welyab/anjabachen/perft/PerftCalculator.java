@@ -18,13 +18,13 @@ package com.welyab.anjabachen.perft;
 import java.util.Iterator;
 
 import com.welyab.anjabachen.Board;
-import com.welyab.anjabachen.Movement;
-import com.welyab.anjabachen.MovementBag;
+import com.welyab.anjabachen.movement.BoardMovements;
+import com.welyab.anjabachen.movement.Movement;
 
 public class PerftCalculator {
 	
 	public static void main(String[] args) {
-		Board board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
+		Board board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
 		System.out.println(board.toString(true));
 		PerftResult.Builder resultBuilder = PerftResult.builder();
 		long t1 = System.currentTimeMillis();
@@ -36,7 +36,7 @@ public class PerftCalculator {
 	}
 	
 	private static void execute(PerftResult.Builder resultBuilder, int depth, int maxDepth, Board board) {
-		MovementBag bag = board.getMovements();
+		BoardMovements bag = board.getMovements();
 		resultBuilder.addValues(depth, bag.getMetadata());
 		if (depth + 1 <= maxDepth) {
 			for (Iterator<Movement> it = bag.movementIterator(); it.hasNext();) {

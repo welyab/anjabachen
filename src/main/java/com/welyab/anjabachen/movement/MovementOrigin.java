@@ -13,7 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.movement;
+
+import com.welyab.anjabachen.Piece;
+import com.welyab.anjabachen.Position;
 
 public class MovementOrigin {
 	

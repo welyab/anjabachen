@@ -1,4 +1,8 @@
 # AN.JA.BA.CH.EN
 ## Another Java Based Chess Engine
 
-This project is in very initial stage.
+This is a hobbyist chess engine completely programmed in Java.
+
+### Features
+
+* FEN Parser and producer

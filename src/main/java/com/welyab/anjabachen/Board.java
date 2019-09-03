@@ -27,6 +27,13 @@ import java.util.stream.Collectors;
 
 import com.welyab.anjabachen.fen.BoardConfig;
 import com.welyab.anjabachen.fen.FenParser;
+import com.welyab.anjabachen.movement.Movement;
+import com.welyab.anjabachen.movement.BoardMovements;
+import com.welyab.anjabachen.movement.MovementException;
+import com.welyab.anjabachen.movement.MovementMetadata;
+import com.welyab.anjabachen.movement.MovementOrigin;
+import com.welyab.anjabachen.movement.MovementTarget;
+import com.welyab.anjabachen.movement.PieceMovement;
 import com.welyab.anjabachen.util.Copiable;
 
 /**
@@ -802,7 +809,7 @@ public class Board implements Copiable<Board> {
 	 * @see #moveRandom()
 	 */
 	public Movement getRandomMovement() {
-		MovementBag bag = getMovements();
+		BoardMovements bag = getMovements();
 		if (bag.isEmpty()) {
 			throw new MovementException("No valid movement available. Checkmate?");
 		}
@@ -1278,7 +1285,7 @@ public class Board implements Copiable<Board> {
 	 *
 	 * @return The all movement object representation.
 	 */
-	public MovementBag getMovements() {
+	public BoardMovements getMovements() {
 		return getMovements(true);
 	}
 	
@@ -1291,7 +1298,7 @@ public class Board implements Copiable<Board> {
 	 *
 	 * @return The all movements object representation.
 	 */
-	public MovementBag getMovements(boolean extractExtraMovementFlags) {
+	public BoardMovements getMovements(boolean extractExtraMovementFlags) {
 		Iterable<LocalizedPiece> squares = this::privateIterator;
 		List<PieceMovement> movements = new ArrayList<>(32);
 		MovementMetadata.Builder pieceMovementMetaBuilder = MovementMetadata.builder();
@@ -1306,7 +1313,7 @@ public class Board implements Copiable<Board> {
 				}
 			}
 		}
-		return new MovementBag(movements, pieceMovementMetaBuilder.build());
+		return new BoardMovements(movements, pieceMovementMetaBuilder.build());
 	}
 	
 	/**

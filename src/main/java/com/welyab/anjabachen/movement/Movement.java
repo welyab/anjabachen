@@ -13,29 +13,54 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.movement;
 
+/**
+ * The <code>Movement</code> is a helper class that aggregates a pair of
+ * <code>MovementOrigin/MovementTarget</code> in order to describe the movement of a piece.
+ * 
+ * @author Welyab Paula
+ */
 public class Movement {
 	
+	/** The movement origin. */
 	private final MovementOrigin origin;
 	
+	/** The movement target. */
 	private final MovementTarget target;
 	
+	/**
+	 * Creates a new <code>Movement</code> by specifying the origin and the target square of the
+	 * movement.
+	 * 
+	 * @param origin The movement origin.
+	 * @param target The movement target.
+	 */
 	public Movement(MovementOrigin origin, MovementTarget target) {
 		this.origin = origin;
 		this.target = target;
 	}
 	
+	/**
+	 * Retrieves the origin of this movement.
+	 * 
+	 * @return The movement origin.
+	 */
 	public MovementOrigin getOrigin() {
 		return origin;
 	}
 	
+	/**
+	 * Retrieves the destination of this movement.
+	 * 
+	 * @return The movement target.
+	 */
 	public MovementTarget getTarget() {
 		return target;
 	}
 	
 	@Override
 	public String toString() {
-		return origin + " - " + target;
+		return origin + " -> " + target;
 	}
 }

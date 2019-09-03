@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.movement;
 
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.stream.StreamSupport;
  *
  * @author Welyab Paula
  *
- * @see MovementBag
+ * @see BoardMovements
  * @see MovementOrigin
  * @see MovementTarget
  */

@@ -13,21 +13,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.movement;
 
+import com.welyab.anjabachen.ChessException;
+
+/**
+ * Indicates problems during piece movement process.
+ * 
+ * @author Welyab Paula
+ */
 public class MovementException extends ChessException {
-
+	
+	@SuppressWarnings("javadoc")
+	private static final long serialVersionUID = 1L;
+	
+	@SuppressWarnings("javadoc")
 	public MovementException() {
 	}
-
+	
+	@SuppressWarnings("javadoc")
 	public MovementException(String message) {
 		super(message);
 	}
-
+	
+	@SuppressWarnings("javadoc")
 	public MovementException(Throwable cause) {
 		super(cause);
 	}
-
+	
+	@SuppressWarnings("javadoc")
 	public MovementException(String message, Throwable cause) {
 		super(message, cause);
 	}

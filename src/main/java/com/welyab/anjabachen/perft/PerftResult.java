@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
-import com.welyab.anjabachen.MovementMetadata;
+import com.welyab.anjabachen.movement.MovementMetadata;
+import com.welyab.anjabachen.movement.MovementMetadataField;
 
 /**
  * A <i>Perft Result</i> is a set of values about movement generation. For example, the amout of
@@ -32,16 +33,16 @@ import com.welyab.anjabachen.MovementMetadata;
  * @author Welyab Paula
  * 
  * @see PerftCalculator
- * @see PerftResultField
+ * @see MovementMetadataField
  */
 public class PerftResult {
 	
 	/** The values of this perft result. */
-	private Map<PerftResultField, Map<Long, Long>> values;
+	private Map<MovementMetadataField, Map<Long, Long>> values;
 	
 	@SuppressWarnings("javadoc")
 	private PerftResult() {
-		values = new EnumMap<>(PerftResultField.class);
+		values = new EnumMap<>(MovementMetadataField.class);
 	}
 	
 	/**
@@ -51,7 +52,7 @@ public class PerftResult {
 	 * 
 	 * @return The list fields.
 	 */
-	public Set<PerftResultField> getFields(long depth) {
+	public Set<MovementMetadataField> getFields(long depth) {
 		return values
 			.entrySet()
 			.stream()
@@ -68,9 +69,9 @@ public class PerftResult {
 	 * 
 	 * @return The value associated with given field in the in a specific depth.
 	 * 
-	 * @see #isValuePresent(PerftResultField, long)
+	 * @see #isValuePresent(MovementMetadataField, long)
 	 */
-	public Long getValue(PerftResultField field, long depth) {
+	public Long getValue(MovementMetadataField field, long depth) {
 		if (!isValuePresent(field, depth)) {
 			throw new PerftException(String.format("Field %s not present for the depth %d", field, depth));
 		}
@@ -87,7 +88,7 @@ public class PerftResult {
 	 * @return A value <code>true</code> if this perft has a value for the specific field in the
 	 *         given depth, or <code>false</code> otherwise.
 	 */
-	public boolean isValuePresent(PerftResultField field, long depth) {
+	public boolean isValuePresent(MovementMetadataField field, long depth) {
 		return values.containsKey(field) && values.get(field).containsKey(depth);
 	}
 	
@@ -131,7 +132,7 @@ public class PerftResult {
 		 */
 		public Builder addValue(long depth, PerftResult perftResult) {
 			checkNotFinished();
-			for (PerftResultField field : perftResult.getFields(depth)) {
+			for (MovementMetadataField field : perftResult.getFields(depth)) {
 				addValue(depth, field, perftResult.getValue(field, depth));
 			}
 			return this;
@@ -150,7 +151,7 @@ public class PerftResult {
 		 * @throws IllegalStateException If the builder is finished. A builder is considered
 		 *         <i>finished</i> after the method {@linkplain #build() build} is returns.
 		 */
-		public Builder addValue(long depth, PerftResultField field, long value) {
+		public Builder addValue(long depth, MovementMetadataField field, long value) {
 			checkNotFinished();
 			if (!result.values.containsKey(field)) {
 				result.values.put(field, new HashMap<>());
@@ -187,17 +188,21 @@ public class PerftResult {
 		 */
 		public Builder addValues(long depth, MovementMetadata metadata) {
 			checkNotFinished();
-			addValue(depth, PerftResultField.NODES, metadata.getTotalMovements());
-			addValue(depth, PerftResultField.CAPTURES, metadata.getCaptureCount());
-			addValue(depth, PerftResultField.EN_PASSANTS, metadata.getEnPassantCount());
-			addValue(depth, PerftResultField.CASTLINGS, metadata.getCastlingsCount());
-			addValue(depth, PerftResultField.PROMOTIONS, metadata.getPromotionCount());
-			addValue(depth, PerftResultField.CHECKS, metadata.getCheckCount());
-			addValue(depth, PerftResultField.DISCOVERY_CHECKS, metadata.getDiscoveryCheckCount());
-			addValue(depth, PerftResultField.DOUBLE_CHECKS, metadata.getDoubleCheckCount());
-			addValue(depth, PerftResultField.CHECKMATES, metadata.getCheckmateCount());
-			addValue(depth, PerftResultField.STALEMATES, metadata.getStalemateCount());
+			addValue(depth, MovementMetadataField.NODES, metadata);
+			addValue(depth, MovementMetadataField.CAPTURES, metadata);
+			addValue(depth, MovementMetadataField.EN_PASSANTS, metadata);
+			addValue(depth, MovementMetadataField.CASTLINGS, metadata);
+			addValue(depth, MovementMetadataField.PROMOTIONS, metadata);
+			addValue(depth, MovementMetadataField.CHECKS, metadata);
+			addValue(depth, MovementMetadataField.DISCOVERY_CHECKS, metadata);
+			addValue(depth, MovementMetadataField.DOUBLE_CHECKS, metadata);
+			addValue(depth, MovementMetadataField.CHECKMATES, metadata);
+			addValue(depth, MovementMetadataField.STALEMATES, metadata);
 			return this;
+		}
+		
+		private void addValue(long depth, MovementMetadataField field, MovementMetadata metadata) {
+			addValue(depth, field, metadata.getValueOptional(field).orElse(0L));
 		}
 		
 		/**
@@ -264,7 +269,7 @@ public class PerftResult {
 			.collect(Collectors.toList());
 		Map<Long, StringBuilder> builders = new HashMap<>();
 		for (long depth : depths) {
-			for (PerftResultField field : PerftResultField.values()) {
+			for (MovementMetadataField field : MovementMetadataField.values()) {
 				if (isValuePresent(field, depth)) {
 					builders
 						.computeIfAbsent(

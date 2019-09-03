@@ -20,13 +20,13 @@ import java.util.Scanner;
 import com.welyab.anjabachen.Board;
 import com.welyab.anjabachen.Color;
 import com.welyab.anjabachen.BoardUtils;
-import com.welyab.anjabachen.Movement;
-import com.welyab.anjabachen.MovementBag;
-import com.welyab.anjabachen.MovementTarget;
 import com.welyab.anjabachen.Piece;
-import com.welyab.anjabachen.PieceMovement;
 import com.welyab.anjabachen.PieceType;
 import com.welyab.anjabachen.Position;
+import com.welyab.anjabachen.movement.Movement;
+import com.welyab.anjabachen.movement.BoardMovements;
+import com.welyab.anjabachen.movement.MovementTarget;
+import com.welyab.anjabachen.movement.PieceMovement;
 
 public class Evaluator {
 	
@@ -177,7 +177,7 @@ public class Evaluator {
 		return value;
 	}
 	
-	private double getScore(MovementBag bag) {
+	private double getScore(BoardMovements bag) {
 		double score = 0;
 		for (int row = 0; row < BoardUtils.BOARD_SIZE; row++) {
 			for (int column = 0; column < BoardUtils.BOARD_SIZE; column++) {
