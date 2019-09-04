@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 import com.welyab.anjabachen.fen.BoardConfig;
 import com.welyab.anjabachen.fen.FenParser;
-import com.welyab.anjabachen.movement.Movement;
 import com.welyab.anjabachen.movement.BoardMovements;
+import com.welyab.anjabachen.movement.Movement;
 import com.welyab.anjabachen.movement.MovementException;
 import com.welyab.anjabachen.movement.MovementMetadata;
 import com.welyab.anjabachen.movement.MovementOrigin;

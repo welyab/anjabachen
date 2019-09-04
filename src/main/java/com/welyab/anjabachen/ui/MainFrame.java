@@ -15,5 +15,15 @@
  */
 package com.welyab.anjabachen.ui;
 
-public class MainFrame {
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+public class MainFrame extends JFrame {
+	
+	public static void main(String args[]) {
+		MainFrame mainFrame = new MainFrame();
+		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		mainFrame.setTitle("AN.JA.BA.CH.EN");
+		SwingUtilities.invokeLater(() -> mainFrame.setVisible(true));
+	}
 }

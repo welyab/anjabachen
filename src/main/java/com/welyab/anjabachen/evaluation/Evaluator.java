@@ -18,13 +18,13 @@ package com.welyab.anjabachen.evaluation;
 import java.util.Scanner;
 
 import com.welyab.anjabachen.Board;
-import com.welyab.anjabachen.Color;
 import com.welyab.anjabachen.BoardUtils;
+import com.welyab.anjabachen.Color;
 import com.welyab.anjabachen.Piece;
 import com.welyab.anjabachen.PieceType;
 import com.welyab.anjabachen.Position;
-import com.welyab.anjabachen.movement.Movement;
 import com.welyab.anjabachen.movement.BoardMovements;
+import com.welyab.anjabachen.movement.Movement;
 import com.welyab.anjabachen.movement.MovementTarget;
 import com.welyab.anjabachen.movement.PieceMovement;
 
@@ -97,14 +97,14 @@ public class Evaluator {
 	
 	// @formatter:off
 	private static final int kingTable[][] = {
-			{-50,-40,-30,-20,-20,-30,-40,-50},
-			{-30,-20,-10,  0,  0,-10,-20,-30},
-			{-30,-10, 20, 30, 30, 20,-10,-30},
-			{-30,-10, 30, 40, 40, 30,-10,-30},
-			{-30,-10, 30, 40, 40, 30,-10,-30},
-			{-30,-10, 20, 30, 30, 20,-10,-30},
-			{-30,-30,  0,  0,  0,  0,-30,-30},
-			{-50,-30,-30,-30,-30,-30,-30,-50}
+			{  0,  0,  0,  0,  0,  0, 0,   0},
+			{  0,  0,  0,  0,  0,  0, 0,   0},
+			{  0,  0,  0,  0,  0,  0, 0,   0},
+			{  0,  0,  0,  0,  0,  0, 0,   0},
+			{  0,  0,  0,  0,  0,  0, 0,   0},
+			{  0,  0,  0,  0,  0,  0, 0,   0},
+			{  0,  0,  0,  0,  0,  0, 0,   0},
+			{ 50, 30, 30, 30, 30, 30, 30, 50}
 	};
 	// @formatter:on
 	
@@ -119,7 +119,7 @@ public class Evaluator {
 	}
 	
 	public static void main(String[] args) {
-		Evaluator evaluator = new Evaluator("rnbq1bnr/ppp1pppp/3p2k1/1B4B1/3PP1Q1/8/PPP2PPP/RN2K1NR w KQ - 7 6");
+		Evaluator evaluator = new Evaluator(new Board().getFen());
 		try (Scanner s = new Scanner(System.in)) {
 			while (true) {
 				System.out.println("Current board: " + evaluator.board.getFen());
@@ -150,7 +150,7 @@ public class Evaluator {
 	}
 	
 	public int getPiecePositionalValue(Color color, PieceType type, Position p) {
-		int row = color.isWhite() ? 7 - p.getRow() : p.getRow();
+		int row = color.isWhite() ? p.getRow() : 7 - p.getRow();
 		int sign = color.isWhite() ? 1 : -1;
 		int value = switch (type) {
 			case KING -> kingTable[row][p.getColumn()];

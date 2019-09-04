@@ -37,3 +37,19 @@ Will produce the follow output
 │   │   │   │   │   │   │   │   │
 └───┴───┴───┴───┴───┴───┴───┴───┘
 ```
+
+#### Producing FEN strings
+
+At any movement of the game it is possible to get the FEN string representation of the current board state
+
+```java
+var board = new Board();
+var fen = board.getFen();
+System.out.println(fen);
+```
+
+Will produce the follow output:
+
+```text
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+```
