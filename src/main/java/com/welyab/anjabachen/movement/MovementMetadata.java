@@ -136,6 +136,20 @@ public class MovementMetadata {
 		return EMPTY;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (MovementMetadataField field : MovementMetadataField.values()) {
+			if (isFieldPresent(field)) {
+				if (builder.length() > 0) {
+					builder.append(", ");
+				}
+				builder.append(field).append(" = ").append(getValue(field));
+			}
+		}
+		return builder.toString();
+	}
+	
 	public static final class Builder {
 		
 		private final MovementMetadata meta;

@@ -1186,16 +1186,16 @@ public class Board implements Copiable<Board> {
 	private void encodeFenCastlingFlags(StringBuilder builder) {
 		StringBuilder castlingAvaiability = new StringBuilder();
 		if (BoardUtils.isWhiteKingSideCastling(gameInfo.castlingFlags)) {
-			castlingAvaiability.append('K');
+			castlingAvaiability.append(Piece.WHITE_KING.getLetterSymbol());
 		}
 		if (BoardUtils.isWhiteQueenSideCastling(gameInfo.castlingFlags)) {
-			castlingAvaiability.append('Q');
+			castlingAvaiability.append(Piece.WHITE_QUEEN.getLetterSymbol());
 		}
 		if (BoardUtils.isBlackKingSideCastling(gameInfo.castlingFlags)) {
-			castlingAvaiability.append('k');
+			castlingAvaiability.append(Piece.BLACK_KING.getLetterSymbol());
 		}
 		if (BoardUtils.isBlackQueenSideCastling(gameInfo.castlingFlags)) {
-			castlingAvaiability.append('q');
+			castlingAvaiability.append(Piece.BLACK_QUEEN.getLetterSymbol());
 		}
 		if (castlingAvaiability.length() == 0) {
 			builder.append('-');

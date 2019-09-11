@@ -24,18 +24,23 @@ import com.welyab.anjabachen.movement.Movement;
 public class PerftCalculator {
 	
 	public static void main(String[] args) {
-		Board board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
+		Board board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
 		System.out.println(board.toString(true));
 		PerftResult.Builder resultBuilder = PerftResult.builder();
 		long t1 = System.currentTimeMillis();
-		execute(resultBuilder, 1, 4, board);
+		execute(resultBuilder, 1, 6, board);
 		long t2 = System.currentTimeMillis();
 		PerftResult perftResult = resultBuilder.build();
 		System.out.println(perftResult);
 		System.out.println("Time: " + (t2 - t1));
 	}
 	
-	private static void execute(PerftResult.Builder resultBuilder, int depth, int maxDepth, Board board) {
+	private static void execute(
+			PerftResult.Builder resultBuilder,
+			int depth,
+			int maxDepth,
+			Board board
+	) {
 		BoardMovements bag = board.getMovements();
 		resultBuilder.addValues(depth, bag.getMetadata());
 		if (depth + 1 <= maxDepth) {

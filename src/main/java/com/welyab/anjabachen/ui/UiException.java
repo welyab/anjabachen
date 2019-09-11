@@ -13,27 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.util.textprinter;
+package com.welyab.anjabachen.ui;
 
-/**
- * Enumerates possible vertical aligns for text formatting.
- * 
- * @author Welyab Paula
- */
-public enum VertialAlign {
+import com.welyab.anjabachen.ChessException;
+
+public class UiException extends ChessException {
 	
-	/**
-	 * Indicates that text should be placed on the higher possible area of the cell.
-	 */
-	TOP,
+	public UiException() {
+	}
 	
-	/**
-	 * Indicates that text should be placed on the vertical middle area of the cell.
-	 */
-	MIDDLE,
+	public UiException(String message) {
+		super(message);
+	}
 	
-	/**
-	 * Indicates that text should be placed on the lower possible area of the cell.
-	 */
-	DOWN;
+	public UiException(Throwable cause) {
+		super(cause);
+	}
+	
+	public UiException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

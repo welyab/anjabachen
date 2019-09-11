@@ -15,6 +15,25 @@
  */
 package com.welyab.anjabachen.util.textprinter;
 
+/**
+ * Enumerates possible horizontal aligns for text formating.
+ * 
+ * @author Welyab Paula
+ */
 public enum HorizontalAlign {
-	LEFT, CENTER, RIGHT;
+	
+	/**
+	 * Indicates that text should be placed on the leftmost position.
+	 */
+	LEFT,
+	
+	/**
+	 * Indicates that text should be placed on the center of the cell.
+	 */
+	CENTER,
+	
+	/**
+	 * Indicates that text should be placed on the rightmost position.
+	 */
+	RIGHT;
 }

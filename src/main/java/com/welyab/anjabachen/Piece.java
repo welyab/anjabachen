@@ -374,24 +374,67 @@ public enum Piece {
 	 *
 	 * @return The instance of piece.
 	 */
+	// public static Piece get(PieceType type, Color color) {
+	// return switch (color) {
+	// case WHITE -> switch (type) {
+	// case KING -> Piece.WHITE_KING;
+	// case QUEEN -> Piece.WHITE_QUEEN;
+	// case ROOK -> Piece.WHITE_ROOK;
+	// case BISHOP -> Piece.WHITE_BISHOP;
+	// case KNIGHT -> Piece.WHITE_KNIGHT;
+	// case PAWN -> Piece.WHITE_PAWN;
+	// };
+	// case BLACK -> switch (type) {
+	// case KING -> Piece.BLACK_KING;
+	// case QUEEN -> Piece.BLACK_QUEEN;
+	// case ROOK -> Piece.BLACK_ROOK;
+	// case BISHOP -> Piece.BLACK_BISHOP;
+	// case KNIGHT -> Piece.BLACK_KNIGHT;
+	// case PAWN -> Piece.BLACK_PAWN;
+	// };
+	// };
+	// }
 	public static Piece get(PieceType type, Color color) {
-		return switch (color) {
-			case WHITE -> switch (type) {
-					case KING -> Piece.WHITE_KING;
-					case QUEEN -> Piece.WHITE_QUEEN;
-					case ROOK -> Piece.WHITE_ROOK;
-					case BISHOP -> Piece.WHITE_BISHOP;
-					case KNIGHT -> Piece.WHITE_KNIGHT;
-					case PAWN -> Piece.WHITE_PAWN;
-				};
-			case BLACK -> switch (type) {
-					case KING -> Piece.BLACK_KING;
-					case QUEEN -> Piece.BLACK_QUEEN;
-					case ROOK -> Piece.BLACK_ROOK;
-					case BISHOP -> Piece.BLACK_BISHOP;
-					case KNIGHT -> Piece.BLACK_KNIGHT;
-					case PAWN -> Piece.BLACK_PAWN;
-				};
-		};
+		if (color == Color.WHITE) {
+			if (type == PieceType.KING) {
+				return Piece.WHITE_KING;
+			}
+			if (type == PieceType.QUEEN) {
+				return Piece.WHITE_QUEEN;
+			}
+			if (type == PieceType.ROOK) {
+				return Piece.WHITE_ROOK;
+			}
+			if (type == PieceType.BISHOP) {
+				return Piece.WHITE_BISHOP;
+			}
+			if (type == PieceType.KNIGHT) {
+				return Piece.WHITE_KNIGHT;
+			}
+			if (type == PieceType.PAWN) {
+				return Piece.WHITE_PAWN;
+			}
+		}
+		if (color == Color.BLACK) {
+			if (type == PieceType.KING) {
+				return Piece.BLACK_KING;
+			}
+			if (type == PieceType.QUEEN) {
+				return Piece.BLACK_QUEEN;
+			}
+			if (type == PieceType.ROOK) {
+				return Piece.BLACK_ROOK;
+			}
+			if (type == PieceType.BISHOP) {
+				return Piece.BLACK_BISHOP;
+			}
+			if (type == PieceType.KNIGHT) {
+				return Piece.BLACK_KNIGHT;
+			}
+			if (type == PieceType.PAWN) {
+				return Piece.BLACK_PAWN;
+			}
+		}
+		return null;
 	}
 }

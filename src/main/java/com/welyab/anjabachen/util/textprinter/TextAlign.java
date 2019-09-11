@@ -16,24 +16,19 @@
 package com.welyab.anjabachen.util.textprinter;
 
 /**
- * Enumerates possible vertical aligns for text formatting.
+ * Possible text aligns (for multi line text cell content).
  * 
  * @author Welyab Paula
  */
-public enum VertialAlign {
+public enum TextAlign {
 	
 	/**
-	 * Indicates that text should be placed on the higher possible area of the cell.
+	 * Multiline text will align for the left.
 	 */
-	TOP,
+	LEFT,
 	
 	/**
-	 * Indicates that text should be placed on the vertical middle area of the cell.
+	 * Multiline text will align for the right.
 	 */
-	MIDDLE,
-	
-	/**
-	 * Indicates that text should be placed on the lower possible area of the cell.
-	 */
-	DOWN;
+	RIGHT;
 }

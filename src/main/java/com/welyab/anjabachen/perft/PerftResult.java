@@ -64,14 +64,14 @@ public class PerftResult {
 	/**
 	 * Retrieves the value associated with the given field in the specific depth.
 	 * 
-	 * @param field The required field.
 	 * @param depth The required depth.
+	 * @param field The required field.
 	 * 
 	 * @return The value associated with given field in the in a specific depth.
 	 * 
 	 * @see #isValuePresent(MovementMetadataField, long)
 	 */
-	public Long getValue(MovementMetadataField field, long depth) {
+	public Long getValue(long depth, MovementMetadataField field) {
 		if (!isValuePresent(field, depth)) {
 			throw new PerftException(String.format("Field %s not present for the depth %d", field, depth));
 		}
@@ -133,7 +133,7 @@ public class PerftResult {
 		public Builder addValue(long depth, PerftResult perftResult) {
 			checkNotFinished();
 			for (MovementMetadataField field : perftResult.getFields(depth)) {
-				addValue(depth, field, perftResult.getValue(field, depth));
+				addValue(depth, field, perftResult.getValue(depth, field));
 			}
 			return this;
 		}
@@ -279,7 +279,7 @@ public class PerftResult {
 						.append(" - ")
 						.append(field.getFieldName())
 						.append(": ")
-						.append(getValue(field, depth));
+						.append(getValue(depth, field));
 				}
 			}
 		}

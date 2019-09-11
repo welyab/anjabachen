@@ -147,6 +147,9 @@ public class Position {
 	 */
 	@Override
 	public boolean equals(Object position) {
+		if (position == null) {
+			return false;
+		}
 		if (!(position instanceof Position)) {
 			return false;
 		}

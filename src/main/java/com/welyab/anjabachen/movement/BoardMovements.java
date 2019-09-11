@@ -116,7 +116,9 @@ public class BoardMovements implements Iterable<PieceMovement> {
 		
 		@Override
 		public boolean hasNext() {
-			return deliveredMovements < getMetadata().getValue(MovementMetadataField.NODES);
+			return deliveredMovements < getMetadata()
+				.getValueOptional(MovementMetadataField.NODES)
+				.orElse(0L);
 		}
 		
 		@Override

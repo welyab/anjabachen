@@ -43,15 +43,18 @@ public enum MovementMetadataField {
 	EN_PASSANTS("En passants"),
 	
 	/**
-	 * Metadata information for the total number of movement that are also a castling movement.
+	 * Metadata information for the total number of movements that are also a castling movement.
 	 */
 	CASTLINGS("Castlings"),
 	
 	/**
-	 * Metadata in
+	 * Metadata information for the total number of movements that are also a promotion movement.
 	 */
 	PROMOTIONS("Promotions"),
 	
+	/**
+	 * Metadata information for the total number of movements that are also a check movement.
+	 */
 	CHECKS("Checks"),
 	
 	/**
@@ -79,6 +82,7 @@ public enum MovementMetadataField {
 	 */
 	STALEMATES("Stalemate");
 	
+	/** The field name. */
 	private String fieldName;
 	
 	@SuppressWarnings("javadoc")
