@@ -19,7 +19,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -45,6 +44,16 @@ public class PerftResult {
 		values = new EnumMap<>(MovementMetadataField.class);
 	}
 	
+	public List<Long> getAvailableDepths() {
+		return values
+			.values()
+			.stream()
+			.flatMap(e -> e.keySet().stream())
+			.distinct()
+			.sorted()
+			.collect(Collectors.toList());
+	}
+	
 	/**
 	 * Retrieves fields available for the given depth.
 	 * 
@@ -52,13 +61,14 @@ public class PerftResult {
 	 * 
 	 * @return The list fields.
 	 */
-	public Set<MovementMetadataField> getFields(long depth) {
+	public List<MovementMetadataField> getFields(long depth) {
 		return values
 			.entrySet()
 			.stream()
 			.filter(e -> e.getValue().containsKey(depth))
 			.map(Map.Entry::getKey)
-			.collect(Collectors.toSet());
+			.sorted((f1, f2) -> f1.ordinal() - f2.ordinal())
+			.collect(Collectors.toList());
 	}
 	
 	/**
@@ -277,7 +287,7 @@ public class PerftResult {
 							xDepth -> new StringBuilder(Long.toString(depth))
 						)
 						.append(" - ")
-						.append(field.getFieldName())
+						.append(field.name())
 						.append(": ")
 						.append(getValue(depth, field));
 				}

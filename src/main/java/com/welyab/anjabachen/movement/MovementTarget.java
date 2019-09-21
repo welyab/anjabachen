@@ -15,10 +15,6 @@
  */
 package com.welyab.anjabachen.movement;
 
-import com.welyab.anjabachen.BoardUtils;
-import com.welyab.anjabachen.Piece;
-import com.welyab.anjabachen.Position;
-
 /**
  * A target represents the destination of a piece after move.
  *

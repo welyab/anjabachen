@@ -15,8 +15,8 @@
  */
 package com.welyab.anjabachen.fen;
 
-import com.welyab.anjabachen.Color;
-import com.welyab.anjabachen.Position;
+import com.welyab.anjabachen.movement.Color;
+import com.welyab.anjabachen.movement.Position;
 
 public class BoardConfig {
 

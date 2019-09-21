@@ -15,9 +15,6 @@
  */
 package com.welyab.anjabachen.movement;
 
-import com.welyab.anjabachen.Piece;
-import com.welyab.anjabachen.Position;
-
 public class MovementOrigin {
 	
 	/**

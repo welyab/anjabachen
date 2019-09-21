@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.welyab.anjabachen.Position;
+import com.welyab.anjabachen.movement.Position;
 
 public class UiBoardTest {
 	

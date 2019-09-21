@@ -17,16 +17,16 @@ package com.welyab.anjabachen.evaluation;
 
 import java.util.Scanner;
 
-import com.welyab.anjabachen.Board;
-import com.welyab.anjabachen.BoardUtils;
-import com.welyab.anjabachen.Color;
-import com.welyab.anjabachen.Piece;
-import com.welyab.anjabachen.PieceType;
-import com.welyab.anjabachen.Position;
+import com.welyab.anjabachen.movement.Board;
 import com.welyab.anjabachen.movement.BoardMovements;
+import com.welyab.anjabachen.movement.BoardUtils;
+import com.welyab.anjabachen.movement.Color;
 import com.welyab.anjabachen.movement.Movement;
 import com.welyab.anjabachen.movement.MovementTarget;
+import com.welyab.anjabachen.movement.Piece;
 import com.welyab.anjabachen.movement.PieceMovement;
+import com.welyab.anjabachen.movement.PieceType;
+import com.welyab.anjabachen.movement.Position;
 
 public class Evaluator {
 	

@@ -24,11 +24,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import com.welyab.anjabachen.Board;
-import com.welyab.anjabachen.Color;
-import com.welyab.anjabachen.LocalizedPiece;
-import com.welyab.anjabachen.Piece;
-import com.welyab.anjabachen.Position;
 import com.welyab.anjabachen.grammar.FENBaseListener;
 import com.welyab.anjabachen.grammar.FENLexer;
 import com.welyab.anjabachen.grammar.FENParser.BlackKingSideCastlingContext;
@@ -40,6 +35,11 @@ import com.welyab.anjabachen.grammar.FENParser.PieceDispositionContext;
 import com.welyab.anjabachen.grammar.FENParser.SideToMoveContext;
 import com.welyab.anjabachen.grammar.FENParser.WhiteKingSideCastlingContext;
 import com.welyab.anjabachen.grammar.FENParser.WhiteQueenSideCastlingContext;
+import com.welyab.anjabachen.movement.Board;
+import com.welyab.anjabachen.movement.Color;
+import com.welyab.anjabachen.movement.LocalizedPiece;
+import com.welyab.anjabachen.movement.Piece;
+import com.welyab.anjabachen.movement.Position;
 
 public class FenParser {
 	

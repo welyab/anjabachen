@@ -24,8 +24,11 @@ import java.util.List;
 import org.junit.Test;
 
 import com.welyab.anjabachen.fen.BoardConfig;
+import com.welyab.anjabachen.movement.Board;
+import com.welyab.anjabachen.movement.Color;
 import com.welyab.anjabachen.movement.MovementTarget;
 import com.welyab.anjabachen.movement.PieceMovement;
+import com.welyab.anjabachen.movement.Position;
 
 /**
  * Unit tests for the <code>Board</code> class.

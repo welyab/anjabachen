@@ -15,26 +15,34 @@
  */
 package com.welyab.anjabachen.util;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import com.welyab.anjabachen.Board;
-import com.welyab.anjabachen.BoardUtils;
-import com.welyab.anjabachen.Piece;
-import com.welyab.anjabachen.Position;
+import com.welyab.anjabachen.movement.Board;
+import com.welyab.anjabachen.movement.BoardUtils;
+import com.welyab.anjabachen.movement.Movement;
+import com.welyab.anjabachen.movement.Piece;
+import com.welyab.anjabachen.movement.Position;
 
 public class BoardImageExporter {
 	
@@ -75,6 +83,16 @@ public class BoardImageExporter {
 		this.imageSize = DEFAULT_IMAGE_SIZE;
 	}
 	
+	public static void main(String[] args) {
+		Board b = new Board();
+		System.out.println(b.toString(true));
+		b.move(Position.of(6, 4), Position.of(4, 4));
+		BoardImageExporter exporter = new BoardImageExporter(b);
+		exporter.export(
+			Paths.get("C:\\Users\\welyab\\Desktop\\saida123").resolve(UUID.randomUUID().toString() + ".png")
+		);
+	}
+	
 	public void export(Path outfile) {
 		BufferedImage bufferedImage = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
@@ -105,6 +123,51 @@ public class BoardImageExporter {
 				}
 			}
 		}
+		
+		Movement lastMovement = board.getLastMovement();
+		g.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		g.setColor(Color.RED);
+		java.awt.geom.Line2D.Double lastMovementLine = new Line2D.Double(
+			new Point2D.Double(
+				lastMovement.getOrigin().getPosition().getColumn() * squareDimension + squareDimension / 2,
+				lastMovement.getOrigin().getPosition().getRow() * squareDimension + squareDimension / 2
+			),
+			new Point2D.Double(
+				lastMovement.getTarget().getPosition().getColumn() * squareDimension + squareDimension / 2,
+				lastMovement.getTarget().getPosition().getRow() * squareDimension + squareDimension / 2
+			)
+		);
+		g.draw(lastMovementLine);
+		java.awt.geom.Ellipse2D.Double lastMovementTargetPoint = new Ellipse2D.Double(
+			lastMovement.getTarget().getPosition().getColumn() * squareDimension + squareDimension / 2 - 8,
+			lastMovement.getTarget().getPosition().getRow() * squareDimension + squareDimension / 2 - 8,
+			16,
+			16
+		);
+		g.fill(lastMovementTargetPoint);
+		
+		Position kingPosition = board.getKingPosition(board.getActiveColor());
+		List<Position> attackers = board.getAttackers(kingPosition, board.getActiveColor().getOpposite());
+		
+		if (attackers.size() != 2) {
+			return;
+		}
+		
+		for (Position originAttacker : attackers) {
+			java.awt.geom.Line2D.Double attackerLine = new Line2D.Double(
+				new Point2D.Double(
+					originAttacker.getColumn() * squareDimension + squareDimension / 2,
+					originAttacker.getRow() * squareDimension + squareDimension / 2
+				),
+				new Point2D.Double(
+					kingPosition.getColumn() * squareDimension + squareDimension / 2,
+					kingPosition.getRow() * squareDimension + squareDimension / 2
+				)
+			);
+			g.setColor(Color.BLUE);
+			g.draw(attackerLine);
+		}
+		
 		try {
 			ImageIO.write(
 				bufferedImage,

@@ -27,7 +27,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import com.welyab.anjabachen.Piece;
+import com.welyab.anjabachen.movement.Piece;
 
 public class Theme {
 	

@@ -17,25 +17,33 @@ package com.welyab.anjabachen.perft;
 
 import java.util.Iterator;
 
-import com.welyab.anjabachen.Board;
+import com.welyab.anjabachen.movement.Board;
 import com.welyab.anjabachen.movement.BoardMovements;
 import com.welyab.anjabachen.movement.Movement;
 
 public class PerftCalculator {
 	
-	public static void main(String[] args) {
-		Board board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
-		System.out.println(board.toString(true));
-		PerftResult.Builder resultBuilder = PerftResult.builder();
-		long t1 = System.currentTimeMillis();
-		execute(resultBuilder, 1, 6, board);
-		long t2 = System.currentTimeMillis();
-		PerftResult perftResult = resultBuilder.build();
-		System.out.println(perftResult);
-		System.out.println("Time: " + (t2 - t1));
+	private int depth;
+	
+	private String fen;
+	
+	public PerftCalculator(String fen, int depth) {
+		this.fen = fen;
+		this.depth = depth;
 	}
 	
-	private static void execute(
+	public Board getBoard() {
+		return new Board(fen);
+	}
+	
+	public PerftResult calculate() {
+		Board board = new Board(fen);
+		PerftResult.Builder builder = PerftResult.builder();
+		walkMovementTree(builder, 1, depth, board);
+		return builder.build();
+	}
+	
+	private static void walkMovementTree(
 			PerftResult.Builder resultBuilder,
 			int depth,
 			int maxDepth,
@@ -43,11 +51,34 @@ public class PerftCalculator {
 	) {
 		BoardMovements bag = board.getMovements();
 		resultBuilder.addValues(depth, bag.getMetadata());
+		
+		// if (depth == 5 &&
+		// bag.getMetadata().getValueOptional(MovementMetadataField.DOUBLE_CHECKS).orElse(0L) > 0) {
+		// for (PieceMovement pieceMovement : bag) {
+		// for (MovementTarget movementTarget : pieceMovement) {
+		// if (BoardUtils.isDoubleCheck(movementTarget.getMovementFlags())) {
+		// System.out.println(board.getFen());
+		// System.out.printf(
+		// String.format(
+		// "%s %s%s -> %s %s%s%n",
+		// pieceMovement.getOrigin().getPiece(),
+		// pieceMovement.getOrigin().getPosition(),
+		// pieceMovement.getOrigin().getPosition().getPgnPosition(),
+		// movementTarget.getPiece(),
+		// movementTarget.getPosition().getPgnPosition(),
+		// movementTarget.getPosition()
+		// )
+		// );
+		// }
+		// }
+		// }
+		// }
+		
 		if (depth + 1 <= maxDepth) {
 			for (Iterator<Movement> it = bag.movementIterator(); it.hasNext();) {
 				Movement movement = it.next();
 				board.move(movement);
-				execute(resultBuilder, depth + 1, maxDepth, board);
+				walkMovementTree(resultBuilder, depth + 1, maxDepth, board);
 				board.undo();
 			}
 		}

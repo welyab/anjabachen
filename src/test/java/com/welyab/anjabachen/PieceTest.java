@@ -20,6 +20,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.welyab.anjabachen.movement.Color;
+import com.welyab.anjabachen.movement.Piece;
+import com.welyab.anjabachen.movement.PieceType;
+
 /**
  * Unit tests for <code>Piece</code> class.
  *

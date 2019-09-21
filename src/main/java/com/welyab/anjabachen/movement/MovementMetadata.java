@@ -20,7 +20,6 @@ import java.util.EnumMap;
 import java.util.Optional;
 import java.util.Set;
 
-import com.welyab.anjabachen.BoardUtils;
 import com.welyab.anjabachen.perft.PerftCalculator;
 
 /**

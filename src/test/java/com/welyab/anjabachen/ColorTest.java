@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.welyab.anjabachen.movement.Color;
+
 /**
  * Unit tests for <code>Color</code> class.
  *

@@ -29,73 +29,56 @@ public enum MovementMetadataField {
 	/**
 	 * Metadata information for the total number of available movements.
 	 */
-	NODES("Nodes"),
+	NODES,
 	
 	/**
 	 * Metadata information for the total number of movements that are also a movement of capture.
 	 */
-	CAPTURES("Captures"),
+	CAPTURES,
 	
 	/**
 	 * Metadata information for the total number of movements that are also a <i>en passant</i>
 	 * capture. These movement are also counted in the {@link #CAPTURES} field.
 	 */
-	EN_PASSANTS("En passants"),
+	EN_PASSANTS,
 	
 	/**
 	 * Metadata information for the total number of movements that are also a castling movement.
 	 */
-	CASTLINGS("Castlings"),
+	CASTLINGS,
 	
 	/**
 	 * Metadata information for the total number of movements that are also a promotion movement.
 	 */
-	PROMOTIONS("Promotions"),
+	PROMOTIONS,
 	
 	/**
 	 * Metadata information for the total number of movements that are also a check movement.
 	 */
-	CHECKS("Checks"),
+	CHECKS,
 	
 	/**
 	 * Metadata information for the total number of movements that applies a discovery check to the
 	 * enemy king. These movements are not counted as {@link #DOUBLE_CHECKS}, when applicable.
 	 */
-	DISCOVERY_CHECKS("Discovery Checks"),
+	DISCOVERY_CHECKS,
 	
 	/**
 	 * Metadata information for the total number of movements that also applies a double check in
 	 * the enemy king. These movements are not counted as {@link #DISCOVERY_CHECKS}, but they are
 	 * counted as {@link #CHECKS}.
 	 */
-	DOUBLE_CHECKS("Double Checks"),
+	DOUBLE_CHECKS,
 	
 	/**
 	 * Metadata information for the total number of movements that terminates the game with
 	 * checkmate.
 	 */
-	CHECKMATES("Checkmates"),
+	CHECKMATES,
 	
 	/**
 	 * Metadata information for the total number of movements that terminates the game with
 	 * stalemate.
 	 */
-	STALEMATES("Stalemate");
-	
-	/** The field name. */
-	private String fieldName;
-	
-	@SuppressWarnings("javadoc")
-	private MovementMetadataField(String fieldName) {
-		this.fieldName = fieldName;
-	}
-	
-	/**
-	 * Retrieves the field name.
-	 * 
-	 * @return The field name.
-	 */
-	public String getFieldName() {
-		return fieldName;
-	}
+	STALEMATES;
 }

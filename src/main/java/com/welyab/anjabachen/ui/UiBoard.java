@@ -37,9 +37,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.welyab.anjabachen.Board;
-import com.welyab.anjabachen.BoardUtils;
-import com.welyab.anjabachen.Position;
+import com.welyab.anjabachen.movement.Board;
+import com.welyab.anjabachen.movement.BoardUtils;
+import com.welyab.anjabachen.movement.Position;
 import com.welyab.anjabachen.ui.theme.Theme;
 
 public class UiBoard extends JPanel {
