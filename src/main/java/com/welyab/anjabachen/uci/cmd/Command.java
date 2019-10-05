@@ -15,5 +15,29 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-public abstract class Command {
+import com.welyab.anjabachen.uci.Channel;
+
+public abstract class Command<T> {
+	
+	protected static final String NEWLINE = String.format("%n");
+	
+	private final Channel channel;
+	
+	protected Command(Channel channel) {
+		this.channel = channel;
+	}
+	
+	protected void sendText(String... texts) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < texts.length; i++) {
+			if (i > 0) {
+				builder.append(' ');
+			}
+			builder.append(texts[i]);
+		}
+		builder.append(NEWLINE);
+		channel.sendText(builder.toString());
+	}
+	
+	public abstract void call(T parameter);
 }

@@ -13,8 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.ui;
+package com.welyab.anjabachen.engine;
 
-public class AnjabachenGuiBootConfig {
+import com.welyab.anjabachen.uci.Channel;
+
+public class EngineConfig {
 	
+	private final Channel outputChannel;
+	
+	public EngineConfig(Channel outputChannel) {
+		this.outputChannel = outputChannel;
+		
+	}
+	
+	public Channel getOutputChannel() {
+		return outputChannel;
+	}
 }

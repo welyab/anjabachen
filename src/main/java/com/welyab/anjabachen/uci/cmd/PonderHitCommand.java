@@ -15,10 +15,19 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class PonderHitCommand extends Command {
 	
-	public PonderHitCommand(List<String> parameters) {
+	protected PonderHitCommand(Channel channel) {
+		super(channel);
+		// TODO Auto-generated constructor stub
 	}
+	
+	@Override
+	public void call(Object parameter) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

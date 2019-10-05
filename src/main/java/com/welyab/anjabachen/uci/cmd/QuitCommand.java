@@ -15,12 +15,19 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class QuitCommand extends Command {
 	
-	public QuitCommand(List<String> parameters) {
+	protected QuitCommand(Channel channel) {
+		super(channel);
 		// TODO Auto-generated constructor stub
+	}
+	
+	@Override
+	public void call(Object parameter) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

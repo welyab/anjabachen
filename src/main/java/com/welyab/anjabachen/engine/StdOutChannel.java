@@ -13,8 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.ui;
+package com.welyab.anjabachen.engine;
 
-public class AnjabachenGuiBootConfig {
+import java.io.PrintStream;
+
+import com.welyab.anjabachen.uci.Channel;
+
+public class StdOutChannel implements Channel {
 	
+	private final PrintStream out;
+	
+	public StdOutChannel() {
+		this.out = System.out;
+	}
+	
+	@Override
+	public void sendText(String text) {
+		out.print(text);
+		out.flush();
+	}
 }

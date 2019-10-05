@@ -15,10 +15,18 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class StopCommand extends Command {
 	
-	public StopCommand(List<String> parameters) {
+	protected StopCommand(Channel channel) {
+		super(channel);
+		// TODO Auto-generated constructor stub
 	}
+	
+	@Override
+	public void call(Object parameter) {
+		
+	}
+	
 }

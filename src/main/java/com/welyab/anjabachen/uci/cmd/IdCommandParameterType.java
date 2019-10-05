@@ -13,8 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.ui;
+package com.welyab.anjabachen.uci.cmd;
 
-public class AnjabachenGuiBootConfig {
+public enum IdCommandParameterType {
 	
+	NAME("name"),
+	
+	AUTHOR("author");
+	
+	private final String typeName;
+	
+	private IdCommandParameterType(String typeName) {
+		this.typeName = typeName;
+	}
+	
+	public String getTypeName() {
+		return typeName;
+	}
 }

@@ -13,10 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.util.sync;
+package com.welyab.anjabachen.engine;
 
-@FunctionalInterface
-public interface Runnable2 {
+public class EngineOptionValue {
 	
-	void run() throws Exception;
+	public EngineOption getEngineOption() {
+		return null;
+	}
+	
+	public Object getValue() {
+		return null;
+	}
 }

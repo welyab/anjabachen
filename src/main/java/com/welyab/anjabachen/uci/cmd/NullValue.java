@@ -15,9 +15,10 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-public enum Origin {
+public class NullValue {
 	
-	ENGINE,
+	public static final NullValue INSTANCE = new NullValue();
 	
-	GUI;
+	private NullValue() {
+	}
 }

@@ -13,8 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.ui;
+package com.welyab.anjabachen.uci;
 
-public class AnjabachenGuiBootConfig {
+public interface Channel {
 	
+	void sendText(String text);
 }

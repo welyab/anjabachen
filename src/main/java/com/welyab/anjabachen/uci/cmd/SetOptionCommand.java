@@ -15,10 +15,15 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class SetOptionCommand extends Command {
 	
-	public SetOptionCommand(List<String> parameters) {
+	protected SetOptionCommand(Channel channel) {
+		super(channel);
+	}
+	
+	@Override
+	public void call(Object parameter) {
 	}
 }

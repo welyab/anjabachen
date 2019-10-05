@@ -15,12 +15,15 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class RegisterCommand extends Command {
 	
-	public RegisterCommand(List<String> parameters) {
-		// TODO Auto-generated constructor stub
+	protected RegisterCommand(Channel channel) {
+		super(channel);
 	}
 	
+	@Override
+	public void call(Object parameter) {
+	}
 }

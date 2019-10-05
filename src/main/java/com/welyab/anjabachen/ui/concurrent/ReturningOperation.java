@@ -13,8 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.ui;
+package com.welyab.anjabachen.ui.concurrent;
 
-public class AnjabachenGuiBootConfig {
+@FunctionalInterface
+public interface ReturningOperation<T> {
 	
+	T call() throws Exception;
 }

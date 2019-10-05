@@ -15,10 +15,15 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
-public class DebugCommand extends Command {
+public class DebugCommand extends Command<Boolean> {
 	
-	public DebugCommand(List<String> parameters) {
+	public DebugCommand(Channel channel) {
+		super(channel);
+	}
+	
+	@Override
+	public void call(Boolean parameter) {
 	}
 }

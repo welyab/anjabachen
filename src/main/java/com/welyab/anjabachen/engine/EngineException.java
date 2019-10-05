@@ -13,8 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.ui;
+package com.welyab.anjabachen.engine;
 
-public class AnjabachenGuiBootConfig {
+import com.welyab.anjabachen.ChessException;
+
+public class EngineException extends ChessException {
 	
+	public EngineException() {
+	}
+	
+	public EngineException(String message) {
+		super(message);
+	}
+	
+	public EngineException(Throwable cause) {
+		super(cause);
+	}
+	
+	public EngineException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

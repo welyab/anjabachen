@@ -15,10 +15,15 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class IsReadyCommand extends Command {
 	
-	public IsReadyCommand(List<String> parameters) {
+	protected IsReadyCommand(Channel channel) {
+		super(channel);
+	}
+	
+	@Override
+	public void call(Object parameter) {
 	}
 }

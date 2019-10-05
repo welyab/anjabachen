@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2019 Welyab da Silva Paula
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.welyab.anjabachen.perft;
 
 import java.time.Duration;
@@ -13,7 +28,7 @@ public class PerftTest {
 	
 	@Test
 	public void perft() {
-		String fen = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -";
+		String fen = "5rk1/3rqbpp/8/8/8/2B3R1/PP6/2K5 w - -";
 		PerftExpectedResults.getAvailableResults();
 		PerftResult perftResultExpected = PerftExpectedResults.loadResult(fen);
 		long depth = 3;
@@ -26,6 +41,12 @@ public class PerftTest {
 		long t2 = System.currentTimeMillis();
 		System.out.printf("Elapsed time: %s %n", formatTime(t2 - t1));
 		printPerftResultsComparison(perftResultExpected, perftResultCalculated);
+	}
+	
+	public static void main(String[] args) {
+		PerftCalculator perftCalculator = new PerftCalculator("1kr1q3/ppp5/8/8/8/1R6/8/1K5B w - - 0 1", 6);
+		PerftResult perft = perftCalculator.calculate();
+		printPerftResultsComparison(perft, perft);
 	}
 	
 	@Test
@@ -82,13 +103,13 @@ public class PerftTest {
 			.orElseThrow();
 	}
 	
-	private void printPerftResultsComparison(PerftResult expected, PerftResult calculated) {
+	private static void printPerftResultsComparison(PerftResult expected, PerftResult calculated) {
 		List<List<String>> lines = new ArrayList<>();
 		for (Long depth : calculated.getAvailableDepths()) {
 			List<String> lineValues = new ArrayList<>();
 			lineValues.add(String.format("%d", depth));
 			lineValues.add("-");
-			List<MovementMetadataField> fields = expected.getFields(depth);
+			List<MovementMetadataField> fields = calculated.getFields(depth);
 			for (MovementMetadataField field : fields) {
 				Optional<Long> expectedValue = getValue(expected, depth, field);
 				Optional<Long> calculatedValue = getValue(calculated, depth, field);
@@ -105,7 +126,7 @@ public class PerftTest {
 		}
 	}
 	
-	private String padSpace(String value, int length) {
+	private static String padSpace(String value, int length) {
 		StringBuilder stringBuilder = new StringBuilder(value);
 		int toPad = Math.abs(value.length() - length);
 		for (int i = 0; i < toPad; i++) {
@@ -114,7 +135,7 @@ public class PerftTest {
 		return stringBuilder.toString();
 	}
 	
-	private int getColumnLength(List<List<String>> lines, int column) {
+	private static int getColumnLength(List<List<String>> lines, int column) {
 		return lines
 			.stream()
 			.mapToInt(l -> l.get(column).length())
@@ -122,7 +143,8 @@ public class PerftTest {
 			.orElse(0);
 	}
 	
-	private String compareValues(MovementMetadataField field, Optional<Long> expected, Optional<Long> calculated) {
+	private static String compareValues(MovementMetadataField field, Optional<Long> expected,
+			Optional<Long> calculated) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(field).append(": ");
 		if (expected.equals(calculated)) {
@@ -135,7 +157,7 @@ public class PerftTest {
 		return builder.toString();
 	}
 	
-	private Optional<Long> getValue(PerftResult perftResult, long depth, MovementMetadataField field) {
+	private static Optional<Long> getValue(PerftResult perftResult, long depth, MovementMetadataField field) {
 		if (!perftResult.isValuePresent(field, depth)) {
 			return Optional.empty();
 		}

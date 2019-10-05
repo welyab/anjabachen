@@ -51,29 +51,6 @@ public class PerftCalculator {
 	) {
 		BoardMovements bag = board.getMovements();
 		resultBuilder.addValues(depth, bag.getMetadata());
-		
-		// if (depth == 5 &&
-		// bag.getMetadata().getValueOptional(MovementMetadataField.DOUBLE_CHECKS).orElse(0L) > 0) {
-		// for (PieceMovement pieceMovement : bag) {
-		// for (MovementTarget movementTarget : pieceMovement) {
-		// if (BoardUtils.isDoubleCheck(movementTarget.getMovementFlags())) {
-		// System.out.println(board.getFen());
-		// System.out.printf(
-		// String.format(
-		// "%s %s%s -> %s %s%s%n",
-		// pieceMovement.getOrigin().getPiece(),
-		// pieceMovement.getOrigin().getPosition(),
-		// pieceMovement.getOrigin().getPosition().getPgnPosition(),
-		// movementTarget.getPiece(),
-		// movementTarget.getPosition().getPgnPosition(),
-		// movementTarget.getPosition()
-		// )
-		// );
-		// }
-		// }
-		// }
-		// }
-		
 		if (depth + 1 <= maxDepth) {
 			for (Iterator<Movement> it = bag.movementIterator(); it.hasNext();) {
 				Movement movement = it.next();
@@ -82,5 +59,8 @@ public class PerftCalculator {
 				board.undo();
 			}
 		}
+	}
+	
+	public static void start(PerftCalculatorBootConfig createPerftCalculatorBootConfig) {
 	}
 }

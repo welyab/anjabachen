@@ -15,10 +15,15 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class PositionCommand extends Command {
 	
-	public PositionCommand(List<String> parameters) {
+	protected PositionCommand(Channel channel) {
+		super(channel);
+	}
+	
+	@Override
+	public void call(Object parameter) {
 	}
 }

@@ -15,10 +15,15 @@
  */
 package com.welyab.anjabachen.uci.cmd;
 
-import java.util.List;
+import com.welyab.anjabachen.uci.Channel;
 
 public class UciCommand extends Command {
 	
-	public UciCommand(List<String> parameters) {
+	public UciCommand(Channel channel) {
+		super(channel);
+	}
+	
+	@Override
+	public void call(Object parameter) {
 	}
 }
