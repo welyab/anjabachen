@@ -13,12 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen;
+package com.welyab.anjabachen.movement;
 
-/**
- * Tests the movement generation logic inside <cod</code>
- *
- * @author Welyab Paula
- */
-public class BoardPerftTest {
+public class StateInfo implements Copyable<StateInfo> {
+	
+	@Override
+	public StateInfo copy() {
+		return null;
+	}
 }

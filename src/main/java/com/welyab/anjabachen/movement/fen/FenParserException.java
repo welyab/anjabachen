@@ -13,15 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.engine;
+package com.welyab.anjabachen.movement.fen;
 
-public class EngineOptionValue {
+import com.welyab.anjabachen.ChessException;
+
+@SuppressWarnings("javadoc")
+public class FenParserException extends ChessException {
 	
-	public EngineOption getEngineOption() {
-		return null;
+	private static final long serialVersionUID = 1L;
+	
+	private final String fen;
+	
+	public FenParserException(String fen, String message) {
+		this(fen, message, null);
 	}
 	
-	public Object getValue() {
-		return null;
+	public FenParserException(String fen, String message, Throwable cause) {
+		super(message, cause);
+		this.fen = fen;
+	}
+	
+	public String getFen() {
+		return fen;
 	}
 }
