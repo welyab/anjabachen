@@ -16,14 +16,21 @@ It is in development. The list of available features is the follow:
 ### Parsing FEN strings
 
 ```java
-var fenParser = new FenParser("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
-var board fenParser.getBoard();
+var parser = new FenParser("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
+var pieceList = parser.getLocalizedPieces();
+var positionInfo = parser.getFenPositionInfo();
+```
+
+It's possible to create chess boards directly from FEN strings:
+
+```java
+var board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
 ```
 
 ### Generating FEN string
 
 ```java
-var board fenParser.getBoard();
+var board = new Board();
 var fen = board.getFen();
 ```
 
@@ -55,3 +62,7 @@ Will produce the follow output
 │   │   │   │   │   │   │   │   │
 └───┴───┴───┴───┴───┴───┴───┴───┘
 ```
+
+---
+
+My https://lichess.org user: [welyab](https://lichess.org/@/welyab)
