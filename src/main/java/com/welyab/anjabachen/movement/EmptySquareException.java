@@ -15,10 +15,20 @@
  */
 package com.welyab.anjabachen.movement;
 
-public class StateInfo implements Copyable<StateInfo> {
+import com.welyab.anjabachen.ChessException;
+
+/**
+ * Indicates that an specific square is empty a piece is requested from it.
+ * 
+ * @author Welyab Paula
+ */
+public class EmptySquareException extends ChessException {
 	
-	@Override
-	public StateInfo copy() {
-		return null;
+	@SuppressWarnings("javadoc")
+	private static final long serialVersionUID = 1L;
+	
+	@SuppressWarnings("javadoc")
+	public EmptySquareException(Position position) {
+		super(position.toString());
 	}
 }

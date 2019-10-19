@@ -59,12 +59,39 @@ public final class Position {
 	}
 	
 	/**
+	 * Retrieves the rank number of this position.
+	 * 
+	 * @return The rank number.
+	 */
+	public byte getRank() {
+		return rowToRank(row);
+	}
+	
+	/**
 	 * Retrieves the position column.
 	 * 
 	 * @return The column number.
 	 */
 	public byte getColumn() {
 		return column;
+	}
+	
+	/**
+	 * Retrieves the file number of this position.
+	 * 
+	 * @return The file number.
+	 */
+	public char getFile() {
+		return columnToFile(column);
+	}
+	
+	/**
+	 * Retrieves the algebraic notation of this column, like <code>"g6"</code>, <code>"d4"</code>.
+	 * 
+	 * @return The algebraic notation.
+	 */
+	public String getAlgebraicNotation() {
+		return String.format("%c%d", getFile(), getRank());
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -100,6 +127,20 @@ public final class Position {
 	 */
 	public static Position of(char file, int rank) {
 		return of(rankToRow(rank), fileToColumn(file));
+	}
+	
+	/**
+	 * Retrieves the position of the given algebraic notation of the position.
+	 * 
+	 * @param algebraicNotation The position in algebraic notation.
+	 * 
+	 * @return The position.
+	 */
+	public static Position of(String algebraicNotation) {
+		return of(
+			algebraicNotation.charAt(0),
+			algebraicNotation.charAt(1) - '0'
+		);
 	}
 	
 	/**
@@ -160,6 +201,20 @@ public final class Position {
 	 */
 	public static byte rowToRank(int row) {
 		return (byte) (8 - row);
+	}
+	
+	@Override
+	public int hashCode() {
+		return column * BoardUtil.SIZE + row;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Position)) {
+			return false;
+		}
+		Position pos = (Position) obj;
+		return pos.row == row && pos.column == column;
 	}
 	
 	@Override

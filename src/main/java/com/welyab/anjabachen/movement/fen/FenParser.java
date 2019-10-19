@@ -45,7 +45,7 @@ public class FenParser {
 	private List<LocalizedPiece> localizedPieces;
 	
 	/** The information extract from the FEN string. */
-	private PositionInfo info;
+	private FenPositionInfo info;
 	
 	/** The side to move code. */
 	private byte sideToMove;
@@ -82,7 +82,7 @@ public class FenParser {
 	}
 	
 	/**
-	 * Retrieves the list of pieces and its locations.
+	 * Retrieves the list of pieces and its locations. Only non empty square will be returned.
 	 * 
 	 * @return The list of pieces and its locations.
 	 */
@@ -96,7 +96,7 @@ public class FenParser {
 	 * 
 	 * @return The position info.
 	 */
-	public PositionInfo getPositionInfo() {
+	public FenPositionInfo getFenPositionInfo() {
 		parseIfNecessary();
 		if (info == null) {
 			info = new PositionInfoImpl();
@@ -117,7 +117,7 @@ public class FenParser {
 	
 	/**
 	 * Parses the FEN string. The passing occurs automatically when the method
-	 * {@linkplain #getLocalizedPieces() getLocalizedPieces} or {@linkplain #getPositionInfo()
+	 * {@linkplain #getLocalizedPieces() getLocalizedPieces} or {@linkplain #getFenPositionInfo()
 	 * getPositionInfo} is called.
 	 */
 	public void parse() {
@@ -207,12 +207,14 @@ public class FenParser {
 			);
 		}
 		for (int col = 0; col < squareValues.size(); col++) {
-			localizedPieces.add(
-				new LocalizedPiece(
-					Position.of(row, col),
-					squareValues.get(col)
-				)
-			);
+			if (squareValues.get(col) != BoardUtil.NO_PIECE_CODE) {
+				localizedPieces.add(
+					new LocalizedPiece(
+						Position.of(row, col),
+						squareValues.get(col)
+					)
+				);
+			}
 		}
 	}
 	
@@ -327,6 +329,7 @@ public class FenParser {
 	 */
 	private void processFullMoveCounter(String fullMoveCounter) {
 		if (fullMoveCounter == null || fullMoveCounter.contentEquals("-")) {
+			this.fullMoveCounter = 1;
 			return;
 		}
 		
@@ -341,7 +344,7 @@ public class FenParser {
 			"javadoc",
 			"squid:S2972"
 	})
-	private class PositionInfoImpl implements PositionInfo {
+	private class PositionInfoImpl implements FenPositionInfo {
 		
 		@Override
 		public byte getSideToMove() {

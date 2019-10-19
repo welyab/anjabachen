@@ -100,6 +100,18 @@ public class BoardUtil {
 	/** The value indicative for a non piece (a empty square, for sample). */
 	public static final byte NO_PIECE_CODE = 0;
 	
+	/** The bit mask for white king's side castling. */
+	public static final byte WHITE_KING_SIDE_CASTLING_FLAG_MASK = 0b1000;
+	
+	/** The bit mask for white queen's side castling. */
+	public static final byte WHITE_QUEEN_SIDE_CASTLING_FLAG_MASK = 0b0100;
+	
+	/** The bit mask for black king's side castling. */
+	public static final byte BLACK_KING_SIDE_CASTLING_FLAG_MASK = 0b0010;
+	
+	/** The bit mask for black queen's side castling. */
+	public static final byte BLACK_QUEEN_SIDE_CASTLING_FLAG_MASK = 0b0001;
+	
 	/**
 	 * Piece code cache. Each index is associated with a piece code. The indexes are piece letters
 	 * minus the <code>'A'</code> letter.
@@ -195,7 +207,7 @@ public class BoardUtil {
 			case WHITE_COLOR_LETTER -> WHITE_COLOR_CODE;
 			case BLACK_COLOR_LETTER -> BLACK_COLOR_CODE;
 			default -> throw new IllegalArgumentException(
-				String.format("Invalid color char: %c", colorLetter)
+				String.format("Invalid color letter: %c", colorLetter)
 			);
 		};
 	}
@@ -237,5 +249,380 @@ public class BoardUtil {
 				String.format("Invalid color code: %d", colorCode)
 			);
 		};
+	}
+	
+	/**
+	 * Evaluates if given castling flags is marked with flag for castling movement for white pieces
+	 * on king side.
+	 * 
+	 * @param castlingFlags The castling flags.
+	 * 
+	 * @return A value <code>true</code> if the movement is available, or <code>false</code>.
+	 */
+	public static boolean isWhiteKingSideCaslting(int castlingFlags) {
+		return (castlingFlags & WHITE_KING_SIDE_CASTLING_FLAG_MASK) != 0;
+	}
+	
+	/**
+	 * Evaluates if given castling flags is marked with flag for castling movement for white pieces
+	 * on queen side.
+	 * 
+	 * @param castlingFlags The castling flags.
+	 * 
+	 * @return A value <code>true</code> if the movement is available, or <code>false</code>.
+	 */
+	public static boolean isWhiteQueenSideCaslting(int castlingFlags) {
+		return (castlingFlags & WHITE_QUEEN_SIDE_CASTLING_FLAG_MASK) != 0;
+	}
+	
+	/**
+	 * Evaluates if given castling flags is marked with flag for castling movement for black pieces
+	 * on king side.
+	 * 
+	 * @param castlingFlags The castling flags.
+	 * 
+	 * @return A value <code>true</code> if the movement is available, or <code>false</code>.
+	 */
+	public static boolean isBlackKingSideCaslting(int castlingFlags) {
+		return (castlingFlags & BLACK_KING_SIDE_CASTLING_FLAG_MASK) != 0;
+	}
+	
+	/**
+	 * Evaluates if given castling flags is marked with flag for castling movement for black pieces
+	 * on queen side.
+	 * 
+	 * @param castlingFlags The castling flags.
+	 * 
+	 * @return A value <code>true</code> if the movement is available, or <code>false</code>.
+	 */
+	public static boolean isBlackQueenSideCaslting(int castlingFlags) {
+		return (castlingFlags & BLACK_QUEEN_SIDE_CASTLING_FLAG_MASK) != 0;
+	}
+	
+	/**
+	 * Encode the given flags into the bits of a byte number. The meaning of each bit is described
+	 * as follow:
+	 * 
+	 * <pre>
+	 *     +-----> 4º least significant bit
+	 *     |+----> 3º least significant bit
+	 *     ||+---> 2º least significant bit
+	 *     |||+--> 1º least significant bit  
+	 *     ||||
+	 *     vvvv
+	 * 0b000000
+	 *     ^^^^
+	 *     ||||
+	 *     |||+--> if castling is available for white pieces on the king side
+	 *     ||+---> if castling is available for white pieces on the queen side
+	 *     |+----> if castling is available for black pieces on the king side
+	 *     +-----> if castling is available for black pieces on the queen side
+	 * </pre>
+	 * 
+	 * @param isWhiteKingSideCastling If the castling is available for white pieces on the king
+	 *        side.
+	 * @param isWhiteQueenSideCastling If the castling is available for white pieces on the queen
+	 *        side.
+	 * @param isBlackKingSideCastling If the castling is available for black pieces on the king
+	 *        side.
+	 * @param isBlackQueenSideCastling If the castling is available for black pieces on the queen
+	 *        side.
+	 * 
+	 * @return The castling encoded into bits.
+	 */
+	public static byte muxCastlingFlags(
+			boolean isWhiteKingSideCastling,
+			boolean isWhiteQueenSideCastling,
+			boolean isBlackKingSideCastling,
+			boolean isBlackQueenSideCastling
+	) {
+		byte flags = 0;
+		flags |= (isWhiteKingSideCastling ? WHITE_KING_SIDE_CASTLING_FLAG_MASK : 0);
+		flags |= (isWhiteQueenSideCastling ? WHITE_QUEEN_SIDE_CASTLING_FLAG_MASK : 0);
+		flags |= (isBlackKingSideCastling ? BLACK_KING_SIDE_CASTLING_FLAG_MASK : 0);
+		flags |= (isBlackQueenSideCastling ? BLACK_QUEEN_SIDE_CASTLING_FLAG_MASK : 0);
+		return flags;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for a king piece (white or black).
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the king piece
+	 *         (white or black), or <code>false</code> if not.
+	 */
+	public static boolean isKing(int pieceCode) {
+		return pieceCode == WHITE_KING_CODE || pieceCode == BLACK_KING_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for a queen piece (white or black).
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the queen piece
+	 *         (white or black), or <code>false</code> if not.
+	 */
+	public static boolean isQueen(int pieceCode) {
+		return pieceCode == WHITE_QUEEN_CODE || pieceCode == BLACK_QUEEN_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for a rook piece (white or black).
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the rook piece
+	 *         (white or black), or <code>false</code> if not.
+	 */
+	public static boolean isRook(int pieceCode) {
+		return pieceCode == WHITE_ROOK_CODE || pieceCode == BLACK_ROOK_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for a bishop piece (white or black).
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the bishop
+	 *         piece (white or black), or <code>false</code> if not.
+	 */
+	public static boolean isBishop(int pieceCode) {
+		return pieceCode == WHITE_BISHOP_CODE || pieceCode == BLACK_BISHOP_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for a knight piece (white or black).
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the knight
+	 *         piece (white or black), or <code>false</code> if not.
+	 */
+	public static boolean isKnight(int pieceCode) {
+		return pieceCode == WHITE_KNIGHT_CODE || pieceCode == BLACK_KNIGHT_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for a pawn piece (white or black).
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the pawn piece
+	 *         (white or black), or <code>false</code> if not.
+	 */
+	public static boolean isPawn(int pieceCode) {
+		return pieceCode == WHITE_PAWN_CODE || pieceCode == BLACK_PAWN_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the white king piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the white king
+	 *         piece, or <code>false</code> if not.
+	 */
+	public static boolean isWhiteKing(int pieceCode) {
+		return pieceCode == WHITE_KING_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the white queen piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the white
+	 *         queen piece, or <code>false</code> if not.
+	 */
+	public static boolean isWhiteQueen(int pieceCode) {
+		return pieceCode == WHITE_QUEEN_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the white rook piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the white rook
+	 *         piece, or <code>false</code> if not.
+	 */
+	public static boolean isWhiteRook(int pieceCode) {
+		return pieceCode == WHITE_ROOK_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the white bishop piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the white
+	 *         bishop piece, or <code>false</code> if not.
+	 */
+	public static boolean isWhiteBishop(int pieceCode) {
+		return pieceCode == WHITE_BISHOP_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the white knight piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the white
+	 *         knight piece, or <code>false</code> if not.
+	 */
+	public static boolean isWhiteKnight(int pieceCode) {
+		return pieceCode == WHITE_KNIGHT_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the white pawn piece piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the white pawn
+	 *         piece, or <code>false</code> if not.
+	 */
+	public static boolean isWhitePawn(int pieceCode) {
+		return pieceCode == WHITE_PAWN_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the black king piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the black king
+	 *         piece, or <code>false</code> if not.
+	 */
+	public static boolean isBlackKing(int pieceCode) {
+		return pieceCode == BLACK_KING_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the black queen piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the black
+	 *         queen piece, or <code>false</code> if not.
+	 */
+	public static boolean isBlackQueen(int pieceCode) {
+		return pieceCode == BLACK_QUEEN_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the black black rook piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the black rook
+	 *         piece, or <code>false</code> if not.
+	 */
+	public static boolean isBlackRook(int pieceCode) {
+		return pieceCode == BLACK_ROOK_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the black black bishop.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the black
+	 *         bishop, or <code>false</code> if not.
+	 */
+	public static boolean isBlackBishop(int pieceCode) {
+		return pieceCode == BLACK_BISHOP_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the black knight piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the black
+	 *         knight piece, or <code>false</code> if not.
+	 */
+	public static boolean isBlackKnight(int pieceCode) {
+		return pieceCode == BLACK_KNIGHT_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is the identifier for the black pawn piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is the representative for the black pawn
+	 *         piece, or <code>false</code> if not.
+	 */
+	public static boolean isBlackPawn(int pieceCode) {
+		return pieceCode == BLACK_PAWN_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is a representative code for a white piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is a code for white piece, of
+	 *         <code>false</code> if not.
+	 */
+	public static boolean isWhitePiece(int pieceCode) {
+		return pieceCode > 0;
+	}
+	
+	/**
+	 * Evaluates if the given piece code is a representative code for a black piece.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return A value <code>true</code> if the piece code is a code for black piece, or
+	 *         <code>false</code> if not.
+	 */
+	public static boolean isBlackPiece(int pieceCode) {
+		return pieceCode < 0;
+	}
+	
+	/**
+	 * Retrieves the color code for the given piece code.
+	 * 
+	 * @param pieceCode The piece code.
+	 * 
+	 * @return The color code ({@linkplain #WHITE_COLOR_CODE white} or {@linkplain #BLACK_COLOR_CODE
+	 *         code}).
+	 */
+	public static byte getColorCode(int pieceCode) {
+		if (pieceCode < 0) {
+			return BLACK_COLOR_CODE;
+		}
+		if (pieceCode > 0) {
+			return WHITE_COLOR_CODE;
+		}
+		throw new IllegalArgumentException("Invalid piece code: 0");
+	}
+	
+	/**
+	 * Evaluates if the given color code is the representative code for white color.
+	 * 
+	 * @param pieceColor The color code.
+	 * 
+	 * @return A value <code>true</code> if the code is the identifier for the white color, or
+	 *         <code>false</code> if not.
+	 */
+	public static boolean isWhiteColor(int pieceColor) {
+		return pieceColor == WHITE_COLOR_CODE;
+	}
+	
+	/**
+	 * Evaluates if the given color code is the representative code for black color.
+	 * 
+	 * @param pieceColor The color code.
+	 * 
+	 * @return A value <code>true</code> if the code is the identifier for the black color, or
+	 *         <code>false</code> if not.
+	 */
+	public static boolean isBlaclColor(int pieceColor) {
+		return pieceColor == BLACK_COLOR_CODE;
 	}
 }

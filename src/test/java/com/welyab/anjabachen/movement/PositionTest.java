@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Unit tests for the <code>Position</code> class.
@@ -27,56 +29,68 @@ import org.junit.jupiter.api.Test;
  */
 public class PositionTest {
 	
-	@Test
+	@ParameterizedTest
+	@CsvSource({
+			'a' + "," + 0,
+			'b' + "," + 1,
+			'c' + "," + 2,
+			'd' + "," + 3,
+			'e' + "," + 4,
+			'f' + "," + 5,
+			'g' + "," + 6,
+			'h' + "," + 7
+	})
 	@SuppressWarnings("javadoc")
-	public void columnToFileShouldConvertColumnsToFilesProperly() {
-		assertEquals('a', Position.columnToFile(0));
-		assertEquals('b', Position.columnToFile(1));
-		assertEquals('c', Position.columnToFile(2));
-		assertEquals('d', Position.columnToFile(3));
-		assertEquals('e', Position.columnToFile(4));
-		assertEquals('f', Position.columnToFile(5));
-		assertEquals('g', Position.columnToFile(6));
-		assertEquals('h', Position.columnToFile(7));
+	public void columnToFileShouldConvertColumnsToFilesProperly(char file, byte column) {
+		assertEquals(file, Position.columnToFile(column));
 	}
 	
-	@Test
+	@ParameterizedTest
+	@CsvSource({
+			0 + "," + 'a',
+			1 + "," + 'b',
+			2 + "," + 'c',
+			3 + "," + 'd',
+			4 + "," + 'e',
+			5 + "," + 'f',
+			6 + "," + 'g',
+			7 + "," + 'h'
+	})
 	@SuppressWarnings("javadoc")
-	public void fileToColumnShouldConevertFilesToColumnProperly() {
-		assertEquals(0, Position.fileToColumn('a'));
-		assertEquals(1, Position.fileToColumn('b'));
-		assertEquals(2, Position.fileToColumn('c'));
-		assertEquals(3, Position.fileToColumn('d'));
-		assertEquals(4, Position.fileToColumn('e'));
-		assertEquals(5, Position.fileToColumn('f'));
-		assertEquals(6, Position.fileToColumn('g'));
-		assertEquals(7, Position.fileToColumn('h'));
+	public void fileToColumnShouldConevertFilesToColumnProperly(byte column, char file) {
+		assertEquals(column, Position.fileToColumn(file));
 	}
 	
-	@Test
+	@ParameterizedTest
+	@CsvSource({
+			1 + "," + 7,
+			2 + "," + 6,
+			3 + "," + 5,
+			4 + "," + 4,
+			5 + "," + 3,
+			6 + "," + 2,
+			7 + "," + 1,
+			8 + "," + 0
+	})
 	@SuppressWarnings("javadoc")
-	public void rowToRankShouldConvertRanksToColumnsProperly() {
-		assertEquals(1, Position.rowToRank(7));
-		assertEquals(2, Position.rowToRank(6));
-		assertEquals(3, Position.rowToRank(5));
-		assertEquals(4, Position.rowToRank(4));
-		assertEquals(5, Position.rowToRank(3));
-		assertEquals(6, Position.rowToRank(2));
-		assertEquals(7, Position.rowToRank(1));
-		assertEquals(8, Position.rowToRank(0));
+	public void rowToRankShouldConvertRanksToColumnsProperly(byte rank, byte row) {
+		assertEquals(rank, Position.rowToRank(row));
 	}
 	
-	@Test
+	@ParameterizedTest
+	@CsvSource({
+			7 + "," + 1,
+			6 + "," + 2,
+			5 + "," + 3,
+			4 + "," + 4,
+			3 + "," + 5,
+			2 + "," + 6,
+			1 + "," + 7,
+			0 + "," + 8
+	})
 	@SuppressWarnings("javadoc")
-	public void rankToRowShouldConevertRanksToRowsProperlyProperly() {
-		assertEquals(7, Position.rankToRow(1));
-		assertEquals(6, Position.rankToRow(2));
-		assertEquals(5, Position.rankToRow(3));
-		assertEquals(4, Position.rankToRow(4));
-		assertEquals(3, Position.rankToRow(5));
-		assertEquals(2, Position.rankToRow(6));
-		assertEquals(1, Position.rankToRow(7));
-		assertEquals(0, Position.rankToRow(8));
+	public void rankToRowShouldConevertRanksToRowsProperlyProperly(byte row, byte rank) {
+		assertEquals(row, Position.rankToRow(rank));
 	}
 	
 	@Test
@@ -109,5 +123,69 @@ public class PositionTest {
 		assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
 			Position.of(2, -4);
 		});
+	}
+	
+	@ParameterizedTest
+	@CsvSource({
+			'a' + "," + 7 + "," + 0,
+			'b' + "," + 6 + "," + 1,
+			'c' + "," + 5 + "," + 2,
+			'd' + "," + 4 + "," + 3,
+			'e' + "," + 3 + "," + 4,
+			'f' + "," + 2 + "," + 5,
+			'g' + "," + 1 + "," + 6,
+			'h' + "," + 0 + "," + 7
+	})
+	@SuppressWarnings("javadoc")
+	public void getFileShouldReturnProperlyValue(char file, int row, int column) {
+		assertEquals(file, Position.of(row, column).getFile());
+	}
+	
+	@ParameterizedTest
+	@CsvSource({
+			1 + "," + 7 + "," + 0,
+			2 + "," + 6 + "," + 1,
+			3 + "," + 5 + "," + 2,
+			4 + "," + 4 + "," + 3,
+			5 + "," + 3 + "," + 4,
+			6 + "," + 2 + "," + 5,
+			7 + "," + 1 + "," + 6,
+			8 + "," + 0 + "," + 7
+	})
+	@SuppressWarnings("javadoc")
+	public void getRankShouldReturnProperlyValue(byte rank, byte row, byte column) {
+		assertEquals(rank, Position.of(row, column).getRank());
+	}
+	
+	@ParameterizedTest
+	@CsvSource({
+			"e5" + "," + 3 + "," + 4,
+			"a8" + "," + 0 + "," + 0,
+			"a1" + "," + 7 + "," + 0,
+			"h8" + "," + 0 + "," + 7,
+			"h1" + "," + 7 + "," + 7,
+			"e4" + "," + 4 + "," + 4
+	})
+	@SuppressWarnings("javadoc")
+	public void getAlgebraicNotationShouldReturnProperlyValue(String algebraicNotation, byte row, byte column) {
+		assertEquals(algebraicNotation, Position.of(row, column).getAlgebraicNotation());
+	}
+	
+	@ParameterizedTest
+	@CsvSource({
+			3 + "," + 4 + "," + "e5",
+			0 + "," + 0 + "," + "a8",
+			7 + "," + 0 + "," + "a1",
+			0 + "," + 7 + "," + "h8",
+			7 + "," + 7 + "," + "h1",
+			4 + "," + 4 + "," + "e4"
+	})
+	@SuppressWarnings("javadoc")
+	public void ofAlgebraicNotationShouldReturnProperlyValue(
+			byte expectedRow,
+			byte expectedColumn,
+			String algebraicNotation
+	) {
+		assertEquals(Position.of(expectedRow, expectedColumn), Position.of(algebraicNotation));
 	}
 }
