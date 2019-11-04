@@ -26,14 +26,28 @@ public final class Position {
 	// @formatter:off
 	@SuppressWarnings("javadoc")
 	private static final Position[][] CACHE = {
-		{nnew(0, 0), nnew(0, 1), nnew(0, 2), nnew(0, 3), nnew(0, 4), nnew(0, 5), nnew(0, 6), nnew(0, 7)},
-		{nnew(1, 0), nnew(1, 1), nnew(1, 2), nnew(1, 3), nnew(1, 4), nnew(1, 5), nnew(1, 6), nnew(1, 7)},
-		{nnew(2, 0), nnew(2, 1), nnew(2, 2), nnew(2, 3), nnew(2, 4), nnew(2, 5), nnew(2, 6), nnew(2, 7)},
-		{nnew(3, 0), nnew(3, 1), nnew(3, 2), nnew(3, 3), nnew(3, 4), nnew(3, 5), nnew(3, 6), nnew(3, 7)},
-		{nnew(4, 0), nnew(4, 1), nnew(4, 2), nnew(4, 3), nnew(4, 4), nnew(4, 5), nnew(4, 6), nnew(4, 7)},
-		{nnew(5, 0), nnew(5, 1), nnew(5, 2), nnew(5, 3), nnew(5, 4), nnew(5, 5), nnew(5, 6), nnew(5, 7)},
-		{nnew(6, 0), nnew(6, 1), nnew(6, 2), nnew(6, 3), nnew(6, 4), nnew(6, 5), nnew(6, 6), nnew(6, 7)},
-		{nnew(7, 0), nnew(7, 1), nnew(7, 2), nnew(7, 3), nnew(7, 4), nnew(7, 5), nnew(7, 6), nnew(7, 7)}
+		{n(0, 0), n(0, 1), n(0, 2), n(0, 3), n(0, 4), n(0, 5), n(0, 6), n(0, 7)},
+		{n(1, 0), n(1, 1), n(1, 2), n(1, 3), n(1, 4), n(1, 5), n(1, 6), n(1, 7)},
+		{n(2, 0), n(2, 1), n(2, 2), n(2, 3), n(2, 4), n(2, 5), n(2, 6), n(2, 7)},
+		{n(3, 0), n(3, 1), n(3, 2), n(3, 3), n(3, 4), n(3, 5), n(3, 6), n(3, 7)},
+		{n(4, 0), n(4, 1), n(4, 2), n(4, 3), n(4, 4), n(4, 5), n(4, 6), n(4, 7)},
+		{n(5, 0), n(5, 1), n(5, 2), n(5, 3), n(5, 4), n(5, 5), n(5, 6), n(5, 7)},
+		{n(6, 0), n(6, 1), n(6, 2), n(6, 3), n(6, 4), n(6, 5), n(6, 6), n(6, 7)},
+		{n(7, 0), n(7, 1), n(7, 2), n(7, 3), n(7, 4), n(7, 5), n(7, 6), n(7, 7)}
+	};
+	// @formatter:on
+	
+	// @formatter:off
+	@SuppressWarnings("javadoc")
+	private static final String[][] CACHE_NOTATION = {
+		{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"},
+		{"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"},
+		{"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"},
+		{"a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5"},
+		{"a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"},
+		{"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"},
+		{"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"},
+		{"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"},
 	};
 	// @formatter:on
 	
@@ -90,12 +104,13 @@ public final class Position {
 	 * 
 	 * @return The algebraic notation.
 	 */
-	public String getAlgebraicNotation() {
-		return String.format("%c%d", getFile(), getRank());
+	public String getNotation() {
+		return CACHE_NOTATION[row][column];
 	}
 	
 	@SuppressWarnings("javadoc")
-	private static Position nnew(int row, int column) {
+	// new
+	private static Position n(int row, int column) {
 		return new Position((byte) row, (byte) column);
 	}
 	
@@ -205,7 +220,7 @@ public final class Position {
 	
 	@Override
 	public int hashCode() {
-		return column * BoardUtil.SIZE + row;
+		return column * 8 + row;
 	}
 	
 	@Override
@@ -217,8 +232,13 @@ public final class Position {
 		return pos.row == row && pos.column == column;
 	}
 	
+	@SuppressWarnings("javadoc")
+	public boolean equals(int row, int column) {
+		return this.row == row && this.column == column;
+	}
+	
 	@Override
 	public String toString() {
-		return String.format("Position[%d, %d]", row, column);
+		return getNotation();
 	}
 }

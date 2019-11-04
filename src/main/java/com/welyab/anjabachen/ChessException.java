@@ -15,21 +15,33 @@
  */
 package com.welyab.anjabachen;
 
+/**
+ * Chess exception is problem during some operation in the <code>ANJABACHEN</code>, generally
+ * programming bugs.
+ * 
+ * @author Welyab Paula
+ */
 public class ChessException extends RuntimeException {
 	
+	@SuppressWarnings("javadoc")
+	private static final long serialVersionUID = 1L;
+	
+	@SuppressWarnings("javadoc")
 	public ChessException() {
 	}
 	
+	@SuppressWarnings("javadoc")
 	public ChessException(String message) {
 		super(message);
 	}
 	
+	@SuppressWarnings("javadoc")
 	public ChessException(Throwable cause) {
 		super(cause);
 	}
 	
+	@SuppressWarnings("javadoc")
 	public ChessException(String message, Throwable cause) {
 		super(message, cause);
 	}
-	
 }

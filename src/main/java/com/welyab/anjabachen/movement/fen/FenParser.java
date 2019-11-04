@@ -19,14 +19,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.welyab.anjabachen.movement.BoardUtil;
 import com.welyab.anjabachen.movement.LocalizedPiece;
+import com.welyab.anjabachen.movement.MovementUtil;
 import com.welyab.anjabachen.movement.Position;
 
 /**
  * This class process
- * <a href="https://www.chessprogramming.org/Forsyth-Edwards_Notation" alt="article in the chess
- * programming wiki that describes the FEN position format">FEN</a> strings.
+ * <a href="https://www.chessprogramming.org/Forsyth-Edwards_Notation">FEN</a> strings.
  * 
  * @author Welyab Paula
  */
@@ -82,12 +81,21 @@ public class FenParser {
 	}
 	
 	/**
+	 * The underlying FEN string of this parser.
+	 * 
+	 * @return The underlying FEN string.
+	 */
+	public String getFen() {
+		return fen;
+	}
+	
+	/**
 	 * Retrieves the list of pieces and its locations. Only non empty square will be returned.
 	 * 
 	 * @return The list of pieces and its locations.
 	 */
 	public List<LocalizedPiece> getLocalizedPieces() {
-		parseIfNecessary();
+		parse();
 		return Collections.unmodifiableList(localizedPieces);
 	}
 	
@@ -97,22 +105,11 @@ public class FenParser {
 	 * @return The position info.
 	 */
 	public FenPositionInfo getFenPositionInfo() {
-		parseIfNecessary();
+		parse();
 		if (info == null) {
 			info = new PositionInfoImpl();
 		}
 		return info;
-	}
-	
-	/**
-	 * Check if the FEN string already been parsed and, if not, parses the string.
-	 */
-	private void parseIfNecessary() {
-		if (parsed) {
-			return;
-		}
-		parse1();
-		parsed = true;
 	}
 	
 	/**
@@ -121,7 +118,11 @@ public class FenParser {
 	 * getPositionInfo} is called.
 	 */
 	public void parse() {
-		parseIfNecessary();
+		if (parsed) {
+			return;
+		}
+		parse1();
+		parsed = true;
 	}
 	
 	/**
@@ -142,7 +143,8 @@ public class FenParser {
 		if (index >= parts.length) {
 			return null;
 		}
-		return parts[index];
+		String part = parts[index];
+		return part.trim().isEmpty() ? null : part;
 	}
 	
 	/**
@@ -151,12 +153,12 @@ public class FenParser {
 	 * @param pieceDisposition The pieces dispositions.
 	 */
 	private void processPieceDisposition(String pieceDisposition) {
-		if (pieceDisposition == null || pieceDisposition.isEmpty()) {
+		if (pieceDisposition == null) {
 			throw new FenParserException(fen, "Inavlid pieces disposition");
 		}
 		
 		String[] parts = pieceDisposition.split("/");
-		if (parts.length != BoardUtil.SIZE) {
+		if (parts.length != 8) {
 			throw new FenParserException(fen, "Invalid pieces disposition");
 		}
 		
@@ -177,9 +179,9 @@ public class FenParser {
 	 * @param localizedPieces The list where the being created localized pieces will be stored.
 	 */
 	private void processDispositionRow(
-			byte row,
-			String disposition,
-			List<LocalizedPiece> localizedPieces
+		byte row,
+		String disposition,
+		List<LocalizedPiece> localizedPieces
 	) {
 		List<Byte> squareValues = new ArrayList<>();
 		byte column = 0;
@@ -188,26 +190,26 @@ public class FenParser {
 			if (Character.isDigit(c)) {
 				int spaces = c - '0';
 				for (int k = 0; k < spaces; k++) {
-					squareValues.add(BoardUtil.NO_PIECE_CODE);
+					squareValues.add(MovementUtil.EMPTY);
 					column++;
 				}
 			} else {
 				try {
-					squareValues.add(BoardUtil.pieceLetterToCode(c));
+					squareValues.add(MovementUtil.pieceLetterToCode(c));
 				} catch (IllegalArgumentException e) {
 					throw new FenParserException(fen, "Can't parse piece disposition", e);
 				}
 				column++;
 			}
 		}
-		if (column != BoardUtil.SIZE) {
+		if (column != 8) {
 			throw new FenParserException(
 				fen,
 				String.format("Inavlid pieces disposition to row %d", row)
 			);
 		}
 		for (int col = 0; col < squareValues.size(); col++) {
-			if (squareValues.get(col) != BoardUtil.NO_PIECE_CODE) {
+			if (squareValues.get(col) != MovementUtil.EMPTY) {
 				localizedPieces.add(
 					new LocalizedPiece(
 						Position.of(row, col),
@@ -224,11 +226,11 @@ public class FenParser {
 	 * @param sideToMove The code.
 	 */
 	private void processSideToMove(String sideToMove) {
-		if (sideToMove == null || sideToMove.length() != 1) {
+		if (sideToMove == null) {
 			throw new FenParserException(fen, "Can't parse side to move");
 		}
 		try {
-			this.sideToMove = BoardUtil.colorLetterToCode(sideToMove.charAt(0));
+			this.sideToMove = MovementUtil.colorLetterToCode(sideToMove.charAt(0));
 		} catch (IllegalArgumentException e) {
 			throw new FenParserException(fen, "Can't parse side to move", e);
 		}
@@ -239,11 +241,13 @@ public class FenParser {
 	 * 
 	 * @param castlingFlags The castling flags.
 	 */
-	@SuppressWarnings({
+	@SuppressWarnings(
+		{
 			"squid:MethodCyclomaticComplexity"
-	})
+		}
+	)
 	private void processCastlingFlags(String castlingFlags) {
-		if (castlingFlags == null || castlingFlags.isEmpty() || castlingFlags.length() > 4) {
+		if (castlingFlags == null || castlingFlags.length() > 4) {
 			throw new FenParserException(fen, CANT_PARSE_CASTLING_FLAGS_MSG);
 		}
 		
@@ -340,10 +344,12 @@ public class FenParser {
 		}
 	}
 	
-	@SuppressWarnings({
+	@SuppressWarnings(
+		{
 			"javadoc",
 			"squid:S2972"
-	})
+		}
+	)
 	private class PositionInfoImpl implements FenPositionInfo {
 		
 		@Override

@@ -16,6 +16,7 @@
 package com.welyab.anjabachen.movement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 public class PositionTest {
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			'a' + "," + 0,
 			'b' + "," + 1,
 			'c' + "," + 2,
@@ -39,14 +41,16 @@ public class PositionTest {
 			'f' + "," + 5,
 			'g' + "," + 6,
 			'h' + "," + 7
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void columnToFileShouldConvertColumnsToFilesProperly(char file, byte column) {
 		assertEquals(file, Position.columnToFile(column));
 	}
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			0 + "," + 'a',
 			1 + "," + 'b',
 			2 + "," + 'c',
@@ -55,14 +59,16 @@ public class PositionTest {
 			5 + "," + 'f',
 			6 + "," + 'g',
 			7 + "," + 'h'
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void fileToColumnShouldConevertFilesToColumnProperly(byte column, char file) {
 		assertEquals(column, Position.fileToColumn(file));
 	}
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			1 + "," + 7,
 			2 + "," + 6,
 			3 + "," + 5,
@@ -71,14 +77,16 @@ public class PositionTest {
 			6 + "," + 2,
 			7 + "," + 1,
 			8 + "," + 0
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void rowToRankShouldConvertRanksToColumnsProperly(byte rank, byte row) {
 		assertEquals(rank, Position.rowToRank(row));
 	}
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			7 + "," + 1,
 			6 + "," + 2,
 			5 + "," + 3,
@@ -87,7 +95,8 @@ public class PositionTest {
 			2 + "," + 6,
 			1 + "," + 7,
 			0 + "," + 8
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void rankToRowShouldConevertRanksToRowsProperlyProperly(byte row, byte rank) {
 		assertEquals(row, Position.rankToRow(rank));
@@ -126,7 +135,8 @@ public class PositionTest {
 	}
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			'a' + "," + 7 + "," + 0,
 			'b' + "," + 6 + "," + 1,
 			'c' + "," + 5 + "," + 2,
@@ -135,14 +145,16 @@ public class PositionTest {
 			'f' + "," + 2 + "," + 5,
 			'g' + "," + 1 + "," + 6,
 			'h' + "," + 0 + "," + 7
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void getFileShouldReturnProperlyValue(char file, int row, int column) {
 		assertEquals(file, Position.of(row, column).getFile());
 	}
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			1 + "," + 7 + "," + 0,
 			2 + "," + 6 + "," + 1,
 			3 + "," + 5 + "," + 2,
@@ -151,41 +163,55 @@ public class PositionTest {
 			6 + "," + 2 + "," + 5,
 			7 + "," + 1 + "," + 6,
 			8 + "," + 0 + "," + 7
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void getRankShouldReturnProperlyValue(byte rank, byte row, byte column) {
 		assertEquals(rank, Position.of(row, column).getRank());
 	}
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			"e5" + "," + 3 + "," + 4,
 			"a8" + "," + 0 + "," + 0,
 			"a1" + "," + 7 + "," + 0,
 			"h8" + "," + 0 + "," + 7,
 			"h1" + "," + 7 + "," + 7,
 			"e4" + "," + 4 + "," + 4
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void getAlgebraicNotationShouldReturnProperlyValue(String algebraicNotation, byte row, byte column) {
-		assertEquals(algebraicNotation, Position.of(row, column).getAlgebraicNotation());
+		assertEquals(algebraicNotation, Position.of(row, column).getNotation());
 	}
 	
 	@ParameterizedTest
-	@CsvSource({
+	@CsvSource(
+		{
 			3 + "," + 4 + "," + "e5",
 			0 + "," + 0 + "," + "a8",
 			7 + "," + 0 + "," + "a1",
 			0 + "," + 7 + "," + "h8",
 			7 + "," + 7 + "," + "h1",
 			4 + "," + 4 + "," + "e4"
-	})
+		}
+	)
 	@SuppressWarnings("javadoc")
 	public void ofAlgebraicNotationShouldReturnProperlyValue(
-			byte expectedRow,
-			byte expectedColumn,
-			String algebraicNotation
+		byte expectedRow,
+		byte expectedColumn,
+		String algebraicNotation
 	) {
 		assertEquals(Position.of(expectedRow, expectedColumn), Position.of(algebraicNotation));
+	}
+	
+	@Test
+	@SuppressWarnings("javadoc")
+	public void testEqualsShouldReturnFalseWhenGivenObjectIsNotInstanceOfPosition() {
+		assertFalse(
+			Position.of(0, 0).equals(""),
+			"Position.equals should return false when compared object is not a Position"
+		);
 	}
 }

@@ -54,36 +54,20 @@ public class LocalizedPiece {
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + pieceCode;
-		result = prime * result + ((position == null) ? 0 : position.hashCode());
-		return result;
+		return position.hashCode() * pieceCode;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (obj.getClass() != getClass()) {
 			return false;
 		}
-		LocalizedPiece other = (LocalizedPiece) obj;
-		if (pieceCode != other.pieceCode) {
-			return false;
-		}
-		if (position == null) {
-			if (other.position != null) {
-				return false;
-			}
-		} else if (!position.equals(other.position)) {
-			return false;
-		}
-		return true;
+		LocalizedPiece lp = (LocalizedPiece) obj;
+		return lp.getPosition().equals(position)
+				&& lp.pieceCode == pieceCode;
 	}
 	
 	@Override
@@ -92,7 +76,7 @@ public class LocalizedPiece {
 			"LocalizedPiece([%d,%d], %c)",
 			position.getRow(),
 			position.getColumn(),
-			BoardUtil.pieceCodeToLetter(pieceCode)
+			MovementUtil.pieceCodeToLetter(pieceCode)
 		);
 	}
 }
