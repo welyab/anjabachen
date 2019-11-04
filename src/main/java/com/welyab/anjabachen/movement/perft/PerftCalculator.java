@@ -140,20 +140,20 @@ public final class PerftCalculator {
 	 * point equals 1 will generate the output:
 	 * 
 	 * <pre>
-	 * a5a6 -> 3653
-	 * a5a4 -> 3394
-	 * b4b3 -> 3658
-	 * b4b2 -> 3328
-	 * b4b1 -> 4199
-	 * b4c4 -> 3797
-	 * b4d4 -> 3622
-	 * b4e4 -> 3391
-	 * b4f4 -> 606
-	 * b4a4 -> 3019
-	 * e2e3 -> 3107
-	 * e2e4 -> 2748
-	 * g2g3 -> 1014
-	 * g2g4 -> 3702
+	 * a5a6 -&gt; 3653
+	 * a5a4 -&gt; 3394
+	 * b4b3 -&gt; 3658
+	 * b4b2 -&gt; 3328
+	 * b4b1 -&gt; 4199
+	 * b4c4 -&gt; 3797
+	 * b4d4 -&gt; 3622
+	 * b4e4 -&gt; 3391
+	 * b4f4 -&gt; 606
+	 * b4a4 -&gt; 3019
+	 * e2e3 -&gt; 3107
+	 * e2e4 -&gt; 2748
+	 * g2g3 -&gt; 1014
+	 * g2g4 -&gt; 3702
 	 * </pre>
 	 * 
 	 * The divide function shown 14 movements and total number of nodes until the depth 4, starting
@@ -161,15 +161,15 @@ public final class PerftCalculator {
 	 * 2, will generate an output like that:
 	 * 
 	 * <pre>
-	 * a5a6 c7c6 -> 250
-	 * a5a6 c7c5 -> 213
-	 * a5a6 d6d5 -> 182
+	 * a5a6 c7c6 -&gt; 250
+	 * a5a6 c7c5 -&gt; 213
+	 * a5a6 d6d5 -&gt; 182
 	 * ...
 	 * ... 185 other paths
 	 * ...
-	 * g2g4 h4g3 -> 289
-	 * g2g4 h4h3 -> 237
-	 * g2g4 h4g4 -> 238
+	 * g2g4 h4g3 -&gt; 289
+	 * g2g4 h4h3 -&gt; 237
+	 * g2g4 h4g4 -&gt; 238
 	 * </pre>
 	 * 
 	 * The above enumeration shows all 14 movements for white, and for each, a response movement for
@@ -217,20 +217,20 @@ public final class PerftCalculator {
 	 * point equals 1 will generate the output:
 	 * 
 	 * <pre>
-	 * a5a6 -> 3653
-	 * a5a4 -> 3394
-	 * b4b3 -> 3658
-	 * b4b2 -> 3328
-	 * b4b1 -> 4199
-	 * b4c4 -> 3797
-	 * b4d4 -> 3622
-	 * b4e4 -> 3391
-	 * b4f4 -> 606
-	 * b4a4 -> 3019
-	 * e2e3 -> 3107
-	 * e2e4 -> 2748
-	 * g2g3 -> 1014
-	 * g2g4 -> 3702
+	 * a5a6 -&gt; 3653
+	 * a5a4 -&gt; 3394
+	 * b4b3 -&gt; 3658
+	 * b4b2 -&gt; 3328
+	 * b4b1 -&gt; 4199
+	 * b4c4 -&gt; 3797
+	 * b4d4 -&gt; 3622
+	 * b4e4 -&gt; 3391
+	 * b4f4 -&gt; 606
+	 * b4a4 -&gt; 3019
+	 * e2e3 -&gt; 3107
+	 * e2e4 -&gt; 2748
+	 * g2g3 -&gt; 1014
+	 * g2g4 -&gt; 3702
 	 * </pre>
 	 * 
 	 * The divide function shown 14 movements and total number of nodes until the depth 4, starting
@@ -238,15 +238,15 @@ public final class PerftCalculator {
 	 * 2, will generate an output like that:
 	 * 
 	 * <pre>
-	 * a5a6 c7c6 -> 250
-	 * a5a6 c7c5 -> 213
-	 * a5a6 d6d5 -> 182
+	 * a5a6 c7c6 -&gt; 250
+	 * a5a6 c7c5 -&gt; 213
+	 * a5a6 d6d5 -&gt; 182
 	 * ...
 	 * ... 185 other paths
 	 * ...
-	 * g2g4 h4g3 -> 289
-	 * g2g4 h4h3 -> 237
-	 * g2g4 h4g4 -> 238
+	 * g2g4 h4g3 -&gt; 289
+	 * g2g4 h4h3 -&gt; 237
+	 * g2g4 h4g4 -&gt; 238
 	 * </pre>
 	 * 
 	 * The above enumeration shows all 14 movements for white, and for each, a response movement for
