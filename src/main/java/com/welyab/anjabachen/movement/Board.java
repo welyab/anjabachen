@@ -283,7 +283,7 @@ public final class Board implements Copyable<Board> {
 	private static void addPiecesToGrid(byte[][] grid, List<LocalizedPiece> pieces) {
 		pieces.forEach((LocalizedPiece lp) -> {
 			Position position = lp.getPosition();
-			grid[position.getRow()][position.getColumn()] = lp.getPieceCode();
+			grid[position.row][position.column] = lp.getPieceCode();
 		});
 	}
 	
@@ -323,7 +323,7 @@ public final class Board implements Copyable<Board> {
 	 * @return A value <code>true</code> if the square is empty, or <code>false</code> otherwise.
 	 */
 	public boolean isEmpty(Position position) {
-		return grid[position.getRow()][position.getColumn()] == MovementUtil.EMPTY;
+		return grid[position.row][position.column] == MovementUtil.EMPTY;
 	}
 	
 	/**
@@ -339,7 +339,7 @@ public final class Board implements Copyable<Board> {
 		if (isEmpty(position)) {
 			throw new EmptySquareException(position);
 		}
-		return grid[position.getRow()][position.getColumn()];
+		return grid[position.row][position.column];
 	}
 	
 	/**
@@ -419,20 +419,20 @@ public final class Board implements Copyable<Board> {
 	
 	public void move(Position origin, MovementTarget movementTarget) {
 		Position target = movementTarget.getPosition();
-		byte originPiece = grid[origin.getRow()][origin.getColumn()];
+		byte originPiece = grid[origin.row][origin.column];
 		byte color = MovementUtil.getPieceColor(originPiece);
-		byte capturedPiece = grid[target.getRow()][target.getColumn()];
+		byte capturedPiece = grid[target.row][target.column];
 		BoardState stateCopy = state.copy();
 		
 		// moves the piece from origin to target
-		grid[target.getRow()][target.getColumn()] = movementTarget.getPieceCode();
-		grid[origin.getRow()][origin.getColumn()] = MovementUtil.EMPTY;
+		grid[target.row][target.column] = movementTarget.getPieceCode();
+		grid[origin.row][origin.column] = MovementUtil.EMPTY;
 		
 		// remove the captured pawn if the movement is a en passant
 		Position epTarget = state.getEnPassantTargetSquare();
 		if (MovementUtil.isEnPassant(movementTarget.getFlags())) {
-			capturedPiece = grid[origin.getRow()][target.getColumn()];
-			grid[origin.getRow()][epTarget.getColumn()] = MovementUtil.EMPTY;
+			capturedPiece = grid[origin.row][target.column];
+			grid[origin.row][epTarget.column] = MovementUtil.EMPTY;
 		}
 		
 		// update the king position cache
@@ -442,10 +442,10 @@ public final class Board implements Copyable<Board> {
 		
 		// moves the rook if the movement is a castling
 		if (MovementUtil.isCastling(movementTarget.getFlags())) {
-			int rookOriginCol = MovementUtil.getCastlingRookOriginColumn(target.getColumn());
-			int rookTargetCol = MovementUtil.getCastlingRookTargetColumn(target.getColumn());
-			grid[origin.getRow()][rookTargetCol] = grid[origin.getRow()][rookOriginCol];
-			grid[origin.getRow()][rookOriginCol] = MovementUtil.EMPTY;
+			int rookOriginCol = MovementUtil.getCastlingRookOriginColumn(target.column);
+			int rookTargetCol = MovementUtil.getCastlingRookTargetColumn(target.column);
+			grid[origin.row][rookTargetCol] = grid[origin.row][rookOriginCol];
+			grid[origin.row][rookOriginCol] = MovementUtil.EMPTY;
 		}
 		
 		// update castling flags
@@ -478,18 +478,18 @@ public final class Board implements Copyable<Board> {
 		
 		// update en passant target square
 		state.setEnPassantTargetSquare(null);
-		if (MovementUtil.isPawn(originPiece) && Math.abs(origin.getRow() - target.getRow()) == 2) {
+		if (MovementUtil.isPawn(originPiece) && Math.abs(origin.row - target.row) == 2) {
 			for (int i = -1; i <= 1; i += 2) {
-				int sideColumn = target.getColumn() + i;
+				int sideColumn = target.column + i;
 				if (sideColumn >= 0 && sideColumn < 8) {
-					byte squareValue = grid[target.getRow()][sideColumn];
+					byte squareValue = grid[target.row][sideColumn];
 					if (MovementUtil.isPawn(squareValue)) {
 						byte sidePieceColor = MovementUtil.getPieceColor(squareValue);
 						if (MovementUtil.getOppositeColor(sidePieceColor) == MovementUtil.getPieceColor(originPiece)) {
 							state.setEnPassantTargetSquare(
 								Position.of(
-									(target.getRow() + origin.getRow()) / 2,
-									target.getColumn()
+									(target.row + origin.row) / 2,
+									target.column
 								)
 							);
 						}
@@ -539,19 +539,19 @@ public final class Board implements Copyable<Board> {
 		Position origin = log.getOrigin();
 		Position target = log.getTarget();
 		
-		grid[origin.getRow()][origin.getColumn()] = log.getOriginPiece();
+		grid[origin.row][origin.column] = log.getOriginPiece();
 		if (MovementUtil.isPawn(log.getOriginPiece()) && enPassTarget != null && enPassTarget.equals(target)) {
-			grid[origin.getRow()][target.getColumn()] = log.getCapturedPiece();
-			grid[target.getRow()][target.getColumn()] = MovementUtil.EMPTY;
+			grid[origin.row][target.column] = log.getCapturedPiece();
+			grid[target.row][target.column] = MovementUtil.EMPTY;
 		} else {
-			grid[target.getRow()][target.getColumn()] = log.getCapturedPiece();
+			grid[target.row][target.column] = log.getCapturedPiece();
 		}
 		
-		if (MovementUtil.isKing(log.getOriginPiece()) && Math.abs(origin.getColumn() - target.getColumn()) == 2) {
-			byte rookOriginCol = MovementUtil.getCastlingRookOriginColumn(target.getColumn());
-			byte rookTargetCol = MovementUtil.getCastlingRookTargetColumn(target.getColumn());
-			grid[target.getRow()][rookOriginCol] = grid[target.getRow()][rookTargetCol];
-			grid[target.getRow()][rookTargetCol] = MovementUtil.EMPTY;
+		if (MovementUtil.isKing(log.getOriginPiece()) && Math.abs(origin.column - target.column) == 2) {
+			byte rookOriginCol = MovementUtil.getCastlingRookOriginColumn(target.column);
+			byte rookTargetCol = MovementUtil.getCastlingRookTargetColumn(target.column);
+			grid[target.row][rookOriginCol] = grid[target.row][rookTargetCol];
+			grid[target.row][rookTargetCol] = MovementUtil.EMPTY;
 		}
 		
 		this.state.set(logState);
@@ -795,8 +795,8 @@ public final class Board implements Copyable<Board> {
 			throw new ChessException(
 				String.format(
 					"Unexpected piece type in the position [%d,%d]: %d",
-					position.getRow(),
-					position.getColumn(),
+					position.row,
+					position.column,
 					pieceCode
 				)
 			);
@@ -812,133 +812,127 @@ public final class Board implements Copyable<Board> {
 		boolean extractAllMoveFlags
 	) {
 		short flags = 0;
-		if (grid[target.getRow()][target.getColumn()] != MovementUtil.EMPTY) {
+		if (grid[target.row][target.column] != MovementUtil.EMPTY) {
 			flags |= MovementUtil.CAPTURE_MASK;
 		}
-		byte pieceCode = grid[origin.getRow()][origin.getColumn()];
+		byte pieceCode = grid[origin.row][origin.column];
 		Position enpTarget = state.getEnPassantTargetSquare();
 		if (MovementUtil.isPawn(pieceCode) && enpTarget != null && enpTarget.equals(target)) {
 			flags |= MovementUtil.EN_PASSANT_MASK;
 			flags |= MovementUtil.CAPTURE_MASK;
 		}
-		if (MovementUtil.isKing(pieceCode) && Math.abs(origin.getColumn() - target.getColumn()) == 2) {
+		if (MovementUtil.isKing(pieceCode) && Math.abs(origin.column - target.column) == 2) {
 			flags |= MovementUtil.CASTLING_MASK;
 		}
-		if (MovementUtil.isPawn(pieceCode) && (target.getRow() == 0 || target.getRow() == 7)) {
+		if (MovementUtil.isPawn(pieceCode) && (target.row == 0 || target.row == 7)) {
 			flags |= MovementUtil.PROMOTION_MASK;
 		}
 		
-		Position kingPosition = state.getKingPosition(state.getSideToMove());
-		if (kingPosition != null && extractAllMoveFlags) {
-			move(origin, new MovementTarget(target, pieceTarget, flags));
-			byte king = grid[kingPosition.getRow()][kingPosition.getColumn()];
-			for (int d = 0; d < ALL_DIRECTIONS.length; d++) {
-				boolean possibleDiscoveryCheck = false;
-				for (int i = 1; i <= 7; i++) {
-					int targetRow = kingPosition.getRow() + i * ALL_DIRECTIONS[d].rowDirection;
-					int targetColumn = kingPosition.getColumn() + i * ALL_DIRECTIONS[d].columnDirection;
-					if (isInsideBoardBound(targetRow, targetColumn)) {
-						byte targetSquareValue = grid[targetRow][targetColumn];
-						int moveValue = targetSquareValue * king;
-						if (moveValue > 0) {
-							break;
-						}
-						if (origin.equals(targetRow, targetColumn)) {
-							possibleDiscoveryCheck = true;
-						}
-						if (moveValue == 0) {
-							continue;
-						}
-						if (MovementUtil.isQueen(targetSquareValue)
-								|| (MovementUtil.isRook(targetSquareValue) && (kingPosition.getRow() == targetRow || kingPosition.getColumn() == targetColumn))
-								|| (MovementUtil.isBishop(targetSquareValue) && kingPosition.getRow() - targetRow == kingPosition.getColumn() - targetColumn)) {
-							if (MovementUtil.isCheck(flags)) {
-								flags |= MovementUtil.DOUBLE_CHECK_MASK;
-							}
-							flags |= MovementUtil.CHECK_MASK;
-							if (possibleDiscoveryCheck) {
-								flags |= MovementUtil.DISCOVERY_CHECK_MASK;
-							}
-						}
-						break;
-					}
-				}
+		Position kingPosition = state.getKingPosition(MovementUtil.getOppositeColor(state.getSideToMove()));
+		if (kingPosition == null) {
+			return flags;
+		}
+		
+		move(origin, new MovementTarget(target, pieceTarget, flags));
+		boolean underAttack = isUnderAttack(
+			state.getKingPosition(state.getSideToMove()), MovementUtil.getOppositeColor(state.getSideToMove())
+		);
+		undo();
+		
+		boolean check = isCheck(kingPosition, target, pieceTarget);
+		boolean discoveryCheck = isDiscoveryCheck(kingPosition, origin);
+		
+		if (check) {
+			flags |= MovementUtil.CHECK_MASK;
+		}
+		if (discoveryCheck) {
+			flags |= MovementUtil.CHECK_MASK;
+			if (check) {
+				flags |= MovementUtil.DOUBLE_CHECK_MASK;
+			} else {
+				flags |= MovementUtil.DISCOVERY_CHECK_MASK;
 			}
-			boolean possibleDiscoveryCheck = false;
-			for (int d = 0; d < KNIGHT_DIRECTIONS.length; d++) {
-				int targetRow = kingPosition.getRow() + KNIGHT_DIRECTIONS[d].rowDirection;
-				int targetColumn = kingPosition.getColumn() + KNIGHT_DIRECTIONS[d].columnDirection;
-				if (isInsideBoardBound(targetRow, targetColumn)) {
-					byte targetSquareValue = grid[targetRow][targetColumn];
-					int moveValue = targetSquareValue * king;
-					if (origin.equals(targetRow, targetColumn)) {
-						possibleDiscoveryCheck = true;
-					}
-					if (moveValue < 0 && MovementUtil.isKnight(targetSquareValue)) {
-						if (MovementUtil.isCheck(flags)) {
-							flags |= MovementUtil.DOUBLE_CHECK_MASK;
-						}
-						flags |= MovementUtil.CHECK_MASK;
-						if (possibleDiscoveryCheck) {
-							flags |= MovementUtil.DISCOVERY_CHECK_MASK;
-						}
-					}
-				}
-			}
-			Direction[] pawnDirections = MovementUtil.isWhiteColor(state.getSideToMove())
-					? WHITE_PAWN_CAPTURE_DIRECTIONS
-					: BLACK_PAWN_CAPTURE_DIRECTIONS;
-			possibleDiscoveryCheck = false;
-			for (int d = 0; d < pawnDirections.length; d++) {
-				int targetRow = kingPosition.getRow() + pawnDirections[d].rowDirection;
-				int targetColumn = kingPosition.getColumn() + pawnDirections[d].columnDirection;
-				if (isInsideBoardBound(targetRow, targetColumn)) {
-					byte targetSquareValue = grid[targetRow][targetColumn];
-					int moveValue = targetSquareValue * king;
-					if (origin.equals(targetRow, targetColumn)) {
-						possibleDiscoveryCheck = true;
-					}
-					if (moveValue < 0 && MovementUtil.isPawn(targetSquareValue)) {
-						if (MovementUtil.isCheck(flags)) {
-							flags |= MovementUtil.DOUBLE_CHECK_MASK;
-						}
-						flags |= MovementUtil.CHECK_MASK;
-						if (possibleDiscoveryCheck) {
-							flags |= MovementUtil.DISCOVERY_CHECK_MASK;
-						}
-					}
-				}
-			}
-			
-			if (MovementUtil.isDoubleCheck(flags)) {
-				flags &= ~MovementUtil.DISCOVERY_CHECK_MASK;
-			}
-			
-			// Movements movements = getMovements(false);
-			// if (movements.isEmpty() && MovementUtil.isCheck(flags)) {
-			// flags |= MovementUtil.CHECKMATE_MASK;
-			// }
-			// if (movements.isEmpty() && !MovementUtil.isCheck(flags)) {
-			// flags |= MovementUtil.STALEMATE_MASK;
-			// }
-			
-			undo();
+		}
+		
+		if (underAttack && !check) {
+			System.out.println(origin + " -> " + target);
+			System.out.println(this);
 		}
 		
 		return flags;
+	}
+	
+	private boolean isCheck(Position kingPosition, Position direction, byte attackerPiece) {
+		if (MovementUtil.isKnight(attackerPiece)) {
+			int rowDiff = Math.abs(kingPosition.row - direction.column);
+			int columnDiff = Math.abs(kingPosition.column - direction.column);
+			return rowDiff == 1 && columnDiff == 2
+					|| rowDiff == 2 && columnDiff == 1;
+		}
+		if (MovementUtil.isPawn(attackerPiece)) {
+			int pawnDir = MovementUtil.isWhite(attackerPiece)
+					? -1
+					: 1;
+			return kingPosition.equals(direction.row + pawnDir, direction.column - 1)
+					|| kingPosition.equals(direction.row + pawnDir, direction.column + 1);
+		}
+		return isKingAttackedByQueenRookBishop(kingPosition, direction);
+	}
+	
+	private boolean isDiscoveryCheck(Position kingPosition, Position movedPiece) {
+		byte backup = grid[movedPiece.row][movedPiece.column];
+		grid[movedPiece.row][movedPiece.column] = MovementUtil.EMPTY;
+		boolean discoveryCheck = isKingAttackedByQueenRookBishop(kingPosition, movedPiece);
+		grid[movedPiece.row][movedPiece.column] = backup;
+		return discoveryCheck;
+	}
+	
+	private boolean isKingAttackedByQueenRookBishop(Position kingPosition, Position direction) {
+		int rowDiff = direction.row - kingPosition.row;
+		int columnDiff = direction.column - kingPosition.column;
+		
+		boolean rookLikeMovement = rowDiff == 0 && columnDiff != 0
+				|| rowDiff != 0 && columnDiff == 0;
+		boolean bishopLikeMovement = Math.abs(rowDiff) == Math.abs(columnDiff);
+		if (!rookLikeMovement && !bishopLikeMovement) {
+			return false;
+		}
+		
+		int rowDirection = Integer.signum(rowDiff);
+		int columnDirection = Integer.signum(columnDiff);
+		int distance = Math.max(Math.abs(rowDiff), Math.abs(columnDiff));
+		for (int i = 1; i <= distance; i++) {
+			int targetRow = kingPosition.row + i * rowDirection;
+			int targetColumn = kingPosition.column + i * columnDirection;
+			if (!isInsideBoardBound(targetRow, targetColumn)) {
+				return false;
+			}
+			int moveValue = grid[kingPosition.row][kingPosition.column] * grid[targetRow][targetColumn];
+			if (moveValue > 0) {
+				return false;
+			}
+			if (moveValue == 0) {
+				continue;
+			}
+			return MovementUtil.isQueen(grid[targetRow][targetColumn]) && (rookLikeMovement || bishopLikeMovement)
+					|| MovementUtil.isRook(grid[targetRow][targetColumn]) && rookLikeMovement
+					|| MovementUtil.isBishop(grid[targetRow][targetColumn]) && bishopLikeMovement;
+		}
+		return false;
 	}
 	
 	public static void main(String[] args) {
 		Locale.setDefault(Locale.US);
 		long t1 = System.currentTimeMillis();
 		PerftResult perft = PerftCalculator.perft(
-			"r2qk2r/pb4pp/1n2Pb2/2B2Q2/p1p5/2P5/2B2PPP/RN2R1K1 w - - 1 0",
+			"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",
 			4,
 			true
 		);
 		long t2 = System.currentTimeMillis();
-		perft.getDepths().forEach(d -> System.out.println(perft.getMetadata(d)));
-		System.out.printf("%.2f%n", (t2 - t1) / 1000.0);
+		perft.getDepths().forEach(d -> System.out.println(d + " - " + perft.getMetadata(d)));
+		double time = (t2 - t1) / 1000.0;
+		System.out.printf("%.2f%n", time);
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -951,13 +945,13 @@ public final class Board implements Copyable<Board> {
 			1,
 			(Position targetPosition, byte targetSquareValue) -> {
 				byte moveValue = (byte) (originSquareValue * targetSquareValue);
-				byte kingBackup = grid[originPosition.getRow()][originPosition.getColumn()];
-				grid[originPosition.getRow()][originPosition.getColumn()] = MovementUtil.EMPTY;
+				byte kingBackup = grid[originPosition.row][originPosition.column];
+				grid[originPosition.row][originPosition.column] = MovementUtil.EMPTY;
 				boolean underAttack = isUnderAttack(
 					targetPosition,
 					MovementUtil.getOppositeColor(MovementUtil.getPieceColor(originSquareValue))
 				);
-				grid[originPosition.getRow()][originPosition.getColumn()] = kingBackup;
+				grid[originPosition.row][originPosition.column] = kingBackup;
 				if (moveValue <= 0 && !underAttack) {
 					targets.add(
 						new MovementTarget(
@@ -993,29 +987,29 @@ public final class Board implements Copyable<Board> {
 			
 			boolean isValidCastling = true;
 			for (int i = 0; i <= limitColumn; i++) {
-				int currentRow = originPosition.getColumn() + castlingDirection * i;
+				int currentRow = originPosition.column + castlingDirection * i;
 				if (i <= 2 && isUnderAttack(
-					Position.of(originPosition.getRow(), currentRow),
+					Position.of(originPosition.row, currentRow),
 					MovementUtil.getOppositeColor(color)
 				)) {
 					isValidCastling = false;
 					break;
 				}
-				if (i > 0 && grid[originPosition.getRow()][currentRow] != MovementUtil.EMPTY) {
+				if (i > 0 && grid[originPosition.row][currentRow] != MovementUtil.EMPTY) {
 					isValidCastling = false;
 					break;
 				}
 			}
 			if (isValidCastling) {
 				Position targetPosition = Position.of(
-					originPosition.getRow(),
-					originPosition.getColumn() + 2 * castlingDirection
+					originPosition.row,
+					originPosition.column + 2 * castlingDirection
 				);
 				targets.add(
 					new MovementTarget(
 						Position.of(
-							originPosition.getRow(),
-							originPosition.getColumn() + 2 * castlingDirection
+							originPosition.row,
+							originPosition.column + 2 * castlingDirection
 						),
 						originSquareValue,
 						extractMovementFlags(
@@ -1146,7 +1140,7 @@ public final class Board implements Copyable<Board> {
 	
 	@SuppressWarnings("javadoc")
 	private PieceMovements getMovementsFromPawn(Position originPosition, boolean extractAllMoveFlags) {
-		byte originSquareValue = grid[originPosition.getRow()][originPosition.getColumn()];
+		byte originSquareValue = grid[originPosition.row][originPosition.column];
 		byte color = MovementUtil.getPieceColor(originSquareValue);
 		List<MovementTarget> targets = new ArrayList<>(30);
 		direcionalPiecesWalker(
@@ -1160,7 +1154,7 @@ public final class Board implements Copyable<Board> {
 								&& state.getEnPassantTargetSquare() != null
 								&& state.getEnPassantTargetSquare().equals(targetPosition)))
 						&& !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
-					for (byte pieceType : getPawnTargetPieceTypes(targetPosition.getRow())) {
+					for (byte pieceType : getPawnTargetPieceTypes(targetPosition.row)) {
 						byte targetPiece = MovementUtil.getPiece(pieceType, color);
 						targets.add(
 							new MovementTarget(
@@ -1186,7 +1180,7 @@ public final class Board implements Copyable<Board> {
 			(Position targetPosition, byte targetSquareValue) -> {
 				byte moveValue = (byte) (originSquareValue * targetSquareValue);
 				if (moveValue == 0 && !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
-					for (byte pieceType : getPawnTargetPieceTypes(targetPosition.getRow())) {
+					for (byte pieceType : getPawnTargetPieceTypes(targetPosition.row)) {
 						byte targetPiece = MovementUtil.getPiece(pieceType, color);
 						targets.add(
 							new MovementTarget(
@@ -1205,7 +1199,7 @@ public final class Board implements Copyable<Board> {
 				return SquareVisitor.CONTINUE;
 			}
 		);
-		if (getInitialPawnRow(color) == originPosition.getRow()) {
+		if (getInitialPawnRow(color) == originPosition.row) {
 			direcionalPiecesWalker(
 				originPosition,
 				getPawnDoubleSquareMovementDirections(color),
@@ -1213,8 +1207,8 @@ public final class Board implements Copyable<Board> {
 				(Position targetPosition, byte targetSquareValue) -> {
 					byte moveValue = (byte) (originSquareValue * targetSquareValue);
 					if (moveValue == 0) {
-						byte midRow = (byte) ((originPosition.getRow() + targetPosition.getRow()) / 2);
-						if (grid[midRow][originPosition.getColumn()] == MovementUtil.EMPTY
+						byte midRow = (byte) ((originPosition.row + targetPosition.row) / 2);
+						if (grid[midRow][originPosition.column] == MovementUtil.EMPTY
 								&& !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
 							targets.add(
 								new MovementTarget(
@@ -1250,24 +1244,24 @@ public final class Board implements Copyable<Board> {
 	
 	@SuppressWarnings("javadoc")
 	private boolean isKingInCheckWithMovement(Position origin, Position target, byte targetPiece) {
-		byte originPiece = grid[origin.getRow()][origin.getColumn()];
+		byte originPiece = grid[origin.row][origin.column];
 		byte color = MovementUtil.getPieceColor(originPiece);
 		if (!state.isKingPresent(color)) {
 			return false;
 		}
 		byte capturedPawn = MovementUtil.EMPTY;
 		if (state.getEnPassantTargetSquare() != null && state.getEnPassantTargetSquare().equals(target)) {
-			capturedPawn = grid[origin.getRow()][state.getEnPassantTargetSquare().getColumn()];
-			grid[origin.getRow()][state.getEnPassantTargetSquare().getColumn()] = MovementUtil.EMPTY;
+			capturedPawn = grid[origin.row][state.getEnPassantTargetSquare().column];
+			grid[origin.row][state.getEnPassantTargetSquare().column] = MovementUtil.EMPTY;
 		}
-		byte targetBackup = grid[target.getRow()][target.getColumn()];
-		grid[origin.getRow()][origin.getColumn()] = MovementUtil.EMPTY;
-		grid[target.getRow()][target.getColumn()] = targetPiece;
+		byte targetBackup = grid[target.row][target.column];
+		grid[origin.row][origin.column] = MovementUtil.EMPTY;
+		grid[target.row][target.column] = targetPiece;
 		boolean isKingInCheck = isUnderAttack(state.getKingPosition(color), MovementUtil.getOppositeColor(color));
-		grid[origin.getRow()][origin.getColumn()] = originPiece;
-		grid[target.getRow()][target.getColumn()] = targetBackup;
+		grid[origin.row][origin.column] = originPiece;
+		grid[target.row][target.column] = targetBackup;
 		if (state.getEnPassantTargetSquare() != null && state.getEnPassantTargetSquare().equals(target)) {
-			grid[origin.getRow()][state.getEnPassantTargetSquare().getColumn()] = capturedPawn;
+			grid[origin.row][state.getEnPassantTargetSquare().column] = capturedPawn;
 		}
 		return isKingInCheck;
 	}
@@ -1421,8 +1415,8 @@ public final class Board implements Copyable<Board> {
 	) {
 		for (int d = 0; d < directions.length; d++) {
 			for (int length = 1; length <= moveLength; length++) {
-				int targetRow = origin.getRow() + length * directions[d].rowDirection;
-				int targetColumn = origin.getColumn() + length * directions[d].columnDirection;
+				int targetRow = origin.row + length * directions[d].rowDirection;
+				int targetColumn = origin.column + length * directions[d].columnDirection;
 				if (!isInsideBoardBound(targetRow, targetColumn)) {
 					break;
 				}
@@ -1583,7 +1577,7 @@ public final class Board implements Copyable<Board> {
 				Position position = Position.of(row, column);
 				char letter = isEmpty(position)
 						? ' '
-						: MovementUtil.pieceCodeToLetter(grid[position.getRow()][position.getColumn()]);
+						: MovementUtil.pieceCodeToLetter(grid[position.row][position.column]);
 				builder.append("│ ").append(letter).append(" ");
 			}
 			builder.append("│").append(NEWLINE);

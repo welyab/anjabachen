@@ -576,8 +576,8 @@ public class BoardTest {
 					"[king=%s, rook=%s]",
 					m.getPosition().getNotation(),
 					Position.of(
-						m.getPosition().getRow(),
-						MovementUtil.getCastlingRookTargetColumn(m.getPosition().getColumn())
+						m.getPosition().row,
+						MovementUtil.getCastlingRookTargetColumn(m.getPosition().column)
 					).getNotation()
 				);
 			})

@@ -52,24 +52,15 @@ public final class Position {
 	// @formatter:on
 	
 	/** The position row. */
-	private byte row;
+	public final byte row;
 	
 	/** The position column. */
-	private byte column;
+	public final byte column;
 	
 	@SuppressWarnings("javadoc")
 	private Position(byte row, byte column) {
 		this.row = row;
 		this.column = column;
-	}
-	
-	/**
-	 * Retrieves the position row.
-	 * 
-	 * @return The row number.
-	 */
-	public byte getRow() {
-		return row;
 	}
 	
 	/**
@@ -79,15 +70,6 @@ public final class Position {
 	 */
 	public byte getRank() {
 		return rowToRank(row);
-	}
-	
-	/**
-	 * Retrieves the position column.
-	 * 
-	 * @return The column number.
-	 */
-	public byte getColumn() {
-		return column;
 	}
 	
 	/**

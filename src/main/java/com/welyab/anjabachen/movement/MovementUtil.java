@@ -425,6 +425,14 @@ public final class MovementUtil {
 		};
 	}
 	
+	public static boolean isWhite(int pieceCode) {
+		return pieceCode > 0;
+	}
+	
+	public static boolean isBlack(int pieceCode) {
+		return pieceCode < 0;
+	}
+	
 	/**
 	 * Evaluates if given castling flags is marked with flag for castling movement for white pieces
 	 * on king side.
