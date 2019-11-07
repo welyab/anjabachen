@@ -839,7 +839,7 @@ public final class Board implements Copyable<Board> {
 		);
 		undo();
 		
-		boolean check = isCheck(kingPosition, target, pieceTarget);
+		boolean check = isCheck(kingPosition, origin, target, pieceTarget);
 		boolean discoveryCheck = isDiscoveryCheck(kingPosition, origin);
 		
 		if (check) {
@@ -862,10 +862,15 @@ public final class Board implements Copyable<Board> {
 		return flags;
 	}
 	
-	private boolean isCheck(Position kingPosition, Position direction, byte attackerPiece) {
+	private boolean isCheck(
+		Position kingPosition,
+		Position origin,
+		Position target,
+		byte attackerPiece
+	) {
 		if (MovementUtil.isKnight(attackerPiece)) {
-			int rowDiff = Math.abs(kingPosition.row - direction.column);
-			int columnDiff = Math.abs(kingPosition.column - direction.column);
+			int rowDiff = Math.abs(kingPosition.row - target.row);
+			int columnDiff = Math.abs(kingPosition.column - target.column);
 			return rowDiff == 1 && columnDiff == 2
 					|| rowDiff == 2 && columnDiff == 1;
 		}
@@ -873,13 +878,27 @@ public final class Board implements Copyable<Board> {
 			int pawnDir = MovementUtil.isWhite(attackerPiece)
 					? -1
 					: 1;
-			return kingPosition.equals(direction.row + pawnDir, direction.column - 1)
-					|| kingPosition.equals(direction.row + pawnDir, direction.column + 1);
+			return kingPosition.equals(target.row + pawnDir, target.column - 1)
+					|| kingPosition.equals(target.row + pawnDir, target.column + 1);
 		}
-		return isKingAttackedByQueenRookBishop(kingPosition, direction);
+		
+		byte targetBackup = grid[target.row][target.column];
+		byte originBackup = grid[origin.row][origin.column];
+		grid[target.row][target.column] = attackerPiece;
+		grid[origin.row][origin.column] = MovementUtil.EMPTY;
+		
+		boolean isCheck = isKingAttackedByQueenRookBishop(kingPosition, target);
+		
+		grid[target.row][target.column] = targetBackup;
+		grid[origin.row][origin.column] = originBackup;
+		
+		return isCheck;
 	}
 	
-	private boolean isDiscoveryCheck(Position kingPosition, Position movedPiece) {
+	private boolean isDiscoveryCheck(
+		Position kingPosition,
+		Position movedPiece
+	) {
 		byte backup = grid[movedPiece.row][movedPiece.column];
 		grid[movedPiece.row][movedPiece.column] = MovementUtil.EMPTY;
 		boolean discoveryCheck = isKingAttackedByQueenRookBishop(kingPosition, movedPiece);
@@ -900,8 +919,7 @@ public final class Board implements Copyable<Board> {
 		
 		int rowDirection = Integer.signum(rowDiff);
 		int columnDirection = Integer.signum(columnDiff);
-		int distance = Math.max(Math.abs(rowDiff), Math.abs(columnDiff));
-		for (int i = 1; i <= distance; i++) {
+		for (int i = 1; i <= 7; i++) {
 			int targetRow = kingPosition.row + i * rowDirection;
 			int targetColumn = kingPosition.column + i * columnDirection;
 			if (!isInsideBoardBound(targetRow, targetColumn)) {
