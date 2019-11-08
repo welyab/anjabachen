@@ -73,9 +73,8 @@ public class LocalizedPiece {
 	@Override
 	public String toString() {
 		return String.format(
-			"LocalizedPiece([%d,%d], %c)",
-			position.row,
-			position.column,
+			"%s=%c",
+			position,
 			MovementUtil.pieceCodeToLetter(pieceCode)
 		);
 	}
