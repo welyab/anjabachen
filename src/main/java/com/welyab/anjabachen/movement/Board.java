@@ -828,19 +828,31 @@ public final class Board implements Copyable<Board> {
 			flags |= MovementUtil.PROMOTION_MASK;
 		}
 		
+		if (MovementUtil.isKing(pieceTarget)) {
+			return flags;
+		}
+		
 		Position kingPosition = state.getKingPosition(MovementUtil.getOppositeColor(state.getSideToMove()));
 		if (kingPosition == null) {
 			return flags;
 		}
 		
-		move(origin, new MovementTarget(target, pieceTarget, flags));
-		boolean underAttack = isUnderAttack(
-			state.getKingPosition(state.getSideToMove()), MovementUtil.getOppositeColor(state.getSideToMove())
-		);
-		undo();
+		// move(origin, new MovementTarget(target, pieceTarget, flags));
+		// boolean underAttack = isUnderAttack(
+		// state.getKingPosition(state.getSideToMove()),
+		// MovementUtil.getOppositeColor(state.getSideToMove())
+		// );
+		// undo();
 		
-		boolean check = isCheck(kingPosition, origin, target, pieceTarget);
-		boolean discoveryCheck = isDiscoveryCheck(kingPosition, origin);
+		Position originTests = origin;
+		Position targetTests = target;
+		if (MovementUtil.isCastling(flags)) {
+			originTests = Position.of(origin.row, MovementUtil.getCastlingRookOriginColumn(target.column));
+			targetTests = Position.of(origin.row, MovementUtil.getCastlingRookTargetColumn(target.column));
+		}
+		
+		boolean check = isCheck(kingPosition, originTests, targetTests, pieceTarget);
+		boolean discoveryCheck = isDiscoveryCheck(kingPosition, originTests, targetTests);
 		
 		if (check) {
 			flags |= MovementUtil.CHECK_MASK;
@@ -854,10 +866,10 @@ public final class Board implements Copyable<Board> {
 			}
 		}
 		
-		if (underAttack && !check) {
-			System.out.println(origin + " -> " + target);
-			System.out.println(this);
-		}
+		// if (underAttack && !MovementUtil.isCheck(flags)) {
+		// System.out.println(origin + " -> " + target);
+		// System.out.println(this);
+		// }
 		
 		return flags;
 	}
@@ -897,12 +909,15 @@ public final class Board implements Copyable<Board> {
 	
 	private boolean isDiscoveryCheck(
 		Position kingPosition,
-		Position movedPiece
+		Position origin,
+		Position target
 	) {
-		byte backup = grid[movedPiece.row][movedPiece.column];
-		grid[movedPiece.row][movedPiece.column] = MovementUtil.EMPTY;
-		boolean discoveryCheck = isKingAttackedByQueenRookBishop(kingPosition, movedPiece);
-		grid[movedPiece.row][movedPiece.column] = backup;
+		byte backup = grid[target.row][target.column];
+		grid[target.row][target.column] = grid[origin.row][origin.column];
+		grid[origin.row][origin.column] = MovementUtil.EMPTY;
+		boolean discoveryCheck = isKingAttackedByQueenRookBishop(kingPosition, origin);
+		grid[origin.row][origin.column] = grid[target.row][target.column];
+		grid[target.row][target.column] = backup;
 		return discoveryCheck;
 	}
 	
@@ -944,7 +959,7 @@ public final class Board implements Copyable<Board> {
 		long t1 = System.currentTimeMillis();
 		PerftResult perft = PerftCalculator.perft(
 			"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",
-			4,
+			5,
 			true
 		);
 		long t2 = System.currentTimeMillis();
