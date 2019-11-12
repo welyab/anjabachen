@@ -5,15 +5,15 @@ This is a hobbyist chess software completely programmed in Java.
 
 ### Features
 
-* FEN parsing and generation
-* PGN parsing and generation (in development)
-* Text based board printing
-* Movement generation 
-* [PERFT](https://www.chessprogramming.org/Perft) calculation
-* Movement path enumeration
-* Find checkmate in x moves (in development)
-* UCI compatible engine (in development)
-* Chess960 compatibility (in development)
+- [x] FEN parsing and generation
+- [x] Text based board printing
+- [ ] PGN parsing and generation (in development)
+- [ ] Movement generation 
+- [ ] [PERFT](https://www.chessprogramming.org/Perft) calculation
+- [ ] Movement path enumeration
+- [ ] Find checkmate in x moves (in development)
+- [ ] UCI compatible engine (in development)
+- [ ] Chess960 compatibility (in development)
 
 ### Parsing FEN strings
 
