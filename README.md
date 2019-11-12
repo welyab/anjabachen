@@ -5,17 +5,31 @@ This is a hobbyist chess software completely programmed in Java.
 
 ### Features
 
-- [x] FEN parsing and generation
-- [x] Text based board printing
-- [ ] PGN parsing and generation (in development)
-- [ ] Movement generation 
-- [ ] [PERFT](https://www.chessprogramming.org/Perft) calculation
-- [ ] Movement path enumeration
-- [ ] Find checkmate in x moves (in development)
-- [ ] UCI compatible engine (in development)
-- [ ] Chess960 compatibility (in development)
+- [x] FEN string parsing
+- [x] FEN string generation
+- [x] Movement generation
+- [x] Movement metadata information
+- [x] PERFT calculation
+- [x] Movement path enumeration
+- [ ] PGN file reader (in development)
+- [ ] PGN file writer (in development)
+- [ ] Text based board export
+- [ ] Board image generation (png, jpeg...) (in development)
+- [ ] Checkmate finder in N moves (in development)
+- [ ] Game engine (in development)
+- [ ] Chess960 compatible game engine (in development)
+- [ ] Universal Chess Interface (UCI) support (in development)
 
-### Parsing FEN strings
+### Forsyth-Edwards Notation - FEN
+
+FEN is a pattern used to describe a specific chess position.
+It is widely used solution to share game positions, chess puzzles, etc.
+You can know more by reading the related article in the Chess Programming Wiki: 
+https://www.chessprogramming.org/Forsyth-Edwards_Notation.
+
+#### Parsing FEN strings
+
+AN.JA.BA.CH.EN can extract piece disposition by reading a FEN string:
 
 ```java
 var parser = new FenParser("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
@@ -29,7 +43,11 @@ Chess boards may be created directly from FEN strings:
 var board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
 ```
 
-### Generating FEN string
+#### Generating FEN string
+
+The mainly way to create FEN string in AN.JA.BA.CH.EN is extract it from a board object.
+During game playing, an extracted FEN will reflect the current state of the board
+with its piece disposition, castling ability flags, move couter, etc.
 
 ```java
 var board = new Board();
@@ -37,11 +55,13 @@ var fen = board.getFen();
 System.out.println(fen);
 ```
 
-Will produce the follow output:
+Will produce the FEN string, that is the representation for the usual chess in the initial positions:
 
 ```text
 rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 ```
+
+### Movement generation
 
 ### Text based board output
 
