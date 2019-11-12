@@ -29,7 +29,7 @@ https://www.chessprogramming.org/Forsyth-Edwards_Notation.
 
 #### Parsing FEN strings
 
-AN.JA.BA.CH.EN can extract piece disposition by reading a FEN string:
+AN.JA.BA.CH.EN can extract pieces disposition by reading a FEN string:
 
 ```java
 var parser = new FenParser("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
@@ -37,7 +37,7 @@ var pieceList = parser.getLocalizedPieces();
 var positionInfo = parser.getFenPositionInfo();
 ```
 
-Chess boards may be created directly from FEN strings:
+Also, chess boards may be created directly from FEN strings:
 
 ```java
 var board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
@@ -47,7 +47,7 @@ var board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - -");
 
 The mainly way to create FEN string in AN.JA.BA.CH.EN is extract it from a board object.
 During game playing, an extracted FEN will reflect the current state of the board
-with its piece disposition, castling ability flags, move couter, etc.
+with its piece disposition, castling ability flags, move counter, etc.
 
 ```java
 var board = new Board();
@@ -62,6 +62,31 @@ rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 ```
 
 ### Movement generation
+
+All chess playing softwares need a movement generation mechanism.
+In AN.JA.BA.CH.EN, all movements algorithms are made inside the class `Board`, that provides a easy to use API. However, the algorithms implemented are very simple, based in a bi-dimensional array.
+
+```java
+byte[][] grid = new byte[8][8];
+```
+
+The `Board` class just swaps array contents in order to make movements.
+Something like `grid[a][b] = grid[x][y]`, followed by `grid[x][y] = 0`, move the piece
+located in `[x, y]` to the position indicated by `[a, b]`, and than clear the position `[x, y]`
+assign `0` to it. All rules for castling, _en passant_ captures, pin, etc, are considered during calculations.
+
+#### Generating movements
+
+```java
+// create a board with initial position, white to play
+Board board = new Board();
+// retrieve all possible movements for white piece
+Movements movements = board.getMovements();
+```
+
+#### Moving pieces
+
+The commands to a piece to move are submited to the `Board` object.
 
 ### Text based board output
 
