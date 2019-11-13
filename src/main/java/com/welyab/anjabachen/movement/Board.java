@@ -17,16 +17,12 @@ package com.welyab.anjabachen.movement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.BiFunction;
 import java.util.function.ObjIntConsumer;
 
 import com.welyab.anjabachen.ChessException;
-import com.welyab.anjabachen.movement.MovementMetadata.Builder;
 import com.welyab.anjabachen.movement.fen.FenParser;
 import com.welyab.anjabachen.movement.fen.FenPositionInfo;
-import com.welyab.anjabachen.movement.perft.PerftCalculator;
-import com.welyab.anjabachen.movement.perft.PerftResult;
 
 /**
  * The <code>Board</code> class is the main component for movement generation in
@@ -346,18 +342,27 @@ public final class Board implements Copyable<Board> {
 	}
 	
 	/**
-	 * Retrieves the piece located in the given position.
+	 * Retrieves value of the square indicated by given position.
 	 * 
 	 * @param position The square position.
 	 * 
-	 * @return The piece code.
+	 * @return The square content value.
 	 * 
-	 * @throws EmptySquareException If the specific square is empty.
+	 * @see MovementUtil#WHITE_KING
+	 * @see MovementUtil#WHITE_QUEEN
+	 * @see MovementUtil#WHITE_ROOK
+	 * @see MovementUtil#WHITE_BISHOP
+	 * @see MovementUtil#WHITE_KNIGHT
+	 * @see MovementUtil#WHITE_PAWN
+	 * @see MovementUtil#EMPTY
+	 * @see MovementUtil#BLACK_KING
+	 * @see MovementUtil#BLACK_QUEEN
+	 * @see MovementUtil#BLACK_ROOK
+	 * @see MovementUtil#BLACK_BISHOP
+	 * @see MovementUtil#BLACK_KNIGHT
+	 * @see MovementUtil#BLACK_PAWN
 	 */
-	public byte getPiece(Position position) {
-		if (isEmpty(position)) {
-			throw new EmptySquareException(position);
-		}
+	public byte getSquareValue(Position position) {
 		return grid[position.row][position.column];
 	}
 	
@@ -634,7 +639,7 @@ public final class Board implements Copyable<Board> {
 		if (isEmpty(position)) {
 			throw new EmptySquareException(position);
 		}
-		PieceMovements pieceMovements = privateGetMovements(position, extractAllMoveFlags);
+		PieceMovements pieceMovements = privateGetMovements(position, extractAllMoveFlags, false);
 		return new Movements(List.of(pieceMovements), pieceMovements.getMetadata());
 	}
 	
@@ -679,6 +684,10 @@ public final class Board implements Copyable<Board> {
 		return getMovements(getSideToMove(), extractAllMoveFlags);
 	}
 	
+	private Movements getMovements(boolean extractAllMoveFlags, boolean stopOnFirstMovement) {
+		return getMovements(getSideToMove(), extractAllMoveFlags, stopOnFirstMovement);
+	}
+	
 	/**
 	 * Retrieves all movements of all pieces of the specific color.
 	 * 
@@ -718,13 +727,21 @@ public final class Board implements Copyable<Board> {
 	 * @see #getMovementsWB(boolean)
 	 */
 	public Movements getMovements(byte colorCode, boolean extractAllMoveFlags) {
+		return getMovements(colorCode, extractAllMoveFlags, false);
+	}
+	
+	public Movements getMovements(
+		byte colorCode,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement
+	) {
 		List<PieceMovements> list = new ArrayList<>();
 		MovementMetadata.Builder metadataBuilder = MovementMetadata.builder();
 		simplePiecesWalking((Position position, int pieceCode) -> {
 			if (MovementUtil.getPieceColor(pieceCode) != colorCode) {
 				return;
 			}
-			PieceMovements pieceMovements = privateGetMovements(position, extractAllMoveFlags);
+			PieceMovements pieceMovements = privateGetMovements(position, extractAllMoveFlags, stopOnFirstMovement);
 			if (!pieceMovements.isEmpty()) {
 				list.add(pieceMovements);
 				metadataBuilder.add(pieceMovements.getMetadata());
@@ -792,40 +809,59 @@ public final class Board implements Copyable<Board> {
 	}
 	
 	@SuppressWarnings("javadoc")
-	private PieceMovements privateGetMovements(Position position, boolean extractAllMoveFlags) {
-		byte pieceCode = getPiece(position);
-		PieceMovements pieceMovements = null;
-		if (MovementUtil.isKing(pieceCode)) {
-			pieceMovements = getMovementsFromKing(position, extractAllMoveFlags);
-		}
-		if (MovementUtil.isQueen(pieceCode)) {
-			pieceMovements = getMovementsFromQueen(position, extractAllMoveFlags);
-		}
-		if (MovementUtil.isRook(pieceCode)) {
-			pieceMovements = getMovementsFromRook(position, extractAllMoveFlags);
-		}
-		if (MovementUtil.isBishop(pieceCode)) {
-			pieceMovements = getMovementsFromBishop(position, extractAllMoveFlags);
-		}
-		if (MovementUtil.isKnight(pieceCode)) {
-			pieceMovements = getMovementsFromKnight(position, extractAllMoveFlags);
-		}
-		if (MovementUtil.isPawn(pieceCode)) {
-			pieceMovements = getMovementsFromPawn(position, extractAllMoveFlags);
-		}
-		
-		if (pieceMovements == null) {
-			throw new ChessException(
+	private PieceMovements privateGetMovements(
+		Position position,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement
+	) {
+		byte pieceCode = grid[position.row][position.column];
+		return switch (MovementUtil.getPieceType(pieceCode)) {
+			case MovementUtil.KING -> getMovementsFromKing(
+				position,
+				extractAllMoveFlags,
+				stopOnFirstMovement
+			);
+			case MovementUtil.QUEEN -> getMovements(
+				position,
+				extractAllMoveFlags,
+				QUEEN_DIRECTIONS,
+				7,
+				stopOnFirstMovement
+			);
+			case MovementUtil.ROOK -> getMovements(
+				position,
+				extractAllMoveFlags,
+				ROOK_DIRECTIONS,
+				7,
+				stopOnFirstMovement
+			);
+			case MovementUtil.BISHOP -> getMovements(
+				position,
+				extractAllMoveFlags,
+				BISHOP_DIRECTIONS,
+				7,
+				stopOnFirstMovement
+			);
+			case MovementUtil.KNIGHT -> getMovements(
+				position,
+				extractAllMoveFlags,
+				KNIGHT_DIRECTIONS,
+				1,
+				stopOnFirstMovement
+			);
+			case MovementUtil.PAWN -> getMovementsFromPawn(
+				position,
+				extractAllMoveFlags,
+				stopOnFirstMovement
+			);
+			default -> throw new ChessException(
 				String.format(
-					"Unexpected piece type in the position [%d,%d]: %d",
-					position.row,
-					position.column,
+					"Unexpected piece type in the position %s: %d",
+					position,
 					pieceCode
 				)
 			);
-		}
-		
-		return pieceMovements;
+		};
 	}
 	
 	private short extractMovementFlags(
@@ -851,7 +887,7 @@ public final class Board implements Copyable<Board> {
 			flags |= MovementUtil.PROMOTION_MASK;
 		}
 		
-		if (MovementUtil.isKing(pieceTarget)) {
+		if (!extractAllMoveFlags) {
 			return flags;
 		}
 		
@@ -860,15 +896,10 @@ public final class Board implements Copyable<Board> {
 			return flags;
 		}
 		
-		Position originTests = origin;
-		Position targetTests = target;
-		if (MovementUtil.isCastling(flags)) {
-			originTests = Position.of(origin.row, MovementUtil.getCastlingRookOriginColumn(target.column));
-			targetTests = Position.of(origin.row, MovementUtil.getCastlingRookTargetColumn(target.column));
-		}
+		move(origin, new MovementTarget(target, pieceTarget, flags));
 		
-		boolean check = !MovementUtil.isKing(pieceCode) && isCheck(kingPosition, originTests, targetTests, pieceTarget);
-		boolean discoveryCheck = isDiscoveryCheck(kingPosition, originTests, targetTests);
+		boolean check = !MovementUtil.isKing(pieceCode) && isCheck(kingPosition, target);
+		boolean discoveryCheck = isKingAttackedByQueenRookBishop(kingPosition, origin, target);
 		
 		if (check) {
 			flags |= MovementUtil.CHECK_MASK;
@@ -882,76 +913,45 @@ public final class Board implements Copyable<Board> {
 			}
 		}
 		
+		if (getMovements(false, true).isEmpty()) {
+			if (MovementUtil.isCheck(flags)) {
+				flags |= MovementUtil.CHECKMATE_MASK;
+			} else {
+				flags |= MovementUtil.STALEMATE_MASK;
+			}
+		}
+		
+		undo();
+		
 		return flags;
 	}
 	
 	private boolean isCheck(
 		Position kingPosition,
-		Position origin,
-		Position target,
-		byte attackerPiece
+		Position target
 	) {
-		if (MovementUtil.isKnight(attackerPiece)) {
+		if (MovementUtil.isKnight(grid[target.row][target.column])) {
 			int rowDiff = Math.abs(kingPosition.row - target.row);
 			int columnDiff = Math.abs(kingPosition.column - target.column);
-			return rowDiff == 1 && columnDiff == 2
-					|| rowDiff == 2 && columnDiff == 1;
+			return (rowDiff == 1 && columnDiff == 2)
+					|| (rowDiff == 2 && columnDiff == 1);
 		}
-		if (MovementUtil.isPawn(attackerPiece)) {
-			int pawnDir = MovementUtil.isWhite(attackerPiece)
+		if (MovementUtil.isPawn(grid[target.row][target.column])) {
+			int pawnDir = MovementUtil.isWhite(grid[target.row][target.column])
 					? -1
 					: 1;
 			return kingPosition.equals(target.row + pawnDir, target.column - 1)
 					|| kingPosition.equals(target.row + pawnDir, target.column + 1);
 		}
-		
-		byte targetBackup = grid[target.row][target.column];
-		byte originBackup = grid[origin.row][origin.column];
-		grid[target.row][target.column] = attackerPiece;
-		grid[origin.row][origin.column] = MovementUtil.EMPTY;
-		
-		boolean isCheck = isKingAttackedByQueenRookBishop(kingPosition, target, null);
-		
-		grid[target.row][target.column] = targetBackup;
-		grid[origin.row][origin.column] = originBackup;
-		
-		return isCheck;
-	}
-	
-	private boolean isDiscoveryCheck(
-		Position kingPosition,
-		Position origin,
-		Position target
-	) {
-		byte enpassantPawnBackup = MovementUtil.EMPTY;
-		if (MovementUtil.isPawn(grid[origin.row][origin.column])
-				&& origin.column != target.column
-				&& grid[target.row][target.column] == MovementUtil.EMPTY) {
-			enpassantPawnBackup = grid[origin.row][target.column];
-			grid[origin.row][target.column] = MovementUtil.EMPTY;
-		}
-		
-		byte backup = grid[target.row][target.column];
-		grid[target.row][target.column] = grid[origin.row][origin.column];
-		grid[origin.row][origin.column] = MovementUtil.EMPTY;
-		
-		boolean discoveryCheck = isKingAttackedByQueenRookBishop(kingPosition, origin, target);
-		
-		if (enpassantPawnBackup != MovementUtil.EMPTY) {
-			grid[origin.row][target.column] = enpassantPawnBackup;
-		}
-		
-		grid[origin.row][origin.column] = grid[target.row][target.column];
-		grid[target.row][target.column] = backup;
-		return discoveryCheck;
+		return isKingAttackedByQueenRookBishop(kingPosition, target, null);
 	}
 	
 	private boolean isKingAttackedByQueenRookBishop(Position kingPosition, Position origin, Position target) {
 		int rowDiff = origin.row - kingPosition.row;
 		int columnDiff = origin.column - kingPosition.column;
 		
-		boolean rookLikeMovement = rowDiff == 0 && columnDiff != 0
-				|| rowDiff != 0 && columnDiff == 0;
+		boolean rookLikeMovement = (rowDiff == 0 && columnDiff != 0)
+				|| (rowDiff != 0 && columnDiff == 0);
 		boolean bishopLikeMovement = Math.abs(rowDiff) == Math.abs(columnDiff);
 		if (!rookLikeMovement && !bishopLikeMovement) {
 			return false;
@@ -982,26 +982,15 @@ public final class Board implements Copyable<Board> {
 		return false;
 	}
 	
-	public static void main(String[] args) {
-		Locale.setDefault(Locale.US);
-		long t1 = System.currentTimeMillis();
-		String fen = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -";
-		PerftResult perft = PerftCalculator.perft(
-			fen,
-			5,
-			true
-		);
-		long t2 = System.currentTimeMillis();
-		System.out.println(new Board(fen));
-		perft.getDepths().forEach(d -> System.out.println(d + " - " + perft.getMetadata(d)));
-		double time = (t2 - t1) / 1000.0;
-		System.out.printf("%.2f%n", time);
-	}
-	
 	@SuppressWarnings("javadoc")
-	private PieceMovements getMovementsFromKing(Position originPosition, boolean extractAllMoveFlags) {
-		byte originSquareValue = getPiece(originPosition);
+	private PieceMovements getMovementsFromKing(
+		Position originPosition,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement
+	) {
+		byte originSquareValue = getSquareValue(originPosition);
 		List<MovementTarget> targets = new ArrayList<>(10);
+		MovementMetadata.Builder metadataBuilder = MovementMetadata.builder();
 		direcionalPiecesWalker(
 			originPosition,
 			KING_DIRECTIONS,
@@ -1016,18 +1005,23 @@ public final class Board implements Copyable<Board> {
 				);
 				grid[originPosition.row][originPosition.column] = kingBackup;
 				if (moveValue <= 0 && !underAttack) {
+					short flags = extractMovementFlags(
+						originPosition,
+						targetPosition,
+						originSquareValue,
+						extractAllMoveFlags
+					);
+					metadataBuilder.add(flags);
 					targets.add(
 						new MovementTarget(
 							targetPosition,
 							originSquareValue,
-							extractMovementFlags(
-								originPosition,
-								targetPosition,
-								originSquareValue,
-								extractAllMoveFlags
-							)
+							flags
 						)
 					);
+					if (!targets.isEmpty() && stopOnFirstMovement) {
+						return SquareVisitor.STOP_WALKING;
+					}
 				}
 				if (moveValue != 0) {
 					return SquareVisitor.STOP_DIRECTION;
@@ -1035,6 +1029,34 @@ public final class Board implements Copyable<Board> {
 				return SquareVisitor.CONTINUE;
 			}
 		);
+		
+		if (!stopOnFirstMovement || targets.isEmpty()) {
+			targets.addAll(
+				getMovementTargetsFromKingCastling(
+					originPosition,
+					extractAllMoveFlags,
+					stopOnFirstMovement,
+					metadataBuilder
+				)
+			);
+		}
+		
+		return new PieceMovements(
+			originPosition,
+			originSquareValue,
+			targets,
+			metadataBuilder.buid()
+		);
+	}
+	
+	private List<MovementTarget> getMovementTargetsFromKingCastling(
+		Position originPosition,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement,
+		MovementMetadata.Builder metadataBuilder
+	) {
+		List<MovementTarget> targets = new ArrayList<>(2);
+		byte originSquareValue = getSquareValue(originPosition);
 		byte color = MovementUtil.getPieceColor(originSquareValue);
 		byte[] castlinsDirecions = {
 			-1, 1
@@ -1068,6 +1090,13 @@ public final class Board implements Copyable<Board> {
 					originPosition.row,
 					originPosition.column + 2 * castlingDirection
 				);
+				short flags = extractMovementFlags(
+					originPosition,
+					targetPosition,
+					originSquareValue,
+					extractAllMoveFlags
+				);
+				metadataBuilder.add(flags);
 				targets.add(
 					new MovementTarget(
 						Position.of(
@@ -1075,42 +1104,15 @@ public final class Board implements Copyable<Board> {
 							originPosition.column + 2 * castlingDirection
 						),
 						originSquareValue,
-						extractMovementFlags(
-							originPosition,
-							targetPosition,
-							originSquareValue,
-							extractAllMoveFlags
-						)
+						flags
 					)
 				);
+				if (stopOnFirstMovement) {
+					break;
+				}
 			}
 		}
-		return new PieceMovements(
-			originPosition,
-			originSquareValue,
-			targets,
-			mergeFlags(targets)
-		);
-	}
-	
-	@SuppressWarnings("javadoc")
-	private PieceMovements getMovementsFromQueen(Position originPosition, boolean extractAllMoveFlags) {
-		return getMovements(originPosition, extractAllMoveFlags, QUEEN_DIRECTIONS, 8 - 1);
-	}
-	
-	@SuppressWarnings("javadoc")
-	private PieceMovements getMovementsFromRook(Position originPosition, boolean extractAllMoveFlags) {
-		return getMovements(originPosition, extractAllMoveFlags, ROOK_DIRECTIONS, 8 - 1);
-	}
-	
-	@SuppressWarnings("javadoc")
-	private PieceMovements getMovementsFromBishop(Position originPosition, boolean extractAllMoveFlags) {
-		return getMovements(originPosition, extractAllMoveFlags, BISHOP_DIRECTIONS, 8 - 1);
-	}
-	
-	@SuppressWarnings("javadoc")
-	private PieceMovements getMovementsFromKnight(Position originPosition, boolean extractAllMoveFlags) {
-		return getMovements(originPosition, extractAllMoveFlags, KNIGHT_DIRECTIONS, 1);
+		return targets;
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -1118,10 +1120,12 @@ public final class Board implements Copyable<Board> {
 		Position originPosition,
 		boolean extractAllMoveFlags,
 		Direction[] directions,
-		int walkLength
+		int walkLength,
+		boolean stopOnFirstMovement
 	) {
-		byte originSquareValue = getPiece(originPosition);
+		byte originSquareValue = getSquareValue(originPosition);
 		List<MovementTarget> targets = new ArrayList<>(30);
+		MovementMetadata.Builder metadataBuilder = MovementMetadata.builder();
 		direcionalPiecesWalker(
 			originPosition,
 			directions,
@@ -1130,18 +1134,23 @@ public final class Board implements Copyable<Board> {
 				byte moveValue = (byte) (originSquareValue * targetSquareValue);
 				if (moveValue <= 0
 						&& !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
+					short flags = extractMovementFlags(
+						originPosition,
+						targetPosition,
+						originSquareValue,
+						extractAllMoveFlags
+					);
+					metadataBuilder.add(flags);
 					targets.add(
 						new MovementTarget(
 							targetPosition,
 							originSquareValue,
-							extractMovementFlags(
-								originPosition,
-								targetPosition,
-								originSquareValue,
-								extractAllMoveFlags
-							)
+							flags
 						)
 					);
+				}
+				if (!targets.isEmpty() && stopOnFirstMovement) {
+					return SquareVisitor.STOP_WALKING;
 				}
 				if (moveValue != 0) {
 					return SquareVisitor.STOP_DIRECTION;
@@ -1153,7 +1162,7 @@ public final class Board implements Copyable<Board> {
 			originPosition,
 			originSquareValue,
 			targets,
-			mergeFlags(targets)
+			metadataBuilder.buid()
 		);
 	}
 	
@@ -1203,10 +1212,61 @@ public final class Board implements Copyable<Board> {
 	}
 	
 	@SuppressWarnings("javadoc")
-	private PieceMovements getMovementsFromPawn(Position originPosition, boolean extractAllMoveFlags) {
+	private PieceMovements getMovementsFromPawn(
+		Position originPosition,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement
+	) {
+		byte originSquareValue = grid[originPosition.row][originPosition.column];
+		List<MovementTarget> targets = new ArrayList<>(12);
+		
+		MovementMetadata.Builder metadataBuilder = MovementMetadata.builder();
+		targets.addAll(
+			getPawnCaptureTargets(
+				originPosition,
+				extractAllMoveFlags,
+				stopOnFirstMovement,
+				metadataBuilder
+			)
+		);
+		if (!stopOnFirstMovement || targets.isEmpty()) {
+			targets.addAll(
+				getPawnSingleSquareMovementTarget(
+					originPosition,
+					extractAllMoveFlags,
+					stopOnFirstMovement,
+					metadataBuilder
+				)
+			);
+		}
+		if (!stopOnFirstMovement || targets.isEmpty()) {
+			targets.addAll(
+				getPawnDoubleSquareMovemenTargets(
+					originPosition,
+					extractAllMoveFlags,
+					stopOnFirstMovement,
+					metadataBuilder
+				)
+			);
+		}
+		
+		return new PieceMovements(
+			originPosition,
+			originSquareValue,
+			targets,
+			metadataBuilder.buid()
+		);
+	}
+	
+	private List<MovementTarget> getPawnCaptureTargets(
+		Position originPosition,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement,
+		MovementMetadata.Builder metadataBuilder
+	) {
 		byte originSquareValue = grid[originPosition.row][originPosition.column];
 		byte color = MovementUtil.getPieceColor(originSquareValue);
-		List<MovementTarget> targets = new ArrayList<>(30);
+		List<MovementTarget> targets = new ArrayList<>(2);
 		direcionalPiecesWalker(
 			originPosition,
 			getPawnCaptureDirections(color),
@@ -1220,23 +1280,40 @@ public final class Board implements Copyable<Board> {
 						&& !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
 					for (byte pieceType : getPawnTargetPieceTypes(targetPosition.row)) {
 						byte targetPiece = MovementUtil.getPiece(pieceType, color);
+						short flags = extractMovementFlags(
+							originPosition,
+							targetPosition,
+							targetPiece,
+							extractAllMoveFlags
+						);
+						metadataBuilder.add(flags);
 						targets.add(
 							new MovementTarget(
 								targetPosition,
 								targetPiece,
-								extractMovementFlags(
-									originPosition,
-									targetPosition,
-									targetPiece,
-									extractAllMoveFlags
-								)
+								flags
 							)
 						);
+						if (stopOnFirstMovement) {
+							return SquareVisitor.STOP_WALKING;
+						}
 					}
 				}
 				return SquareVisitor.CONTINUE;
 			}
 		);
+		return targets;
+	}
+	
+	private List<MovementTarget> getPawnSingleSquareMovementTarget(
+		Position originPosition,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement,
+		MovementMetadata.Builder metadataBuilder
+	) {
+		byte originSquareValue = grid[originPosition.row][originPosition.column];
+		byte color = MovementUtil.getPieceColor(originSquareValue);
+		List<MovementTarget> targets = new ArrayList<>(2);
 		direcionalPiecesWalker(
 			originPosition,
 			getPawnSingleSquareMovementDirections(color),
@@ -1247,64 +1324,76 @@ public final class Board implements Copyable<Board> {
 						&& !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
 					for (byte pieceType : getPawnTargetPieceTypes(targetPosition.row)) {
 						byte targetPiece = MovementUtil.getPiece(pieceType, color);
+						short flags = extractMovementFlags(
+							originPosition,
+							targetPosition,
+							targetPiece,
+							extractAllMoveFlags
+						);
+						metadataBuilder.add(flags);
 						targets.add(
 							new MovementTarget(
 								targetPosition,
 								targetPiece,
-								extractMovementFlags(
-									originPosition,
-									targetPosition,
-									targetPiece,
-									extractAllMoveFlags
-								)
+								flags
 							)
 						);
+						if (stopOnFirstMovement) {
+							return SquareVisitor.STOP_WALKING;
+						}
 					}
 				}
 				return SquareVisitor.CONTINUE;
 			}
 		);
-		if (getInitialPawnRow(color) == originPosition.row) {
-			direcionalPiecesWalker(
-				originPosition,
-				getPawnDoubleSquareMovementDirections(color),
-				1,
-				(Position targetPosition, byte targetSquareValue) -> {
-					byte moveValue = (byte) (originSquareValue * targetSquareValue);
-					if (moveValue == 0) {
-						byte midRow = (byte) ((originPosition.row + targetPosition.row) / 2);
-						if (grid[midRow][originPosition.column] == MovementUtil.EMPTY
-								&& !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
-							targets.add(
-								new MovementTarget(
-									targetPosition,
-									originSquareValue,
-									extractMovementFlags(
-										originPosition,
-										targetPosition,
-										originSquareValue,
-										extractAllMoveFlags
-									)
-								)
-							);
-						}
-					}
-					return SquareVisitor.CONTINUE;
-				}
-			);
-		}
-		return new PieceMovements(
-			originPosition,
-			originSquareValue,
-			targets,
-			mergeFlags(targets)
-		);
+		return targets;
 	}
 	
-	private static MovementMetadata mergeFlags(List<MovementTarget> targets) {
-		Builder builder = MovementMetadata.builder();
-		targets.forEach(t -> builder.add(t.getFlags()));
-		return builder.buid();
+	private List<MovementTarget> getPawnDoubleSquareMovemenTargets(
+		Position originPosition,
+		boolean extractAllMoveFlags,
+		boolean stopOnFirstMovement,
+		MovementMetadata.Builder metadataBuilder
+	) {
+		byte originSquareValue = grid[originPosition.row][originPosition.column];
+		byte color = MovementUtil.getPieceColor(originSquareValue);
+		if (getInitialPawnRow(color) != originPosition.row) {
+			return new ArrayList<>();
+		}
+		List<MovementTarget> targets = new ArrayList<>(2);
+		direcionalPiecesWalker(
+			originPosition,
+			getPawnDoubleSquareMovementDirections(color),
+			1,
+			(Position targetPosition, byte targetSquareValue) -> {
+				byte moveValue = (byte) (originSquareValue * targetSquareValue);
+				if (moveValue == 0) {
+					byte midRow = (byte) ((originPosition.row + targetPosition.row) / 2);
+					if (grid[midRow][originPosition.column] == MovementUtil.EMPTY
+							&& !isKingInCheckWithMovement(originPosition, targetPosition, originSquareValue)) {
+						short flags = extractMovementFlags(
+							originPosition,
+							targetPosition,
+							originSquareValue,
+							extractAllMoveFlags
+						);
+						metadataBuilder.add(flags);
+						targets.add(
+							new MovementTarget(
+								targetPosition,
+								originSquareValue,
+								flags
+							)
+						);
+						if (stopOnFirstMovement) {
+							return SquareVisitor.STOP_WALKING;
+						}
+					}
+				}
+				return SquareVisitor.CONTINUE;
+			}
+		);
+		return targets;
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -1322,7 +1411,10 @@ public final class Board implements Copyable<Board> {
 		byte targetBackup = grid[target.row][target.column];
 		grid[origin.row][origin.column] = MovementUtil.EMPTY;
 		grid[target.row][target.column] = targetPiece;
-		boolean isKingInCheck = isUnderAttack(state.getKingPosition(color), MovementUtil.getOppositeColor(color));
+		boolean isKingInCheck = isUnderAttack(
+			state.getKingPosition(color),
+			MovementUtil.getOppositeColor(color)
+		);
 		grid[origin.row][origin.column] = originPiece;
 		grid[target.row][target.column] = targetBackup;
 		if (state.getEnPassantTargetSquare() != null && state.getEnPassantTargetSquare().equals(target)) {
@@ -1367,10 +1459,8 @@ public final class Board implements Copyable<Board> {
 	}
 	
 	/**
-	 * Retrieves a list of pieces that are attacking the given position. This
-	 * method return all
-	 * pieces that can reach an specific position by made a movement. A pinned
-	 * piece will be
+	 * Retrieves a list of pieces that are attacking the given position. This method return all
+	 * pieces that can reach an specific position by made a movement. A pinned piece will be
 	 * considered in this method.
 	 *
 	 * <pre>
@@ -1413,7 +1503,94 @@ public final class Board implements Copyable<Board> {
 			"squid:S1142"
 		}
 	)
-	private List<LocalizedPiece> getAttackers(Position position, byte attackerColor, boolean stopOnFirstAttackant) {
+	private List<LocalizedPiece> getAttackers(
+		Position position,
+		byte attackerColor,
+		boolean stopOnFirstAttackant
+	) {
+		List<LocalizedPiece> attackers = new ArrayList<>(15);
+		Direction[] directions = MovementUtil.isWhiteColor(attackerColor)
+				? BLACK_PAWN_CAPTURE_DIRECTIONS
+				: WHITE_PAWN_CAPTURE_DIRECTIONS;
+		for (int i = 0; i < directions.length; i++) {
+			int targetRow = position.row + directions[i].rowDirection;
+			int targetColumn = position.column + directions[i].columnDirection;
+			if (!isInsideBoardBound(targetRow, targetColumn)) {
+				continue;
+			}
+			if (grid[targetRow][targetColumn] == MovementUtil.EMPTY) {
+				continue;
+			}
+			if (MovementUtil.isPawn(grid[targetRow][targetColumn])
+					&& MovementUtil.getPieceColor(grid[targetRow][targetColumn]) == attackerColor) {
+				attackers.add(new LocalizedPiece(Position.of(targetRow, targetColumn), grid[targetRow][targetColumn]));
+				if (stopOnFirstAttackant) {
+					return attackers;
+				}
+			}
+		}
+		directions = KNIGHT_DIRECTIONS;
+		for (int i = 0; i < directions.length; i++) {
+			int targetRow = position.row + directions[i].rowDirection;
+			int targetColumn = position.column + directions[i].columnDirection;
+			if (!isInsideBoardBound(targetRow, targetColumn)) {
+				continue;
+			}
+			if (grid[targetRow][targetColumn] == MovementUtil.EMPTY) {
+				continue;
+			}
+			if (MovementUtil.isKnight(grid[targetRow][targetColumn])
+					&& MovementUtil.getPieceColor(grid[targetRow][targetColumn]) == attackerColor) {
+				attackers.add(new LocalizedPiece(Position.of(targetRow, targetColumn), grid[targetRow][targetColumn]));
+				if (stopOnFirstAttackant) {
+					return attackers;
+				}
+			}
+		}
+		directions = QUEEN_DIRECTIONS;
+		for (int i = 0; i < directions.length; i++) {
+			for (int d = 1; d <= 7; d++) {
+				int targetRow = position.row + d * directions[i].rowDirection;
+				int targetColumn = position.column + d * directions[i].columnDirection;
+				if (!isInsideBoardBound(targetRow, targetColumn)) {
+					break;
+				}
+				if (grid[targetRow][targetColumn] == MovementUtil.EMPTY) {
+					continue;
+				}
+				if (MovementUtil.getPieceColor(grid[targetRow][targetColumn]) != attackerColor) {
+					break;
+				}
+				int rowDiff = targetRow - position.row;
+				int columnDiff = targetColumn - position.column;
+				if (MovementUtil.isQueen(grid[targetRow][targetColumn])
+						|| MovementUtil.isRook(grid[targetRow][targetColumn]) && (rowDiff == 0 && columnDiff != 0 || rowDiff != 0 && columnDiff == 0)
+						|| MovementUtil.isBishop(grid[targetRow][targetColumn]) && Math.abs(rowDiff) == Math.abs(columnDiff)
+						|| MovementUtil.isKing(grid[targetRow][targetColumn]) && d == 1) {
+					attackers.add(
+						new LocalizedPiece(
+							Position.of(targetRow, targetColumn),
+							grid[targetRow][targetColumn]
+						)
+					);
+					if (stopOnFirstAttackant) {
+						return attackers;
+					}
+				}
+				break;
+			}
+		}
+		
+		return attackers;
+	}
+	
+	@SuppressWarnings(
+		{
+			"javadoc",
+			"squid:S1142"
+		}
+	)
+	private List<LocalizedPiece> getAttackers2(Position position, byte attackerColor, boolean stopOnFirstAttackant) {
 		BiFunction<Byte, Byte, Direction[]> directionResolver = (pieceType, color) -> {
 			return switch (pieceType) {
 				case MovementUtil.KING -> KING_DIRECTIONS;

@@ -66,8 +66,9 @@ public final class PerftCalculator {
 		int depth,
 		boolean extractAllMetadata
 	) {
-		PerftResult.Builder resultBuilder = PerftResult.builder();
+		PerftResult.Builder resultBuilder = PerftResult.builder(fen);
 		Board board = new Board(fen);
+		long t1 = System.currentTimeMillis();
 		perftWalker(
 			board,
 			1,
@@ -75,7 +76,8 @@ public final class PerftCalculator {
 			extractAllMetadata,
 			resultBuilder
 		);
-		return resultBuilder.build();
+		long t2 = System.currentTimeMillis();
+		return resultBuilder.build(t2 - t1);
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -259,12 +261,6 @@ public final class PerftCalculator {
 	 * @param printStream The output stream.
 	 */
 	public static void divide(String fen, int depth, int divideDepth, PrintStream printStream) {
-		if (depth < 2) {
-			throw new IllegalArgumentException("The 'depth' parameter must be >= 2");
-		}
-		if (divideDepth < 1 || divideDepth > depth) {
-			throw new IllegalArgumentException("The 'divideDepth' parameter must be >= 1 and <= 'depth'");
-		}
 		Board board = new Board(fen);
 		printStream.println("Divide Function - AN.JA.BA.CH.EN");
 		printStream.println("FEN: " + fen);
@@ -283,6 +279,10 @@ public final class PerftCalculator {
 		printStream.flush();
 	}
 	
+	public static void main(String[] args) {
+		divide("7R/1bpkp3/p2pp3/3P4/4B1q1/2Q5/4NrP1/3K4 w - - 1 0", 10, 1);
+	}
+	
 	@SuppressWarnings(
 		{
 			"javadoc",
@@ -297,29 +297,28 @@ public final class PerftCalculator {
 		int maxDepth,
 		PrintStream printStream
 	) {
-		if (currentDepth == divideDepth) {
+		if (currentDepth >= divideDepth + 1) {
 			for (int i = 0; i < currentDepth - 1; i++) {
-				printStream.print(path[i][0]);
-				printStream.print(path[i][1]);
-				printStream.print(' ');
+				System.out.printf("%s%s ", path[i][0], path[i][1]);
 			}
-			printStream.print("-> ");
-			printStream.println(countNodes(board, currentDepth, maxDepth));
+			if (currentDepth <= maxDepth) {
+				System.out.println(countNodes(board, currentDepth, maxDepth));
+			} else {
+				System.out.println();
+			}
 			return;
 		}
 		
-		if (currentDepth + 1 <= maxDepth) {
-			Movements movements = board.getMovements(false);
-			for (int i = 0; i < movements.getOriginCount(); i++) {
-				PieceMovements pieceMovements = movements.getPieceMovements(i);
-				for (int j = 0; j < pieceMovements.getTargertsCount(); j++) {
-					MovementTarget movementTarget = pieceMovements.getTarget(j);
-					path[currentDepth - 1][0] = pieceMovements.getOrigin().getNotation();
-					path[currentDepth - 1][1] = movementTarget.getPosition().getNotation();
-					board.move(pieceMovements.getOrigin(), movementTarget);
-					divideWalker(board, currentDepth + 1, path, divideDepth, maxDepth, printStream);
-					board.undo();
-				}
+		Movements movements = board.getMovements(false);
+		for (int i = 0; i < movements.getOriginCount(); i++) {
+			PieceMovements pieceMovements = movements.getPieceMovements(i);
+			for (int j = 0; j < pieceMovements.getTargertsCount(); j++) {
+				MovementTarget movementTarget = pieceMovements.getTarget(j);
+				path[currentDepth - 1][0] = pieceMovements.getOrigin().getNotation();
+				path[currentDepth - 1][1] = movementTarget.getPosition().getNotation();
+				board.move(pieceMovements.getOrigin(), movementTarget);
+				divideWalker(board, currentDepth + 1, path, divideDepth, maxDepth, printStream);
+				board.undo();
 			}
 		}
 	}

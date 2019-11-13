@@ -18,7 +18,6 @@ package com.welyab.anjabachen.movement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
 
@@ -55,26 +54,6 @@ public class MovementMetadataTest {
 	}
 	
 	@ParameterizedTest
-	@CsvSource(
-		value = {
-			MovementUtil.CAPTURE_MASK + "," + MovementMetadata.CAPTURES,
-			MovementUtil.EN_PASSANT_MASK + "," + MovementMetadata.EN_PASSANT,
-			MovementUtil.CASTLING_MASK + "," + MovementMetadata.CASTLING,
-			MovementUtil.PROMOTION_MASK + "," + MovementMetadata.PROMOTIONS,
-			MovementUtil.CHECK_MASK + "," + MovementMetadata.CHECKS,
-			MovementUtil.DISCOVERY_CHECK_MASK + "," + MovementMetadata.DISCOVERY_CHECKS,
-			MovementUtil.DOUBLE_CHECK_MASK + "," + MovementMetadata.DOUBLE_CHECKS,
-			MovementUtil.CHECKMATE_MASK + "," + MovementMetadata.CHECKMATES,
-			MovementUtil.STALEMATE_MASK + "," + MovementMetadata.STALEMATE
-		}
-	)
-	@SuppressWarnings("javadoc")
-	public void testIsFieldPresentShouldReturnTrueWhenTheFieldIsPresentInTheMetadata(short flags, int field) {
-		MovementMetadata movementMetadata = MovementMetadata.builder().add(flags).buid();
-		assertTrue(movementMetadata.isFieldPresent(field));
-	}
-	
-	@ParameterizedTest
 	@ValueSource(
 		ints = {
 			MovementMetadata.NODES,
@@ -97,43 +76,23 @@ public class MovementMetadataTest {
 	}
 	
 	@ParameterizedTest
-	@ValueSource(
-		ints = {
-			MovementMetadata.NODES,
-			MovementMetadata.CAPTURES,
-			MovementMetadata.EN_PASSANT,
-			MovementMetadata.CASTLING,
-			MovementMetadata.PROMOTIONS,
-			MovementMetadata.CHECKS,
-			MovementMetadata.DISCOVERY_CHECKS,
-			MovementMetadata.DOUBLE_CHECKS,
-			MovementMetadata.CHECKMATES,
-			MovementMetadata.STALEMATE
-		}
-	)
-	@SuppressWarnings("javadoc")
-	public void testIsFieldPresentShouldReturnTrueWhenTheFieldIsPresentInTheMetadata(int field) {
-		assertFalse(MovementMetadata.empty().isFieldPresent(field));
-	}
-	
-	@ParameterizedTest
 	@CsvSource(
 		value = {
-			"NODES" + "," + MovementMetadata.NODES,
-			"CAPTURES" + "," + MovementMetadata.CAPTURES,
-			"EN_PASSANT" + "," + MovementMetadata.EN_PASSANT,
-			"CASTLING" + "," + MovementMetadata.CASTLING,
-			"PROMOTIONS" + "," + MovementMetadata.PROMOTIONS,
-			"CHECKS" + "," + MovementMetadata.CHECKS,
-			"DISCOVERY_CHECKS" + "," + MovementMetadata.DISCOVERY_CHECKS,
-			"DOUBLE_CHECKS" + "," + MovementMetadata.DOUBLE_CHECKS,
-			"CHECKMATES" + "," + MovementMetadata.CHECKMATES,
-			"STALEMATE" + "," + MovementMetadata.STALEMATE
+			"nodes" + "," + MovementMetadata.NODES,
+			"captures" + "," + MovementMetadata.CAPTURES,
+			"e.p" + "," + MovementMetadata.EN_PASSANT,
+			"castlings" + "," + MovementMetadata.CASTLING,
+			"promotions" + "," + MovementMetadata.PROMOTIONS,
+			"checks" + "," + MovementMetadata.CHECKS,
+			"disc. checks" + "," + MovementMetadata.DISCOVERY_CHECKS,
+			"double checks" + "," + MovementMetadata.DOUBLE_CHECKS,
+			"checkmates" + "," + MovementMetadata.CHECKMATES,
+			"stalemates" + "," + MovementMetadata.STALEMATE
 		}
 	)
 	@SuppressWarnings("javadoc")
 	public void testIsFieldPresentShouldReturnTrueWhenTheFieldIsPresentInTheMetadata(String fieldName, int field) {
-		assertEquals(fieldName, MovementMetadata.getKeyname(field));
+		assertEquals(fieldName, MovementMetadata.getFieldName(field));
 	}
 	
 	@SuppressWarnings("javadoc")
@@ -188,9 +147,9 @@ public class MovementMetadataTest {
 	@Test
 	@SuppressWarnings("javadoc")
 	public void testToStringShouldCreateStringInTheCorrectFormat() {
-		String expected = "NODES = 0, CAPTURES = 0, EN_PASSANT = 0, CASTLING = 0, "
-				+ "PROMOTIONS = 0, CHECKS = 0, DISCOVERY_CHECKS = 0, DOUBLE_CHECKS = 0, "
-				+ "CHECKMATES = 0, STALEMATE = 0";
+		String expected = "nodes = 0, captures = 0, e.p = 0, castlings = 0, "
+				+ "promotions = 0, checks = 0, disc. checks = 0, double checks = 0, "
+				+ "checkmates = 0, stalemates = 0";
 		assertEquals(expected, MovementMetadata.empty().toString());
 	}
 }

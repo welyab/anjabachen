@@ -18,6 +18,7 @@ package com.welyab.anjabachen.movement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class joins a set of information about a movement. During generation, the engine
@@ -89,16 +90,16 @@ public final class MovementMetadata {
 	
 	@SuppressWarnings("javadoc")
 	private static final String[] KEY_NAMES = {
-		"NODES",
-		"CAPTURES",
-		"EN_PASSANT",
-		"CASTLING",
-		"PROMOTIONS",
-		"CHECKS",
-		"DISCOVERY_CHECKS",
-		"DOUBLE_CHECKS",
-		"CHECKMATES",
-		"STALEMATE"
+		"nodes",
+		"captures",
+		"e.p",
+		"castlings",
+		"promotions",
+		"checks",
+		"disc. checks",
+		"double checks",
+		"checkmates",
+		"stalemates"
 	};
 	
 	/**
@@ -109,7 +110,6 @@ public final class MovementMetadata {
 	@SuppressWarnings("javadoc")
 	private MovementMetadata() {
 		values = new long[10];
-		Arrays.fill(values, -1);
 	}
 	
 	public static List<Integer> getFields() {
@@ -120,15 +120,11 @@ public final class MovementMetadata {
 		return list;
 	}
 	
-	/**
-	 * Evaluate if an field is present.
-	 * 
-	 * @param field The field.
-	 * 
-	 * @return A value <code>true</code> if the field is present, or <code>false</code> if not.
-	 */
-	public boolean isFieldPresent(int field) {
-		return values[field] >= 0;
+	public static List<String> getFieldsNames() {
+		return getFields()
+			.stream()
+			.map(i -> getFieldName(i))
+			.collect(Collectors.toList());
 	}
 	
 	/**
@@ -159,7 +155,7 @@ public final class MovementMetadata {
 	 * @throws ArrayIndexOutOfBoundsException If the key is invalid.
 	 */
 	public long getValue(int key) {
-		return values[key] + 1;
+		return values[key];
 	}
 	
 	/**
@@ -263,7 +259,7 @@ public final class MovementMetadata {
 	 * 
 	 * @return The key name.
 	 */
-	public static String getKeyname(int key) {
+	public static String getFieldName(int key) {
 		return KEY_NAMES[key];
 	}
 	
@@ -615,7 +611,7 @@ public final class MovementMetadata {
 			if (i > 0) {
 				builder.append(", ");
 			}
-			builder.append(getKeyname(i)).append(" = ").append(getValue(i));
+			builder.append(getFieldName(i)).append(" = ").append(getValue(i));
 		}
 		return builder.toString();
 	}

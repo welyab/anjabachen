@@ -39,7 +39,7 @@ public final class Position {
 	
 	// @formatter:off
 	@SuppressWarnings("javadoc")
-	private static final String[][] CACHE_NOTATION = {
+	private static final String[][] CACHE_SAN = {
 		{"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"},
 		{"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"},
 		{"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"},
@@ -49,6 +49,80 @@ public final class Position {
 		{"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"},
 		{"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"},
 	};
+	// @formatter:on
+	
+	// @formatter:off
+	@SuppressWarnings("javadoc") public static final Position A1 = of(7, 0);
+	@SuppressWarnings("javadoc") public static final Position A2 = of(6, 0);
+	@SuppressWarnings("javadoc") public static final Position A3 = of(5, 0);
+	@SuppressWarnings("javadoc") public static final Position A4 = of(4, 0);
+	@SuppressWarnings("javadoc") public static final Position A5 = of(3, 0);
+	@SuppressWarnings("javadoc") public static final Position A6 = of(2, 0);
+	@SuppressWarnings("javadoc") public static final Position A7 = of(1, 0);
+	@SuppressWarnings("javadoc") public static final Position A8 = of(0, 0);
+	
+	@SuppressWarnings("javadoc") public static final Position B1 = of(7, 1);
+	@SuppressWarnings("javadoc") public static final Position B2 = of(6, 1);
+	@SuppressWarnings("javadoc") public static final Position B3 = of(5, 1);
+	@SuppressWarnings("javadoc") public static final Position B4 = of(4, 1);
+	@SuppressWarnings("javadoc") public static final Position B5 = of(3, 1);
+	@SuppressWarnings("javadoc") public static final Position B6 = of(2, 1);
+	@SuppressWarnings("javadoc") public static final Position B7 = of(1, 1);
+	@SuppressWarnings("javadoc") public static final Position B8 = of(0, 1);
+	
+	@SuppressWarnings("javadoc") public static final Position C1 = of(7, 2);
+	@SuppressWarnings("javadoc") public static final Position C2 = of(6, 2);
+	@SuppressWarnings("javadoc") public static final Position C3 = of(5, 2);
+	@SuppressWarnings("javadoc") public static final Position C4 = of(4, 2);
+	@SuppressWarnings("javadoc") public static final Position C5 = of(3, 2);
+	@SuppressWarnings("javadoc") public static final Position C6 = of(2, 2);
+	@SuppressWarnings("javadoc") public static final Position C7 = of(1, 2);
+	@SuppressWarnings("javadoc") public static final Position C8 = of(0, 2);
+	
+	@SuppressWarnings("javadoc") public static final Position D1 = of(7, 3);
+	@SuppressWarnings("javadoc") public static final Position D2 = of(6, 3);
+	@SuppressWarnings("javadoc") public static final Position D3 = of(5, 3);
+	@SuppressWarnings("javadoc") public static final Position D4 = of(4, 3);
+	@SuppressWarnings("javadoc") public static final Position D5 = of(3, 3);
+	@SuppressWarnings("javadoc") public static final Position D6 = of(2, 3);
+	@SuppressWarnings("javadoc") public static final Position D7 = of(1, 3);
+	@SuppressWarnings("javadoc") public static final Position D8 = of(0, 3);
+	
+	@SuppressWarnings("javadoc") public static final Position E1 = of(7, 4);
+	@SuppressWarnings("javadoc") public static final Position E2 = of(6, 4);
+	@SuppressWarnings("javadoc") public static final Position E3 = of(5, 4);
+	@SuppressWarnings("javadoc") public static final Position E4 = of(4, 4);
+	@SuppressWarnings("javadoc") public static final Position E5 = of(3, 4);
+	@SuppressWarnings("javadoc") public static final Position E6 = of(2, 4);
+	@SuppressWarnings("javadoc") public static final Position E7 = of(1, 4);
+	@SuppressWarnings("javadoc") public static final Position E8 = of(0, 4);
+	
+	@SuppressWarnings("javadoc") public static final Position F1 = of(7, 5);
+	@SuppressWarnings("javadoc") public static final Position F2 = of(6, 5);
+	@SuppressWarnings("javadoc") public static final Position F3 = of(5, 5);
+	@SuppressWarnings("javadoc") public static final Position F4 = of(4, 5);
+	@SuppressWarnings("javadoc") public static final Position F5 = of(3, 5);
+	@SuppressWarnings("javadoc") public static final Position F6 = of(2, 5);
+	@SuppressWarnings("javadoc") public static final Position F7 = of(1, 5);
+	@SuppressWarnings("javadoc") public static final Position F8 = of(0, 5);
+	
+	@SuppressWarnings("javadoc") public static final Position G1 = of(7, 6);
+	@SuppressWarnings("javadoc") public static final Position G2 = of(6, 6);
+	@SuppressWarnings("javadoc") public static final Position G3 = of(5, 6);
+	@SuppressWarnings("javadoc") public static final Position G4 = of(4, 6);
+	@SuppressWarnings("javadoc") public static final Position G5 = of(3, 6);
+	@SuppressWarnings("javadoc") public static final Position G6 = of(2, 6);
+	@SuppressWarnings("javadoc") public static final Position G7 = of(1, 6);
+	@SuppressWarnings("javadoc") public static final Position G8 = of(0, 6);
+	
+	@SuppressWarnings("javadoc") public static final Position H1 = of(7, 7);
+	@SuppressWarnings("javadoc") public static final Position H2 = of(6, 7);
+	@SuppressWarnings("javadoc") public static final Position H3 = of(5, 7);
+	@SuppressWarnings("javadoc") public static final Position H4 = of(4, 7);
+	@SuppressWarnings("javadoc") public static final Position H5 = of(3, 7);
+	@SuppressWarnings("javadoc") public static final Position H6 = of(2, 7);
+	@SuppressWarnings("javadoc") public static final Position H7 = of(1, 7);
+	@SuppressWarnings("javadoc") public static final Position H8 = of(0, 7);
 	// @formatter:on
 	
 	/** The position row. */
@@ -87,7 +161,7 @@ public final class Position {
 	 * @return The algebraic notation.
 	 */
 	public String getNotation() {
-		return CACHE_NOTATION[row][column];
+		return CACHE_SAN[row][column];
 	}
 	
 	@SuppressWarnings("javadoc")

@@ -109,15 +109,7 @@ public class BoardTest {
 	)
 	@SuppressWarnings("javadoc")
 	public void getPieceShouldReturnProperlyPiece(byte pieceCode, byte row, byte column) {
-		assertEquals(pieceCode, new Board().getPiece(Position.of(row, column)));
-	}
-	
-	@Test
-	@SuppressWarnings("javadoc")
-	public void getPieceShouldThronEmptySquareExceptionWhenSquareIsEmpty() {
-		assertThrows(EmptySquareException.class, () -> {
-			new Board().getPiece(Position.of(4, 4));
-		});
+		assertEquals(pieceCode, new Board().getSquareValue(Position.of(row, column)));
 	}
 	
 	@ParameterizedTest
@@ -1400,7 +1392,7 @@ public class BoardTest {
 		
 		assertEquals(
 			MovementUtil.WHITE_ROOK,
-			board.getPiece(state.getKingRookPosition(MovementUtil.WHITE))
+			board.getSquareValue(state.getKingRookPosition(MovementUtil.WHITE))
 		);
 	}
 	
@@ -1417,7 +1409,7 @@ public class BoardTest {
 		
 		assertEquals(
 			MovementUtil.WHITE_ROOK,
-			board.getPiece(state.getQueenRookPosition(MovementUtil.WHITE))
+			board.getSquareValue(state.getQueenRookPosition(MovementUtil.WHITE))
 		);
 	}
 	
@@ -1434,7 +1426,7 @@ public class BoardTest {
 		
 		assertEquals(
 			MovementUtil.BLACK_ROOK,
-			board.getPiece(state.getKingRookPosition(MovementUtil.BLACK))
+			board.getSquareValue(state.getKingRookPosition(MovementUtil.BLACK))
 		);
 	}
 	
@@ -1451,7 +1443,7 @@ public class BoardTest {
 		
 		assertEquals(
 			MovementUtil.BLACK_ROOK,
-			board.getPiece(state.getQueenRookPosition(MovementUtil.BLACK))
+			board.getSquareValue(state.getQueenRookPosition(MovementUtil.BLACK))
 		);
 	}
 	

@@ -64,7 +64,8 @@ rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 ### Movement generation
 
 All chess playing softwares need a movement generation mechanism.
-In AN.JA.BA.CH.EN, all movements algorithms are made inside the class `Board`, that provides a easy to use API. However, the algorithms implemented are very simple, based in a bi-dimensional array.
+In AN.JA.BA.CH.EN, all movements algorithms are made inside the class `Board`, that provides a easy to use API. 
+However, the algorithms implemented are very simple, based in a bi-dimensional array.
 
 ```java
 byte[][] grid = new byte[8][8];
@@ -84,58 +85,50 @@ Board board = new Board();
 Movements movements = board.getMovements();
 ```
 
+The method `.getMovements()` retrieves
+all movements for the color that has the turn to move. But it is possible to get movements for the other side 
+by indicating an specific color: `.getMovements(color)`. When a movement is submitted to the board object, subsequent
+call to `.getMovements()` will retrieve movements for the other side color, and so on.
+There are some methods to generate the movements for an specific pieces as well.
+
 #### Moving pieces
 
-The commands to a piece to move are submited to the `Board` object.
+### PERFT calculation
 
-### Text based board output
+PERFT is a technic used to help to find bugs in movement generation. A PERFT calculation walk all movement tree
+until a certain depth, count the nodes found, and other information, like the positions that are originated
+from a movement of capturing, castling movements, _en passant_, etc. This technic also shows how fast
+the movement generation is. Currently AN.JA.BA.CH.EN is spent about 18 minutes to generate PERFT results until
+depth 5 of the initial position described by this FEN string: `r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -`.
+It is slowly, but was it was worse; there are softwares that performs the same calculation in a few seconds. 
+Old implements take 95 minutes. There is space to improvements. As said before,
+AN.JA.BA.CH.EN uses very simples algorithms to perform movement generation.
 
-```java
-var board = new Board("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
-System.out.println(board.toString());
+In order to use PERFT calculation, just call the method passing the initial FEN position. 
+
+```
+PerftResults results = PerftCalculator.perft("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -", 4);
+results.asTextTable();
 ```
 
-Will produce the follow output:
+... and the results:
 
 ```text
-┌───┬───┬───┬───┬───┬───┬───┬───┐
-│   │   │   │   │   │   │   │   │
-├───┼───┼───┼───┼───┼───┼───┼───┤
-│   │   │ p │   │   │   │   │   │
-├───┼───┼───┼───┼───┼───┼───┼───┤
-│   │   │   │ p │   │   │   │   │
-├───┼───┼───┼───┼───┼───┼───┼───┤
-│ K │ P │   │   │   │   │   │ r │
-├───┼───┼───┼───┼───┼───┼───┼───┤
-│   │ R │   │   │   │ p │   │ k │
-├───┼───┼───┼───┼───┼───┼───┼───┤
-│   │   │   │   │   │   │   │   │
-├───┼───┼───┼───┼───┼───┼───┼───┤
-│   │   │   │   │ P │   │ P │   │
-├───┼───┼───┼───┼───┼───┼───┼───┤
-│   │   │   │   │   │   │   │   │
-└───┴───┴───┴───┴───┴───┴───┴───┘
+Perft Calculation - AN.JA.BA.CH.EN
+FEN: r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -
+Total time: 17 m 25.991 s
++-------+-----------+----------+-------+-----------+------------+---------+--------------+---------------+------------+------------+
+| depth |     nodes | captures |   e.p | castlings | promotions |  checks | disc. checks | double checks | checkmates | stalemates |
++-------+-----------+----------+-------+-----------+------------+---------+--------------+---------------+------------+------------+
+|     1 |        48 |        8 |     0 |         2 |          0 |       0 |            0 |             0 |          0 |          0 |
+|     2 |      2039 |      351 |     1 |        91 |          0 |       3 |            0 |             0 |          0 |          0 |
+|     3 |     97862 |    17102 |    45 |      3162 |          0 |     993 |            0 |             0 |          1 |          0 |
+|     4 |   4085603 |   757163 |  1929 |    128013 |      15172 |   25523 |           42 |             6 |         43 |          0 |
+|     5 | 193690690 | 35043416 | 73365 |   4993637 |       8392 | 3309875 |        19883 |          2645 |      30171 |          0 |
++-------+-----------+----------+-------+-----------+------------+---------+--------------+---------------+------------+------------+
 ```
 
-### Performing perft calculation
 
-```java
-var results = PerftCalculator.perft("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -", 4, true);
-results.printTable();
-```
-
-Will produce the follow output:
-
-```text
-+-------+--------+----------+------+---------+------------+--------+------------+------------+------------+
-| Depth |  Nodes | Captures | e.p. | castles | promotions | checks | dis checks | dou checks | checkmates |
-+-------+--------+----------+------+---------+------------+--------+------------+------------+------------+
-|     1 |     48 |        8 |    0 |       2 |          0 |      0 |         0 |           0 |          0 |
-|     2 |   2039 |      351 |    1 |      91 |          0 |      3 |         0 |           0 |          0 |
-|     3 |  97862 |    17102 |   45 |    3162 |          0 |    993 |         0 |           0 |          1 |
-|     4 | 4085603|   757163 | 1929 |  128013 |      15172 |  25523 |        42 |           6 |         43 |
-+-------+--------+----------+------+---------+------------+--------+------------+------------+------------+
-```
 
 ---
 

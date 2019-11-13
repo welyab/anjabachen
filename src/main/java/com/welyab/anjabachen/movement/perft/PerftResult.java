@@ -15,50 +15,161 @@
  */
 package com.welyab.anjabachen.movement.perft;
 
+import java.io.PrintStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.welyab.anjabachen.movement.MovementMetadata;
 
 public class PerftResult {
 	
+	private final String fen;
+	
+	private final long timeSpent;
+	
 	private final Map<Integer, MovementMetadata> results;
 	
-	private PerftResult(Map<Integer, MovementMetadata> results) {
+	private PerftResult(
+		String fen,
+		long timeSpent,
+		Map<Integer, MovementMetadata> results
+	) {
+		this.fen = fen;
+		this.timeSpent = timeSpent;
 		this.results = results;
 	}
 	
 	public List<Integer> getDepths() {
-		return results.keySet().stream().sorted().collect(Collectors.toList());
-	}
-	
-	public List<Integer> getAvailableFields(int depth) {
-		List<Integer> list = new ArrayList<>();
-		MovementMetadata metadata = getMetadata(depth);
-		for (int field : MovementMetadata.getFields()) {
-			if (metadata.isFieldPresent(field)) {
-				list.add(field);
-			}
-		}
-		return list;
+		return results
+			.keySet()
+			.stream()
+			.sorted()
+			.collect(Collectors.toList());
 	}
 	
 	public MovementMetadata getMetadata(int depth) {
 		return results.get(depth);
 	}
 	
-	public static Builder builder() {
-		return new Builder();
+	public static Builder builder(String fen) {
+		return new Builder(fen);
+	}
+	
+	public String getFen() {
+		return fen;
+	}
+	
+	public long getTimeSpent() {
+		return timeSpent;
+	}
+	
+	public void asTextTable() {
+		toTable(System.out);
+	}
+	
+	public static void main(String[] args) {
+		PerftCalculator
+			.perft(
+				"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",
+				5,
+				true
+			)
+			.asTextTable();
+	}
+	
+	public void toTable(PrintStream out) {
+		List<List<String>> values = new ArrayList<>();
+		List<String> header = new ArrayList<>();
+		header.add("depth");
+		values.add(header);
+		List<String> fieldsNames = MovementMetadata.getFieldsNames();
+		for (String fieldName : fieldsNames) {
+			header.add(fieldName);
+		}
+		for (int depth : getDepths()) {
+			MovementMetadata metadata = getMetadata(depth);
+			List<String> list = new ArrayList<>();
+			list.add(Integer.toString(depth));
+			values.add(list);
+			for (Integer field : MovementMetadata.getFields()) {
+				list.add(Long.toString(metadata.getValue(field)));
+			}
+		}
+		Function<Integer, Integer> maxLengthByColumn = column -> {
+			return values
+				.stream()
+				.map(l -> l.get(column))
+				.mapToInt(String::length)
+				.max()
+				.orElse(0);
+		};
+		StringBuilder horizontalSeparator = new StringBuilder();
+		int columnsCount = fieldsNames.size() + 1;
+		for (int i = 0; i < columnsCount; i++) {
+			horizontalSeparator.append("+");
+			horizontalSeparator.append(leftPad("", '-', maxLengthByColumn.apply(i) + 2));
+		}
+		horizontalSeparator.append("+");
+		out.println("Perft Calculation - AN.JA.BA.CH.EN");
+		out.println("FEN: " + getFen());
+		out.printf(Locale.US, "Total time: %s%n", getTimeString(timeSpent));
+		out.println(horizontalSeparator);
+		for (int i = 0; i < values.size(); i++) {
+			List<String> list = values.get(i);
+			for (int j = 0; j < list.size(); j++) {
+				String value = list.get(j);
+				out.print("| ");
+				out.print(leftPad(value, ' ', maxLengthByColumn.apply(j)));
+				out.print(" ");
+			}
+			out.println("|");
+			if (i == 0) {
+				out.println(horizontalSeparator);
+			}
+		}
+		out.println(horizontalSeparator);
+	}
+	
+	private static final String getTimeString(long millis) {
+		Duration duration = Duration.ofMillis(millis);
+		StringBuilder builder = new StringBuilder();
+		if (duration.toHoursPart() > 0) {
+			builder.append(duration.toHoursPart() + " h ");
+		}
+		if (duration.toMinutesPart() > 0) {
+			builder.append(duration.toMinutesPart() + " m ");
+		}
+		builder.append(duration.toSecondsPart())
+			.append(".")
+			.append(duration.toMillisPart())
+			.append(" s");
+		return builder.toString();
+	}
+	
+	private static String leftPad(String str, char c, int length) {
+		StringBuilder stringBuilder = new StringBuilder();
+		int diff = length - str.length();
+		for (int i = 0; i < diff; i++) {
+			stringBuilder.append(c);
+		}
+		stringBuilder.append(str);
+		return stringBuilder.toString();
 	}
 	
 	public static class Builder {
 		
 		private Map<Integer, MovementMetadata.Builder> metaBuilders = new HashMap<>();
 		
-		private Builder() {
+		private String fen;
+		
+		private Builder(String fen) {
+			this.fen = fen;
 		}
 		
 		private MovementMetadata.Builder getMetadataBuilder(int depth) {
@@ -120,7 +231,7 @@ public class PerftResult {
 			return this;
 		}
 		
-		public PerftResult build() {
+		public PerftResult build(long timeSpent) {
 			HashMap<Integer, MovementMetadata> values = metaBuilders
 				.entrySet()
 				.stream()
@@ -136,7 +247,11 @@ public class PerftResult {
 					}
 				);
 			
-			return new PerftResult(values);
+			return new PerftResult(
+				fen,
+				timeSpent,
+				values
+			);
 		}
 	}
 }

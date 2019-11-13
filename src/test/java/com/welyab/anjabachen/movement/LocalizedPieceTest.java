@@ -53,12 +53,12 @@ public class LocalizedPieceTest {
 	@SuppressWarnings("javadoc")
 	public void testToStringShouldReturnSpecificFormat() {
 		assertEquals(
-			"LocalizedPiece([6,5], K)",
+			"f2=K",
 			new LocalizedPiece(
 				Position.of(6, 5),
 				MovementUtil.WHITE_KING
 			).toString(),
-			"LocalizedPiece.toString should return the format 'LocalizedPiece([row,column], piece letter)'"
+			"LocalizedPiece.toString should return the format 'f2=K'"
 		);
 	}
 }
