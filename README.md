@@ -1,24 +1,64 @@
+<style>
+h1, h2, h3, h4, h5, h6 {
+	font-family: Arial, sans-serif;
+}
+p, ul {
+  font-family: Verdana, sans-serif;
+}
+</style>
+
 # AN.JA.BA.CH.EN
-## Another Java Based Chess Engine
 
 This is a hobbyist chess software completely programmed in Java.
 
 ### Features
 
-- [x] FEN string parsing
-- [x] FEN string generation
 - [x] Movement generation
 - [x] Movement metadata information
+- [x] FEN string parsing
+- [x] FEN string generation
 - [x] PERFT calculation
 - [x] Movement path enumeration
-- [ ] PGN file reader (in development)
-- [ ] PGN file writer (in development)
-- [ ] Text based board export
-- [ ] Board image generation (png, jpeg...) (in development)
-- [ ] Checkmate finder in N moves (in development)
-- [ ] Game engine (in development)
-- [ ] Chess960 compatible game engine (in development)
-- [ ] Universal Chess Interface (UCI) support (in development)
+- [ ] PGN file reader *
+- [ ] PGN file writer *
+- [ ] Text based board export *
+- [ ] Board image generation (png, jpeg...) *
+- [ ] Checkmate finder in N moves *
+- [ ] Game engine *
+- [ ] Chess960 compatible game engine *
+- [ ] Universal Chess Interface (UCI) support *
+- [ ] GUI software with support for third party UCI compatible engines *
+
+<strong><sup>*</sup></strong> <small style="color: Gray">features under developement</small>
+
+### Movement generation
+
+All chess playing softwares need a movement generation mechanism.
+In AN.JA.BA.CH.EN, all movements algorithms are made inside the class `Board`, that provides a easy to use API. 
+However, the algorithms implemented are very simple and trivial, based in a bi-dimensional array.
+
+```java
+byte[][] grid = new byte[8][8];
+```
+
+The `Board` object just swaps `grid` contents in order to make the movements.
+Something like `grid[a][b] = grid[x][y]`, followed by `grid[x][y] = 0`, move the piece
+located in `[x, y]` to the position indicated by `[a, b]`, and than clear the position `[x, y]`
+assign `0` to it. All rules for castling, _en passant_ captures, pin, etc, are considered during calculations.
+
+#### Generating movements
+
+```java
+// create a board with initial position, white to play
+Board board = new Board();
+// retrieve all possible movements for white pieces
+Movements movements = board.getMovements();
+```
+
+The method `.getMovements()` retrieves all movements for the color that has the turn to move. When a movement is submitted to the board object, a subsequent call to `.getMovements()` (and others related movement generation methods) will retrieve movements for the other side color, and so on. But it is possible to get movements for the other side 
+by indicating an specific color: `.getMovements(color)`. Also, there are some methods to generate the movements for an specific piece.
+
+#### Moving pieces
 
 ### Forsyth-Edwards Notation - FEN
 
@@ -60,38 +100,6 @@ Will produce the FEN string, that is the representation for the usual chess in t
 ```text
 rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 ```
-
-### Movement generation
-
-All chess playing softwares need a movement generation mechanism.
-In AN.JA.BA.CH.EN, all movements algorithms are made inside the class `Board`, that provides a easy to use API. 
-However, the algorithms implemented are very simple, based in a bi-dimensional array.
-
-```java
-byte[][] grid = new byte[8][8];
-```
-
-The `Board` class just swaps array contents in order to make movements.
-Something like `grid[a][b] = grid[x][y]`, followed by `grid[x][y] = 0`, move the piece
-located in `[x, y]` to the position indicated by `[a, b]`, and than clear the position `[x, y]`
-assign `0` to it. All rules for castling, _en passant_ captures, pin, etc, are considered during calculations.
-
-#### Generating movements
-
-```java
-// create a board with initial position, white to play
-Board board = new Board();
-// retrieve all possible movements for white piece
-Movements movements = board.getMovements();
-```
-
-The method `.getMovements()` retrieves
-all movements for the color that has the turn to move. But it is possible to get movements for the other side 
-by indicating an specific color: `.getMovements(color)`. When a movement is submitted to the board object, subsequent
-call to `.getMovements()` will retrieve movements for the other side color, and so on.
-There are some methods to generate the movements for an specific pieces as well.
-
-#### Moving pieces
 
 ### PERFT calculation
 
