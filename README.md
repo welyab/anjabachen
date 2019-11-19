@@ -1,12 +1,3 @@
-<style>
-h1, h2, h3, h4, h5, h6 {
-	font-family: Arial, sans-serif;
-}
-p, ul {
-  font-family: Verdana, sans-serif;
-}
-</style>
-
 # AN.JA.BA.CH.EN
 
 This is a hobbyist chess software completely programmed in Java.
