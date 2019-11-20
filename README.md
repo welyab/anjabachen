@@ -6,11 +6,9 @@ This is a hobbyist chess software completely programmed in Java.
 
 - [x] Movement generation
 - [x] FEN string parsing and generation
-- [x] PERFT calculation
-- [x] Movement path enumeration
-- [ ] PGN file reader *
-- [ ] PGN file writer *
-- [ ] Text based board export *
+- [x] PERFT calculation with path enumeration
+- [x] Text based board export
+- [ ] PGN file reader and writer *
 - [ ] Board image generation (png, jpeg...) *
 - [ ] Checkmate finder in N moves *
 - [ ] Game engine *
@@ -170,19 +168,16 @@ r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3
 
 ### PERFT calculation
 
-PERFT is a technic used to help to find bugs in movement generation. A PERFT calculation walk all movement tree
-until a certain depth, count the nodes found, and other information, like the positions that are originated
-from a movement of capturing, castling movements, _en passant_, etc. This technic also shows how fast
-the movement generation is. Currently AN.JA.BA.CH.EN is spent about 18 minutes to generate PERFT results until
-depth 5 of the initial position described by this FEN string: `r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -`.
-It is slowly, but was it was worse; there are softwares that performs the same calculation in a few seconds. 
-Old implements take 95 minutes. There is space to improvements. As said before,
-AN.JA.BA.CH.EN uses very simples algorithms to perform movement generation.
+PERFT is a technic used to help to find bugs in movement generation. A PERFT calculation walk all movement tree until a certain depth, count the nodes found, and other information, like the positions that are originated
+ the movement generation is. Currently AN.JA.BA.CH.EN is spent about 18 (with Intel Core i7) minutes to generate PERFT results until depth 5 of the initial position described by this FEN string: `r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -`.
+It is very, very slowly, but it was worse. Old implementations  of  AN.JA.BA.CH.EN took about 95 minutes to generate the same results. There are softwares that performs the same calculations in just a few seconds. Perhaps in the future implementations will be changed to improve performance.
 
-In order to use PERFT calculation, just call the method passing the initial FEN position. 
+With a generated PERFT result, it is possible to compare with results provided by other programs. If some differ occurs, then with have bug. Also, there are many PERFT results in the internet. The CPW has a article with some great chess positions and the respective PERFT calcualtions: [https://www.chessprogramming.org/Perft_Results](https://www.chessprogramming.org/Perft_Results).
 
-```
-PerftResults results = PerftCalculator.perft("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -", 4);
+In order to use PERFT calculation AN.JA.BA.CH.EN, just call the method passing the initial FEN position. 
+
+```java
+PerftResults results = PerftCalculator.perft("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -", 5);
 results.asTextTable();
 ```
 
@@ -202,8 +197,62 @@ Total time: 17 m 25.991 s
 |     5 | 193690690 | 35043416 | 73365 |   4993637 |       8392 | 3309875 |        19883 |          2645 |      30171 |          0 |
 +-------+-----------+----------+-------+-----------+------------+---------+--------------+---------------+------------+------------+
 ```
+Other PERFT calculation:
 
+```text
+Perft Calculation - AN.JA.BA.CH.EN
+FEN: 8/2Q5/8/8/8/8/5K2/7k w - -
+Total time: 17.358 s
++-------+----------+----------+-----+-----------+------------+--------+--------------+---------------+------------+------------+
+| depth |    nodes | captures | e.p | castlings | promotions | checks | disc. checks | double checks | checkmates | stalemates |
++-------+----------+----------+-----+-----------+------------+--------+--------------+---------------+------------+------------+
+|     1 |       29 |        0 |   0 |         0 |          0 |      5 |            0 |             0 |          1 |          6 |
+|     2 |       25 |        1 |   0 |         0 |          0 |      0 |            0 |             0 |          0 |          0 |
+|     3 |      663 |        0 |   0 |         0 |          0 |    118 |            4 |             0 |         25 |          6 |
+|     4 |     1539 |       16 |   0 |         0 |          0 |      0 |            0 |             0 |          0 |          0 |
+|     5 |    42562 |        0 |   0 |         0 |          0 |   8533 |          151 |             0 |        733 |       1396 |
+|     6 |   111912 |      977 |   0 |         0 |          0 |      0 |            0 |             0 |          0 |          0 |
+|     7 |  3084483 |        0 |   0 |         0 |          0 | 652565 |        16370 |             0 |      19722 |      21213 |
+|     8 | 10810922 |   116800 |   0 |         0 |          0 |      0 |            0 |             0 |          0 |          0 |
++-------+----------+----------+-----+-----------+------------+--------+--------------+---------------+------------+------------+
+```
+#### Movement path enumeration
 
+Enumerate the path is a feature of PERFT calculator that show all paths for each final board positions until reach certain depth.
+
+```java
+// the first parameter is the maximum depth
+// the second parameter is the length of the movement path enumeration
+// so, the configuration will output all possible movements only for the first movement
+PerftCalculator.divide("8/2Q5/8/8/8/8/5K2/7k w - -", 1, 1);
+```
+Will output:
+
+```
+c7b8 
+c7c8 
+...  25 other movements ...
+f2f1 
+f2e2 
+```
+Another exemplo:
+
+```java
+// the  divide configuration in this call will walk the tree
+// until the depth 6, showning movement path until the depth 3
+// from depth 3 to the depth 6, the divide function counts the total possible positions
+PerftCalculator.divide("8/2Q5/8/8/8/8/5K2/7k w - -", 6, 3);
+```
+And the output:
+
+```text
+c7c8 h1h2 c8b7 73
+c7c8 h1h2 c8a6 107
+... 599 other movements ...
+f2e2 h1g1 e2e1 173
+f2e2 h1g1 e2d2 436
+```
+As described, the above is the movement path enumeration until depth 3, showing the total possible positions  until reach the depth 6.
 
 ---
 
