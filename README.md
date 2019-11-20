@@ -235,7 +235,7 @@ c7c8
 f2f1 
 f2e2 
 ```
-Another exemplo:
+Another enumeration:
 
 ```java
 // the  divide configuration in this call will walk the tree
