@@ -45,10 +45,11 @@ Movements getMovements(position)
 Movements getMovements(color)
 // other methods...
 ```
-When the side color is informed, only movements for the specific color are considered. Otherwise, the movements are generated to the side color that has the turn to make the next movement. When a move is submitted to the board, it changes its state, of course, and a subsequent call to a movement generation method will consider the current state, and the side with turn to move, etc.
+When the side color is informed, only movements for the specific color are considered. Otherwise, the movements are generated to the side color that has the turn to make the next movement. When a move is submitted to the board, it changes its state, of course, and a subsequent call to a movement generation method will consider the current state, and the side with turn to move, and so on.
 ```java
 // create a board with initial position, white to play
 Board board = new Board();
+
 // retrieve all possible movements for white pieces
 Movements movements = board.getMovements();
 ```
@@ -70,12 +71,17 @@ All these information is encoded as flags in the structure that holds the moveme
 ```java
 // creates a board with initial piece disposition, white to play
 Board board = new Board();
+
 // from the board, retrieve a random movement
 Movement movement = board.getMovementRandom();
+
 // retrieves the destination square of the movement
 MovementTarget target = movement.getTarget();
+
 // get the movement flags
 short flags = target.getFlags();
+
+// how to evaluate if flags variable is marked
 // MovementUtil.isCapture(flags)
 // MovementUtil.isEnPassant(flags)
 // MovementUtil.isCastling(flags)
@@ -93,6 +99,7 @@ To move a piece, the instruction is submitted to the board by saying the origin 
 
 ```java
 Board board = new Board();
+
 // move the white king's pawn from square a2 to the square a4
 board.move(Position.E2, Position.E4);
 ```
@@ -144,6 +151,7 @@ rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
 After a movement, the FEN string will change in order to reflect the current board state:
 ```java
 Board board = new Board();
+
 // the Ruy Lopez opening
 board.move(Position.E2, Position.E4);
 board.move(Position.E7, Position.E5);
