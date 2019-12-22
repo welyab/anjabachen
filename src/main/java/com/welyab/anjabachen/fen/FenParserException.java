@@ -13,34 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.welyab.anjabachen.movement;
+package com.welyab.anjabachen.fen;
 
-public class Movement {
+import com.welyab.anjabachen.ChessException;
+
+public class FenParserException extends ChessException {
 	
-	private final Position origin;
+	private final String fen;
 	
-	private final MovementTarget movementTarget;
-	
-	public Movement(Position origin, MovementTarget movementTarget) {
-		this.origin = origin;
-		this.movementTarget = movementTarget;
+	public FenParserException(String fen, String message) {
+		super(message);
+		this.fen = fen;
 	}
 	
-	public Position getOrigin() {
-		return origin;
+	public FenParserException(String fen, String message, Throwable cause) {
+		super(message, cause);
+		this.fen = fen;
 	}
 	
-	public MovementTarget getTarget() {
-		return movementTarget;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("from ")
-			.append(origin.getNotation())
-			.append(" to ")
-			.append(movementTarget);
-		return builder.toString();
+	public String getFen() {
+		return fen;
 	}
 }
