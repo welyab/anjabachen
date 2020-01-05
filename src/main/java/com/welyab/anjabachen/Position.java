@@ -15,12 +15,6 @@
  */
 package com.welyab.anjabachen;
 
-/**
- * The <code>Position</code> is a simple pair of <code>row/column</code> that locates a square in
- * the chess board.
- * 
- * @author Welyab Paula
- */
 public final class Position {
 	
 	// @formatter:off
@@ -52,161 +46,112 @@ public final class Position {
 	// @formatter:on
 	
 	// @formatter:off
-	@SuppressWarnings("javadoc") public static final Position A1 = of(7, 0);
-	@SuppressWarnings("javadoc") public static final Position A2 = of(6, 0);
-	@SuppressWarnings("javadoc") public static final Position A3 = of(5, 0);
-	@SuppressWarnings("javadoc") public static final Position A4 = of(4, 0);
-	@SuppressWarnings("javadoc") public static final Position A5 = of(3, 0);
-	@SuppressWarnings("javadoc") public static final Position A6 = of(2, 0);
-	@SuppressWarnings("javadoc") public static final Position A7 = of(1, 0);
-	@SuppressWarnings("javadoc") public static final Position A8 = of(0, 0);
+	public static final Position A1 = of(7, 0);
+	public static final Position A2 = of(6, 0);
+	public static final Position A3 = of(5, 0);
+	public static final Position A4 = of(4, 0);
+	public static final Position A5 = of(3, 0);
+	public static final Position A6 = of(2, 0);
+	public static final Position A7 = of(1, 0);
+	public static final Position A8 = of(0, 0);
 	
-	@SuppressWarnings("javadoc") public static final Position B1 = of(7, 1);
-	@SuppressWarnings("javadoc") public static final Position B2 = of(6, 1);
-	@SuppressWarnings("javadoc") public static final Position B3 = of(5, 1);
-	@SuppressWarnings("javadoc") public static final Position B4 = of(4, 1);
-	@SuppressWarnings("javadoc") public static final Position B5 = of(3, 1);
-	@SuppressWarnings("javadoc") public static final Position B6 = of(2, 1);
-	@SuppressWarnings("javadoc") public static final Position B7 = of(1, 1);
-	@SuppressWarnings("javadoc") public static final Position B8 = of(0, 1);
+	public static final Position B1 = of(7, 1);
+	public static final Position B2 = of(6, 1);
+	public static final Position B3 = of(5, 1);
+	public static final Position B4 = of(4, 1);
+	public static final Position B5 = of(3, 1);
+	public static final Position B6 = of(2, 1);
+	public static final Position B7 = of(1, 1);
+	public static final Position B8 = of(0, 1);
 	
-	@SuppressWarnings("javadoc") public static final Position C1 = of(7, 2);
-	@SuppressWarnings("javadoc") public static final Position C2 = of(6, 2);
-	@SuppressWarnings("javadoc") public static final Position C3 = of(5, 2);
-	@SuppressWarnings("javadoc") public static final Position C4 = of(4, 2);
-	@SuppressWarnings("javadoc") public static final Position C5 = of(3, 2);
-	@SuppressWarnings("javadoc") public static final Position C6 = of(2, 2);
-	@SuppressWarnings("javadoc") public static final Position C7 = of(1, 2);
-	@SuppressWarnings("javadoc") public static final Position C8 = of(0, 2);
+	public static final Position C1 = of(7, 2);
+	public static final Position C2 = of(6, 2);
+	public static final Position C3 = of(5, 2);
+	public static final Position C4 = of(4, 2);
+	public static final Position C5 = of(3, 2);
+	public static final Position C6 = of(2, 2);
+	public static final Position C7 = of(1, 2);
+	public static final Position C8 = of(0, 2);
 	
-	@SuppressWarnings("javadoc") public static final Position D1 = of(7, 3);
-	@SuppressWarnings("javadoc") public static final Position D2 = of(6, 3);
-	@SuppressWarnings("javadoc") public static final Position D3 = of(5, 3);
-	@SuppressWarnings("javadoc") public static final Position D4 = of(4, 3);
-	@SuppressWarnings("javadoc") public static final Position D5 = of(3, 3);
-	@SuppressWarnings("javadoc") public static final Position D6 = of(2, 3);
-	@SuppressWarnings("javadoc") public static final Position D7 = of(1, 3);
-	@SuppressWarnings("javadoc") public static final Position D8 = of(0, 3);
+	public static final Position D1 = of(7, 3);
+	public static final Position D2 = of(6, 3);
+	public static final Position D3 = of(5, 3);
+	public static final Position D4 = of(4, 3);
+	public static final Position D5 = of(3, 3);
+	public static final Position D6 = of(2, 3);
+	public static final Position D7 = of(1, 3);
+	public static final Position D8 = of(0, 3);
 	
-	@SuppressWarnings("javadoc") public static final Position E1 = of(7, 4);
-	@SuppressWarnings("javadoc") public static final Position E2 = of(6, 4);
-	@SuppressWarnings("javadoc") public static final Position E3 = of(5, 4);
-	@SuppressWarnings("javadoc") public static final Position E4 = of(4, 4);
-	@SuppressWarnings("javadoc") public static final Position E5 = of(3, 4);
-	@SuppressWarnings("javadoc") public static final Position E6 = of(2, 4);
-	@SuppressWarnings("javadoc") public static final Position E7 = of(1, 4);
-	@SuppressWarnings("javadoc") public static final Position E8 = of(0, 4);
+	public static final Position E1 = of(7, 4);
+	public static final Position E2 = of(6, 4);
+	public static final Position E3 = of(5, 4);
+	public static final Position E4 = of(4, 4);
+	public static final Position E5 = of(3, 4);
+	public static final Position E6 = of(2, 4);
+	public static final Position E7 = of(1, 4);
+	public static final Position E8 = of(0, 4);
 	
-	@SuppressWarnings("javadoc") public static final Position F1 = of(7, 5);
-	@SuppressWarnings("javadoc") public static final Position F2 = of(6, 5);
-	@SuppressWarnings("javadoc") public static final Position F3 = of(5, 5);
-	@SuppressWarnings("javadoc") public static final Position F4 = of(4, 5);
-	@SuppressWarnings("javadoc") public static final Position F5 = of(3, 5);
-	@SuppressWarnings("javadoc") public static final Position F6 = of(2, 5);
-	@SuppressWarnings("javadoc") public static final Position F7 = of(1, 5);
-	@SuppressWarnings("javadoc") public static final Position F8 = of(0, 5);
+	public static final Position F1 = of(7, 5);
+	public static final Position F2 = of(6, 5);
+	public static final Position F3 = of(5, 5);
+	public static final Position F4 = of(4, 5);
+	public static final Position F5 = of(3, 5);
+	public static final Position F6 = of(2, 5);
+	public static final Position F7 = of(1, 5);
+	public static final Position F8 = of(0, 5);
 	
-	@SuppressWarnings("javadoc") public static final Position G1 = of(7, 6);
-	@SuppressWarnings("javadoc") public static final Position G2 = of(6, 6);
-	@SuppressWarnings("javadoc") public static final Position G3 = of(5, 6);
-	@SuppressWarnings("javadoc") public static final Position G4 = of(4, 6);
-	@SuppressWarnings("javadoc") public static final Position G5 = of(3, 6);
-	@SuppressWarnings("javadoc") public static final Position G6 = of(2, 6);
-	@SuppressWarnings("javadoc") public static final Position G7 = of(1, 6);
-	@SuppressWarnings("javadoc") public static final Position G8 = of(0, 6);
+	public static final Position G1 = of(7, 6);
+	public static final Position G2 = of(6, 6);
+	public static final Position G3 = of(5, 6);
+	public static final Position G4 = of(4, 6);
+	public static final Position G5 = of(3, 6);
+	public static final Position G6 = of(2, 6);
+	public static final Position G7 = of(1, 6);
+	public static final Position G8 = of(0, 6);
 	
-	@SuppressWarnings("javadoc") public static final Position H1 = of(7, 7);
-	@SuppressWarnings("javadoc") public static final Position H2 = of(6, 7);
-	@SuppressWarnings("javadoc") public static final Position H3 = of(5, 7);
-	@SuppressWarnings("javadoc") public static final Position H4 = of(4, 7);
-	@SuppressWarnings("javadoc") public static final Position H5 = of(3, 7);
-	@SuppressWarnings("javadoc") public static final Position H6 = of(2, 7);
-	@SuppressWarnings("javadoc") public static final Position H7 = of(1, 7);
-	@SuppressWarnings("javadoc") public static final Position H8 = of(0, 7);
+	public static final Position H1 = of(7, 7);
+	public static final Position H2 = of(6, 7);
+	public static final Position H3 = of(5, 7);
+	public static final Position H4 = of(4, 7);
+	public static final Position H5 = of(3, 7);
+	public static final Position H6 = of(2, 7);
+	public static final Position H7 = of(1, 7);
+	public static final Position H8 = of(0, 7);
 	// @formatter:on
 	
-	/** The position row. */
 	public final byte row;
 	
-	/** The position column. */
 	public final byte column;
 	
-	@SuppressWarnings("javadoc")
 	private Position(byte row, byte column) {
 		this.row = row;
 		this.column = column;
 	}
 	
-	/**
-	 * Retrieves the rank number of this position.
-	 * 
-	 * @return The rank number.
-	 */
 	public byte getRank() {
 		return rowToRank(row);
 	}
 	
-	/**
-	 * Retrieves the file number of this position.
-	 * 
-	 * @return The file number.
-	 */
 	public char getFile() {
 		return columnToFile(column);
 	}
 	
-	/**
-	 * Retrieves the algebraic notation of this column, like <code>"g6"</code>, <code>"d4"</code>.
-	 * 
-	 * @return The algebraic notation.
-	 */
 	public String getNotation() {
 		return CACHE_SAN[row][column];
 	}
 	
-	@SuppressWarnings("javadoc")
-	// new
-	private static Position n(int row, int column) {
+	private static Position /* new */ n(int row, int column) {
 		return new Position((byte) row, (byte) column);
 	}
 	
-	/**
-	 * Retrieves the position of the given <code>row/column</code> pair.
-	 * 
-	 * @param row The row number in the interval <code>[0 - 7]</code>.
-	 * @param column The column number in the interval <code>[0 - 7]</code>.
-	 * 
-	 * @return The position for given <code>row</code> and <code>column</code>.
-	 * 
-	 * @throws ArrayIndexOutOfBoundsException If given <code>row</code> or <code>column</code> are
-	 *         invalid.
-	 */
 	public static Position of(int row, int column) {
 		return CACHE[row][column];
 	}
 	
-	/**
-	 * Retrieves the position of the given <code>file/rank</code> pair.
-	 * 
-	 * @param file The file letter in the interval <code>[a - h]</code>.
-	 * @param rank The rank number in the interval <code>[1 - 8]</code>.
-	 * 
-	 * @return The position for given <code>file</code> and <code>rank</code>.
-	 * 
-	 * @throws ArrayIndexOutOfBoundsException If given <code>file</code> letter or <code>rank</code>
-	 *         are invalid.
-	 */
 	public static Position of(char file, int rank) {
 		return of(rankToRow(rank), fileToColumn(file));
 	}
 	
-	/**
-	 * Retrieves the position of the given algebraic notation of the position.
-	 * 
-	 * @param algebraicNotation The position in algebraic notation.
-	 * 
-	 * @return The position.
-	 */
 	public static Position of(String algebraicNotation) {
 		return of(
 			algebraicNotation.charAt(0),
@@ -214,62 +159,18 @@ public final class Position {
 		);
 	}
 	
-	/**
-	 * Converts the given file letter into a column number.
-	 * 
-	 * <p>
-	 * The file letter should be in lower case and must be in the interval <code>[a - h]</code>,
-	 * otherwise this method may return unexpected values.
-	 * 
-	 * @param file The file letter in the interval <code>[a - h]</code>.
-	 * 
-	 * @return The column number.
-	 */
 	public static byte fileToColumn(char file) {
 		return (byte) (file - 'a');
 	}
 	
-	/**
-	 * Converts the given column number into a file letter.
-	 * 
-	 * <p>
-	 * The column number should be in the interval <code>[0 - 7]</code>, otherwise this method may
-	 * return unexpected values.
-	 * 
-	 * @param column The column number in the interval <code>[0 - 7]</code>.
-	 * 
-	 * @return The file letter.
-	 */
 	public static char columnToFile(int column) {
 		return (char) ('a' + column);
 	}
 	
-	/**
-	 * Converts the given rank number into a row number.
-	 * 
-	 * <p>
-	 * The rank number should be in the interval <code>[1 - 8]</code>, otherwise this method may
-	 * return unexpected values.
-	 * 
-	 * @param rank The rank number in the interval <code>[1 - 8]</code>.
-	 * 
-	 * @return The row number.
-	 */
 	public static byte rankToRow(int rank) {
 		return (byte) (8 - rank);
 	}
 	
-	/**
-	 * Converts the given row number into a rank number.
-	 * 
-	 * <p>
-	 * The given row number should be in the interval <code>[0 - 7]</code>. This method will return
-	 * an unexpected value if the row does not follow this rule.
-	 * 
-	 * @param row The row number in the interval <code>[0 - 7]</code>.
-	 * 
-	 * @return The rank number.
-	 */
 	public static byte rowToRank(int row) {
 		return (byte) (8 - row);
 	}

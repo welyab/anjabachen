@@ -17,9 +17,12 @@ package com.welyab.anjabachen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("javadoc")
 public class ColorTest {
@@ -62,5 +65,15 @@ public class ColorTest {
 	@Test
 	public void getSignShouldReturnNegativeOneWhenColorIsBlack() {
 		assertEquals(-1, Color.BLACK.getValue());
+	}
+	
+	@ParameterizedTest
+	@ValueSource(
+		chars = {
+			'c', 'a', 'x', 'u', 'n'
+		}
+	)
+	public void valueOfShouldThrowIllegalArgumentExceptionWhenColorLetterIsInvalid(char letter) {
+		assertThrows(IllegalArgumentException.class, () -> Color.valueOf(letter));
 	}
 }

@@ -129,4 +129,27 @@ public enum Piece {
 	public boolean isBlackPawn() {
 		return this == BLACK_PAWN;
 	}
+	
+	public static Piece valueOf(char pieceLetter) {
+		return switch (pieceLetter) {
+			case WHITE_KING_LETTER -> Piece.WHITE_KING;
+			case WHITE_QUEEN_LETTER -> Piece.WHITE_QUEEN;
+			case WHITE_ROOK_LETTER -> Piece.WHITE_ROOK;
+			case WHITE_BISHOP_LETTER -> Piece.WHITE_BISHOP;
+			case WHITE_KNIGHT_LETTER -> Piece.WHITE_KNIGHT;
+			case WHITE_PAWN_LETTER -> Piece.WHITE_PAWN;
+			case BLACK_KING_LETTER -> Piece.BLACK_KING;
+			case BLACK_QUEEN_LETTER -> Piece.BLACK_QUEEN;
+			case BLACK_ROOK_LETTER -> Piece.BLACK_ROOK;
+			case BLACK_BISHOP_LETTER -> Piece.BLACK_BISHOP;
+			case BLACK_KNIGHT_LETTER -> Piece.BLACK_KNIGHT;
+			case BLACK_PAWN_LETTER -> Piece.BLACK_PAWN;
+			default -> throw new IllegalArgumentException(
+				String.format(
+					"Invalid piece letter: '%c'",
+					pieceLetter
+				)
+			);
+		};
+	}
 }

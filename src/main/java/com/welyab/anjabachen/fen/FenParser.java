@@ -20,10 +20,11 @@ import java.util.Collections;
 import java.util.List;
 
 import com.welyab.anjabachen.Color;
+import com.welyab.anjabachen.LocalizedPiece;
+import com.welyab.anjabachen.Piece;
+import com.welyab.anjabachen.Position;
 
 public class FenParser {
-	
-	private static final String INVALID_FEN_PARSER = "Invalid FEN string";
 	
 	private static final char WHITE_KING_CASTLING_FLAG = 'K';
 	
@@ -33,9 +34,13 @@ public class FenParser {
 	
 	private static final char BLACK_QUEEN_CASTLING_FLAG = 'q';
 	
+	private static final char SLASH = '/';
+	
 	private final String fen;
 	
 	private boolean parsed;
+	
+	private List<LocalizedPiece> pieceDisposition;
 	
 	private Color sideToMove;
 	
@@ -55,14 +60,44 @@ public class FenParser {
 		this.fen = fen;
 	}
 	
-	public static void main(String[] args) {
-		FenParser fenParser = new FenParser("r1bqkb1r/p1p2ppp/2n2n2/1pP5/4p3/2N5/PP1PBPpP/R1BQ1RK1 w kq b6 0 10");
-		fenParser
-			.splitParts()
-			.forEach(s -> {
-				CharSequenceImpl m = (CharSequenceImpl) s;
-				System.out.printf("%02d %02d - '%s'%n", m.startIndex, m.endIndex, m);
-			});
+	public List<LocalizedPiece> getPiecesDisposition() {
+		parse();
+		return Collections.unmodifiableList(pieceDisposition);
+	}
+	
+	public int getHalfMoveClock() {
+		parse();
+		return halfMoveClock;
+	}
+	
+	public int getFullMoveCounter() {
+		parse();
+		return fullMoveCounter;
+	}
+	
+	public Color getSideToMove() {
+		parse();
+		return sideToMove;
+	}
+	
+	public boolean isParsed() {
+		return parsed;
+	}
+	
+	public boolean isWhiteKingCastling() {
+		return whiteKingCastling;
+	}
+	
+	public boolean isWhiteQueenCastling() {
+		return whiteQueenCastling;
+	}
+	
+	public boolean isBlackKingCastling() {
+		return blackKingCastling;
+	}
+	
+	public boolean isBlackQueenCastling() {
+		return blackQueenCastling;
 	}
 	
 	public void parse() {
@@ -70,15 +105,26 @@ public class FenParser {
 			return;
 		}
 		
+		try {
+			parse0();
+			parsed = true;
+		} catch (FenParserException e) {
+			throw e;
+		} catch (RuntimeException e) {
+			throw new FenParserException(fen, "Fail to parse FEN string", e);
+		}
+	}
+	
+	private void parse0() {
 		List<CharSequence> parts = splitParts();
 		
 		for (int i = 1; i < parts.size(); i += 2) {
-			if (parts.size() > 1 || parts.get(i).charAt(i) != ' ') {
-				throw new FenParserException(fen, INVALID_FEN_PARSER);
+			if (parts.get(i).length() > 1 || parts.get(i).charAt(0) != ' ') {
+				throw new FenParserException(fen, "Invalid FEN string");
 			}
 		}
 		if (parts.get(parts.size() - 1).charAt(0) == ' ') {
-			throw new FenParserException(fen, INVALID_FEN_PARSER);
+			throw new FenParserException(fen, "Invalid FEN string");
 		}
 		
 		CharSequence pieceDisposition = extractPart(parts, 0);
@@ -99,19 +145,54 @@ public class FenParser {
 	}
 	
 	private void parsePieceDisposition(CharSequence pieceDisposition) {
+		this.pieceDisposition = new ArrayList<>();
+		int currentRow = 0;
+		int currentColumn = 0;
+		for (int i = 0; i < pieceDisposition.length(); i++) {
+			char c = fen.charAt(i);
+			if (c == SLASH) {
+				if (currentColumn != 8) {
+					throw new FenParserException(fen, "Invalid piece disposition");
+				}
+				currentRow++;
+				currentColumn = 0;
+				continue;
+			}
+			
+			if (c >= '1' && c <= '8') {
+				currentColumn += c - '0';
+				if (currentColumn > 8) {
+					throw new FenParserException(fen, "Invalid piece disposition");
+				}
+				continue;
+			}
+			this.pieceDisposition.add(
+				new LocalizedPiece(
+					Piece.valueOf(c),
+					Position.of(
+						currentRow,
+						currentColumn
+					)
+				)
+			);
+			currentColumn++;
+		}
+		if (currentRow != 7) {
+			throw new FenParserException(fen, "Invalid piece disposition");
+		}
 	}
 	
 	private void parseSideToMove(CharSequence sideToMove) {
 		if (sideToMove == null || sideToMove.length() != 1
-				|| (sideToMove.charAt(0) != 'w' && sideToMove.charAt(0) != 'b')) {
+				|| (sideToMove.charAt(0) != Color.WHITE_LETTER && sideToMove.charAt(0) != Color.BLACK_LETTER)) {
 			throw new FenParserException(fen, String.format("Invalid side to move: %s", sideToMove));
 		}
-		this.sideToMove = Color.valueOf(fen.charAt(0));
+		this.sideToMove = Color.valueOf(sideToMove.charAt(0));
 	}
 	
 	private void parseCastlingAvailability(CharSequence castlingAvailability) {
 		if (castlingAvailability == null) {
-			return;
+			throw new FenParserException(fen, "Fail to parse castling flags");
 		}
 		
 		if (castlingAvailability.length() == 1 && castlingAvailability.charAt(0) == '-') {
@@ -174,9 +255,9 @@ public class FenParser {
 		List<CharSequence> parts = new ArrayList<>(6);
 		int startIndex = 0;
 		int endIndex = 0;
-		boolean flag = fen.charAt(0) == ' ';
-		while (startIndex < fen.length() && endIndex < fen.length()) {
-			boolean f = fen.charAt(endIndex) == ' ';
+		boolean flag = Character.isWhitespace(fen.charAt(0));
+		while (endIndex < fen.length()) {
+			boolean f = Character.isWhitespace(fen.charAt(endIndex));
 			if (flag != f) {
 				parts.add(new CharSequenceImpl(startIndex, endIndex));
 				startIndex = endIndex;
@@ -190,14 +271,51 @@ public class FenParser {
 	}
 	
 	private CharSequence extractPart(List<CharSequence> parts, int partIndex) {
-		if (partIndex < parts.size()) {
+		if (partIndex >= parts.size()) {
 			return null;
 		}
 		return parts.get(partIndex);
 	}
 	
-	public static FenParser parse(String fen) {
+	public static FenParser createParser(String fen) {
 		return new FenParser(fen);
+	}
+	
+	private String encodeCastlingFlags() {
+		StringBuilder builder = new StringBuilder();
+		if (whiteKingCastling) {
+			builder.append(WHITE_KING_CASTLING_FLAG);
+		}
+		if (whiteQueenCastling) {
+			builder.append(WHITE_QUEEN_CASTLING_FLAG);
+		}
+		if (blackKingCastling) {
+			builder.append(BLACK_KING_CASTLING_FLAG);
+		}
+		if (blackQueenCastling) {
+			builder.append(BLACK_QUEEN_CASTLING_FLAG);
+		}
+		if (builder.length() == 0) {
+			builder.append("-");
+		}
+		return builder.toString();
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("next = ");
+		builder.append(sideToMove.getLetter()).append(", ");
+		builder.append("castlings = ");
+		builder.append(encodeCastlingFlags()).append(", ");
+		builder.append("pieces = ");
+		for (int i = 0; i < pieceDisposition.size(); i++) {
+			if (i > 0) {
+				builder.append(", ");
+			}
+			builder.append(pieceDisposition.get(i));
+		}
+		return builder.toString();
 	}
 	
 	private final class CharSequenceImpl implements CharSequence {
@@ -219,9 +337,6 @@ public class FenParser {
 		
 		@Override
 		public char charAt(int index) {
-			if (startIndex + index >= endIndex) {
-				throw new IndexOutOfBoundsException(index);
-			}
 			return fen.charAt(startIndex + index);
 		}
 		
