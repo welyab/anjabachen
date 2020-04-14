@@ -46,6 +46,7 @@ public class ChessException extends RuntimeException {
 	}
 }
 
+<<<<<<< HEAD
 @SuppressWarnings("javadoc")
 private static final long serialVersionUID = 1L;
 
@@ -67,3 +68,10 @@ public ChessException(Throwable cause) {
 public ChessException(String message, Throwable cause) {
 	super(message, cause);
 }
+=======
+fasd
+f
+asdf
+asdfa
+sdfasd
+>>>>>>> develop
