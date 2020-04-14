@@ -45,3 +45,9 @@ public class ChessException extends RuntimeException {
 		super(message, cause);
 	}
 }
+
+fasd
+f
+asdf
+asdfa
+sdfasd
